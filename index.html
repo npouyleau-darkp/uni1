@@ -1,4 +1,4 @@
-<!-- START OF BLOCK 1: HEAD AND CSS STYLES WITH SIDE WINDOW INFRASTRUCTURE -->
+<!-- START OF BLOCK 1.1: CSS RESET AND CORE LAYOUT VARIABLE MATRIX -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,25 +7,47 @@
     <title>LQA Tester Assessment</title>
     
     <style>
+        /* CSS Variables for seamless theme switching */
+        :root {
+            --bg-color: #f0f4f8;
+            --container-bg: #ffffff;
+            --text-color: #1e293b;
+            --title-color: #0f172a;
+            --border-color: #cbd5e1;
+            --input-bg: #f8fafc;
+            --panel-bg: #f8fafc;
+        }
+
+        /* Dark Mode variables override */
+        .dark-mode {
+            --bg-color: #0f172a;
+            --container-bg: #1e293b;
+            --text-color: #cbd5e1;
+            --title-color: #f8fafc;
+            --border-color: #475569;
+            --input-bg: #334155;
+            --panel-bg: #1e293b;
+        }
+
         body { 
             font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; 
             padding: 40px 20px; 
-            background-color: #f0f4f8; 
-            color: #1e293b; 
+            background-color: var(--bg-color); 
+            color: var(--text-color); 
             margin: 0; 
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         .container { 
-            max-width: 1100px; /* Wider to comfortably fit side panels */
+            max-width: 1100px; 
             margin: auto; 
-            background: #ffffff; 
+            background: var(--container-bg); 
             padding: 40px; 
             border-radius: 12px; 
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); 
             position: relative; 
-            transition: filter 0.05s linear; /* Ultra-fast rendering transition for blur mechanics */
+            transition: filter 0.05s linear, background-color 0.3s ease; 
         }
         
-        /* SCREENSHOT FOCUS LOSS PROTECTION: Forces dark blur text protection when shield triggers */
         body:has(.screen-shield.active) .container {
             filter: blur(50px) grayscale(100%) brightness(0.2);
             pointer-events: none;
@@ -36,84 +58,74 @@
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            border-bottom: 2px solid #e2e8f0; 
+            border-bottom: 2px solid var(--border-color); 
             padding-bottom: 20px; 
             margin-bottom: 30px; 
             position: sticky; 
             top: 0; 
-            background: #ffffff; 
+            background: var(--container-bg); 
             z-index: 100; 
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
-        .test-title { font-size: 24px; font-weight: 700; color: #0f172a; margin: 0; }
+        .test-title { font-size: 24px; font-weight: 700; color: var(--title-color); margin: 0; }
         .timer-bar { font-size: 20px; color: #b91c1c; font-weight: 700; background: #fef2f2; padding: 10px 20px; border-radius: 8px; border: 2px solid #fca5a5; display: none; }
         
+        /* Dark mode switch button styling */
+        .theme-toggle-btn {
+            background: #475569;
+            color: #ffffff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: background 0.2s ease;
+        }
+        .theme-toggle-btn:hover { background: #64748b; }
+
         .page-view { display: none; }
         .page-view.active { display: block; }
-        
-        /* Flex Grid Layout for Sections with Side Windows */
-        .split-layout {
-            display: flex;
-            gap: 30px;
-            align-items: flex-start;
-        }
+    </style>
+<!-- END OF BLOCK 1.1 -->
+<!-- START OF BLOCK 1.2: CSS COMPONENTS AND RESTORED SUMMARY DASHBOARD -->
+    <style>
+        .split-layout { display: flex; gap: 30px; align-items: flex-start; }
         .side-window {
-            flex: 0 0 300px; /* Fixed width for left helper panel */
-            background: #f8fafc;
-            border: 1px solid #cbd5e1;
-            border-radius: 10px;
-            padding: 20px;
-            box-sizing: border-box;
-            max-height: 85vh;
-            overflow-y: auto;
-            position: sticky;
+            flex: 0 0 300px; 
+            background: var(--panel-bg); 
+            border: 1px solid var(--border-color); 
+            border-radius: 10px; 
+            padding: 20px; 
+            box-sizing: border-box; 
+            max-height: 85vh; 
+            overflow-y: auto; 
+            position: sticky; 
             top: 100px;
             z-index: 1;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
-        .main-content {
-            flex: 1;
-            position: relative;
-            overflow: hidden;
-        }
+        .main-content { flex: 1; position: relative; overflow: hidden; }
 
         .side-title {
             font-size: 16px;
             font-weight: 700;
-            color: #1e3a8a;
+            color: #3b82f6;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-bottom: 12px;
-            border-bottom: 2px solid #3b82f6;
+            border-bottom: 2px solid #2563eb;
             padding-bottom: 5px;
         }
-        .side-text {
-            font-size: 14px;
-            line-height: 1.6;
-            color: #334155;
-            white-space: pre-wrap;
-            margin-bottom: 20px;
-        }
+        .side-text { font-size: 14px; line-height: 1.6; color: var(--text-color); white-space: pre-wrap; margin-bottom: 20px; }
 
-        /* Glossary Table Sheet Component */
-        .glossary-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-            background: #ffffff;
-        }
-        .glossary-table th, .glossary-table td {
-            border: 1px solid #cbd5e1;
-            padding: 8px;
-            text-align: left;
-            word-break: break-word;
-        }
-        .glossary-table th {
-            background: #e2e8f0;
-            font-weight: 700;
-            color: #0f172a;
-        }
+        .glossary-table { width: 100%; border-collapse: collapse; font-size: 13px; background: var(--container-bg); }
+        .glossary-table th, .glossary-table td { border: 1px solid var(--border-color); padding: 8px; text-align: left; word-break: break-word; }
+        .glossary-table th { background: var(--panel-bg); font-weight: 700; color: var(--title-color); }
 
         .section-title { 
-            color: #0f172a; 
+            color: var(--title-color); 
             border-left: 5px solid #2563eb; 
             padding-left: 12px; 
             margin-bottom: 25px; 
@@ -122,64 +134,29 @@
         }
         .form-group { margin-bottom: 30px; }
         
-        label { 
-            font-weight: 600; 
-            display: block; 
-            margin-bottom: 10px; 
-            color: #334155; 
-            line-height: 1.5; 
-            white-space: pre-wrap; 
-        }
+        label { font-weight: 600; display: block; margin-bottom: 10px; color: var(--text-color); line-height: 1.5; white-space: pre-wrap; }
         .required-star { color: #dc2626; margin-left: 3px; }
         
         textarea { 
-            width: 100%; 
-            padding: 14px; 
-            box-sizing: border-box; 
-            border: 1px solid #cbd5e1; 
-            border-radius: 8px; 
-            font-size: 15px; 
-            background-color: #f8fafc; 
-            white-space: pre-wrap; 
-            word-wrap: break-word;
+            width: 100%; padding: 14px; box-sizing: border-box; 
+            border: 1px solid var(--border-color); border-radius: 8px; font-size: 15px; 
+            background-color: var(--input-bg); color: var(--title-color);
+            white-space: pre-wrap; word-wrap: break-word; transition: background-color 0.3s ease;
         }
         input[type="text"], input[type="email"] { 
-            width: 100%; 
-            padding: 14px; 
-            box-sizing: border-box; 
-            border: 1px solid #cbd5e1; 
-            border-radius: 8px; 
-            font-size: 15px; 
-            background-color: #f8fafc; 
+            width: 100%; padding: 14px; box-sizing: border-box; 
+            border: 1px solid var(--border-color); border-radius: 8px; font-size: 15px; 
+            background-color: var(--input-bg); color: var(--title-color); transition: background-color 0.3s ease;
         }
-        input:focus, textarea:focus { border-color: #2563eb; outline: none; background-color: #ffffff; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15); }
-        input:read-only { background-color: #f1f5f9; color: #64748b; cursor: not-allowed; }
-        .q-image { max-width: 100%; height: auto; display: block; margin: 15px 0; border: 1px solid #cbd5e1; border-radius: 8px; }
+        input:focus, textarea:focus { border-color: #2563eb; outline: none; background-color: var(--container-bg); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15); }
+        input:read-only { background-color: var(--border-color); color: #64748b; cursor: not-allowed; }
+        .q-image { max-width: 100%; height: auto; display: block; margin: 15px 0; border: 1px solid var(--border-color); border-radius: 8px; }
         
-        .comparison-sheet {
-            display: flex;
-            width: 75%;
-            margin: 15px auto;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            overflow: hidden;
-            background: #f8fafc;
-        }
-        .comparison-case {
-            flex: 1;
-            padding: 15px;
-            font-size: 14px;
-            line-height: 1.5;
-            word-break: break-word;
-            white-space: pre-wrap;
-            height: auto;
-        }
-        .case-left {
-            border-right: 1px solid #cbd5e1;
-            background-color: #ffffff;
-        }
+        .comparison-sheet { display: flex; width: 75%; margin: 15px auto; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; background: var(--panel-bg); }
+        .comparison-case { flex: 1; padding: 15px; font-size: 14px; line-height: 1.5; word-break: break-word; white-space: pre-wrap; height: auto; color: var(--title-color); }
+        .case-left { border-right: 1px solid var(--border-color); background-color: var(--container-bg); }
         
-        .nav-buttons { display: flex; justify-content: space-between; margin-top: 35px; border-top: 1px solid #e2e8f0; padding-top: 20px; }
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 35px; border-top: 1px solid var(--border-color); padding-top: 20px; }
         button { padding: 14px 30px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.2s ease; }
         .btn-start { background-color: #2563eb; color: white; }
         .btn-nav { background-color: #475569; color: white; }
@@ -190,8 +167,8 @@
 
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); z-index: 200; align-items: center; justify-content: center; }
         .modal-overlay.show { display: flex; }
-        .modal-box { background: white; padding: 30px; border-radius: 12px; max-width: 450px; width: 100%; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        .modal-box h3 { margin-top: 0; color: #0f172a; font-size: 20px; }
+        .modal-box { background: var(--container-bg); padding: 30px; border-radius: 12px; max-width: 450px; width: 100%; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.1); color: var(--text-color); }
+        .modal-box h3 { margin-top: 0; color: var(--title-color); font-size: 20px; }
         .modal-box p { color: #64748b; font-size: 15px; margin-bottom: 25px; line-height: 1.4; }
         .modal-box .modal-buttons { display: flex; justify-content: center; gap: 15px; }
         
@@ -204,60 +181,34 @@
         .screen-shield.active { display: flex; }
         
         /* RESTORED PREMIUM RESULTS SUMMARY DASHBOARD LAYOUT */
-        .summary-header { 
-            background: #f8fafc; 
-            border: 1px solid #cbd5e1; 
-            padding: 30px; 
-            border-radius: 10px; 
-            margin-bottom: 40px; 
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-        }
-        .summary-header h2 { margin: 0 0 12px 0; color: #0f172a; font-size: 24px; font-weight: 700; }
-        .summary-header p { margin: 0; color: #475569; font-size: 15px; }
+        .summary-header { background: var(--panel-bg); border: 1px solid var(--border-color); padding: 30px; border-radius: 10px; margin-bottom: 40px; }
+        .summary-header h2 { margin: 0 0 12px 0; color: var(--title-color); font-size: 24px; font-weight: 700; }
+        .summary-header p { margin: 0; color: var(--text-color); font-size: 15px; }
         
-        .summary-item { 
-            margin-bottom: 35px; 
-            padding-bottom: 25px; 
-            border-bottom: 2px solid #f1f5f9; 
-        }
-        .summary-item:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-        .summary-q { 
-            font-weight: 700; 
-            color: #1e293b; 
-            margin-bottom: 12px; 
-            font-size: 16px; 
-            line-height: 1.5;
-        }
+        .summary-item { margin-bottom: 35px; padding-bottom: 25px; border-bottom: 2px solid var(--border-color); }
+        .summary-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .summary-q { font-weight: 700; color: var(--title-color); margin-bottom: 12px; font-size: 16px; line-height: 1.5; }
         .summary-a { 
-            background: #ffffff; 
-            padding: 20px 24px; 
-            border-radius: 8px; 
-            border: 1px solid #e2e8f0;
-            border-left: 5px solid #2563eb; 
-            color: #0f172a; 
-            white-space: pre-wrap; 
-            font-size: 15px; 
-            line-height: 1.6;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+            background: var(--container-bg); padding: 20px 24px; border-radius: 8px; border: 1px solid var(--border-color);
+            border-left: 5px solid #2563eb; color: var(--title-color); white-space: pre-wrap; font-size: 15px; line-height: 1.6;
         }
         
-        /* PRINT RESTRICTION: Total system blank page enforcement to prevent Ctrl+P or save-to-PDF trickeries */
-        @media print {
-            body { display: none !important; }
-        }
+        @media print { body { display: none !important; } }
     </style>
 </head>
-<!-- END OF BLOCK 1 -->
+<!-- END OF BLOCK 1.2 -->
 <!-- START OF BLOCK 2: IDENTITY REGISTRATION AND SECTION A WITH LOCAL WINDOWS IMAGES -->
 <body>
 <!-- WARNING: DEBUG MECHANISM BELOW - MUST BE REMOVED BEFORE FINAL IMPLEMENTATION -->
-<button type="button" id="qaResetBtn" onclick="resetQASession()" style="position: fixed; bottom: 20px; left: 20px; z-index: 99999; background-color: #dc2626; color: white; padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: background 0.2s;" onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'">
-    🛠️ Reset QA Session
-</button>
+<div style="position: fixed; bottom: 20px; left: 20px; z-index: 99999; display: flex; flex-direction: column; gap: 10px;">
+    <button type="button" id="qaResetBtn" onclick="resetQASession()" style="background-color: #dc2626; color: white; padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: background 0.2s;" onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'">
+        🛠️ Reset QA Session
+    </button>
+    <!-- Dark Mode Trigger Element labeled in English -->
+    <button type="button" class="theme-toggle-btn" id="themeToggle" onclick="toggleDarkMode()">
+        🌙 Dark Mode
+    </button>
+</div>
 
 <div class="screen-shield" id="greyShield">
     <p style="background: #0f172a; padding: 20px 40px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">Content Protected</p>
@@ -339,12 +290,12 @@ Expected behavior</div>
                     </div>
                     <div class="form-group">
                         <label id="lbl_q3">3. Bla-bla-bla.</label>
-                        <img src="screenshots/screenshot3.jpg" alt="Chart" class="q-image">
+                        <img src="screenshots/screenshot3.jpeg" alt="Chart" class="q-image">
                         <textarea id="q3" rows="3" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="Your response..."></textarea>
                     </div>
                     <div class="form-group">
                         <label id="lbl_q4">4. More crazy game</label>
-                        <img src="screenshots/screenshot4.jpg" alt="Chart" class="q-image">
+                        <img src="screenshots/screenshot4.jpeg" alt="Chart" class="q-image">
                         <textarea id="q4" rows="3" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="Your response..."></textarea>
                     </div>
 
@@ -480,6 +431,31 @@ Expected behavior</div>
 <!-- END OF BLOCK 4 -->
 <!-- START OF BLOCK 5: PAGINATION, MODALS AND TIMING ENGINE -->
 <script>
+    // 0. Dark Mode Switch Engine with English Localized strings
+    function toggleDarkMode() {
+        const body = document.body;
+        const btn = document.getElementById('themeToggle');
+        
+        body.classList.toggle('dark-mode');
+        
+        if (body.classList.contains('dark-mode')) {
+            if (btn) btn.innerHTML = "☀️ Light Mode";
+            localStorage.setItem('lqa_theme', 'dark');
+        } else {
+            if (btn) btn.innerHTML = "🌙 Dark Mode";
+            localStorage.setItem('lqa_theme', 'light');
+        }
+    }
+
+    // SAFE INITIALIZATION: Dynamically applies English strings based on localized cache on launch
+    window.addEventListener('DOMContentLoaded', () => {
+        if (localStorage.getItem('lqa_theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            const btn = document.getElementById('themeToggle');
+            if (btn) btn.innerHTML = "☀️ Light Mode";
+        }
+    });
+
     // 1. Pagination View Switching Function
     function changePageView(targetPageId) {
         document.querySelectorAll('.page-view').forEach(view => view.classList.remove('active'));
@@ -496,7 +472,9 @@ Expected behavior</div>
         document.getElementById('confirmationModal').classList.remove('show');
         if (isConfirmed) {
             clearInterval(timerRunningEngine);
-            localStorage.clear(); // ANTI-CHEAT: Wipes session data on clean submission
+            const savedTheme = localStorage.getItem('lqa_theme');
+            localStorage.clear(); 
+            if (savedTheme) localStorage.setItem('lqa_theme', savedTheme);
             displaySummaryDashboard(); 
         }
     }
@@ -525,7 +503,6 @@ Expected behavior</div>
         document.getElementById('timerDisplay').style.display = 'block';
         isTestActive = true;
 
-        // ANTI-CHEAT: Checks if a previous session token is still burning on this machine
         const savedEndTime = localStorage.getItem('lqa_test_end_time');
         
         if (savedEndTime) {
@@ -544,7 +521,9 @@ Expected behavior</div>
                 clearInterval(timerRunningEngine);
                 document.getElementById('confirmationModal').classList.remove('show'); 
                 alert("Time has expired! Generating your results screen.");
-                localStorage.clear(); 
+                const savedTheme = localStorage.getItem('lqa_theme');
+                localStorage.clear();
+                if (savedTheme) localStorage.setItem('lqa_theme', savedTheme);
                 displaySummaryDashboard();
                 return;
             }
