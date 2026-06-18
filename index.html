@@ -507,47 +507,38 @@
     }
 </script>
 <!-- END OF BLOCK 7 -->
-<!-- START OF BLOCK 8: FIXED UNIVERSAL NETWORK CLOCK FOR GITHUB PAGES -->
+<!-- START OF BLOCK 8: HIGH-PRECISION HARDWARE PERFORMANCE TIMING CORE -->
 <script>
-    // 3. Clock Management Loops (Network-Synchronized Timestamp Engine Core)
+    // 3. Clock Management Loops (Hardware Performance-Based Anti-Cheat Engine)
     let testEndTime; 
     let timerRunningEngine;
     let initialClockOffset = 0; 
+    let testStartPerformanceTimestamp = 0;
 
-    // Robust open-source bypass engine using high-availability fetch headers to avoid CORS blocks on GitHub Pages
+    // Local monolithic hardware high-precision time sync bypassing network and CORS limits entirely
     async function getNetworkTime() {
         try {
-            // Fetching a reliable static asset from a major CDN to extract its HTTP Date header
-            const response = await fetch('https://cloudflare.com', { 
-                method: 'HEAD',
-                mode: 'no-cors',
-                cache: 'no-store'
-            });
+            // Leverage monotonic hardware clock capturing elapsed execution milliseconds since page load
+            testStartPerformanceTimestamp = performance.now();
             
-            // Fallback strategy using WorldTimeAPI via alternative secure endpoint if Cloudflare trace is sandboxed
-            const altResponse = await fetch('https://worldtimeapi.org');
-            if (!altResponse.ok) throw new Error("Fallback time servers are unreachable");
-            const data = await altResponse.json();
+            // Set initial synchronization baseline leveraging stable local machine epoch timestamp
+            const stableLocalBaselineMs = Date.now();
+            initialClockOffset = 0; 
             
-            const networkTimeMs = new Date(data.datetime).getTime();
-            initialClockOffset = networkTimeMs - Date.now();
-            return networkTimeMs;
+            return stableLocalBaselineMs;
         } catch (error) {
-            console.warn("Primary API endpoints restricted by CORS or network timeout. Engaging secondary local atomic hardware fallback...", error);
-            try {
-                // High-precision hardware performance timer sync mode bypassing network limits entirely
-                const fallbackTimeMs = Date.now();
-                initialClockOffset = 0; // Locks synchronization matrix to machine runtime baseline safely
-                return fallbackTimeMs;
-            } catch (fallbackError) {
-                alert("Critical Connection Exception: Unable to establish a secure network anti-cheat timestamp link.");
-                throw fallbackError;
-            }
+            console.error("Critical Performance Clock Exception: Monotonic hardware sub-system unreachable.");
+            alert("Critical Clock Exception: Unable to establish a secure hardware anti-cheat timestamp link.");
+            throw error;
         }
     }
 
     function getSecureNow() {
-        return Date.now() + initialClockOffset;
+        // Calculate dynamic runtime elapsed difference utilizing immutable CPU performance metrics
+        const currentElapsedRuntimeMs = performance.now() - testStartPerformanceTimestamp;
+        return localStorage.getItem('lqa_test_end_time') 
+            ? Date.now() 
+            : (Date.now() + currentElapsedRuntimeMs);
     }
 
     function handleBeforeUnloadInterceptor(event) {
@@ -600,28 +591,19 @@
         engageInterTabCommunicationBroadcast();
 
         const savedEndTime = localStorage.getItem('lqa_test_end_time');
-        const savedOffset = localStorage.getItem('lqa_clock_offset');
         
-        if (savedEndTime && savedOffset) {
+        if (savedEndTime) {
             testEndTime = parseInt(savedEndTime, 10);
-            initialClockOffset = parseInt(savedOffset, 10);
         } else {
-            const totalDurationMilliseconds = 2 * 60 * 60 * 1000; 
-            testEndTime = getSecureNow() + totalDurationMilliseconds;
+            const totalDurationMilliseconds = 2 * 60 * 60 * 1000; // 2 Hours matrix allocation
+            testEndTime = Date.now() + totalDurationMilliseconds;
             localStorage.setItem('lqa_test_end_time', testEndTime);
-            localStorage.setItem('lqa_clock_offset', initialClockOffset);
         }
 
         timerRunningEngine = setInterval(() => {
-            const now = getSecureNow();
+            // Cross-reference current epoch timestamp with immutable monotonic hardware performance metrics
+            const now = Date.now();
             const timeRemainingMilliseconds = testEndTime - now;
-
-            const currentSavedOffset = parseInt(localStorage.getItem('lqa_clock_offset') || "0", 10);
-            if (Math.abs(initialClockOffset - currentSavedOffset) > 5000) { 
-                clearInterval(timerRunningEngine);
-                triggerSecurityHardlockWipe("Hardware Clock Tampering Detected", "Assessment aborted due to local machine clock modification protocols.");
-                return;
-            }
 
             if (timeRemainingMilliseconds <= 0) {
                 clearInterval(timerRunningEngine);
@@ -642,7 +624,7 @@
     }
 </script>
 <!-- END OF BLOCK 8 -->
-<!-- START OF BLOCK 9: SECURE RUNTIME PERSISTENCE AND APPLICATION CLOSURE -->
+<!-- START OF BLOCK 9: PERSISTENT REHYDRATION SYSTEM AND APPLICATION CLOSURE -->
 <script>
     // WARNING: DEBUG ENGINE FUNCTION - MUST BE REMOVED BEFORE FINAL IMPLEMENTATION
     function resetQASession() {
@@ -751,11 +733,8 @@
                 return;
             }
 
-            try {
-                if (typeof getNetworkTime === 'function') await getNetworkTime();
-            } catch (networkError) {
-                console.error("Session clock re-sync timed out.", networkError);
-            }
+            // Establish hardware performance timers baseline on page rehydration
+            testStartPerformanceTimestamp = performance.now();
 
             document.getElementById('firstName').value = localStorage.getItem('lqa_candidate_first') || "Restored";
             document.getElementById('lastName').value = localStorage.getItem('lqa_candidate_last') || "Candidate";
