@@ -501,7 +501,7 @@
     }
 </script>
 <!-- END OF BLOCK 7 -->
-<!-- START OF BLOCK 8: HIGH-PRECISION SECURE CLOCK (WITHOUT UNLOAD INTERCEPTOR) -->
+<!-- START OF BLOCK 8: LOCKED MONOTONIC TIMER CORE (ANTI-F5 RESTART FIX) -->
 <script>
     // 3. Clock Management Loops (Hardware Performance-Based Anti-Cheat Engine)
     let testEndTime; 
@@ -539,7 +539,9 @@
         }
 
         const startButton = document.getElementById('unlockBtn');
-        if (!localStorage.getItem('lqa_test_end_time')) {
+        const existingEndTimeCheck = localStorage.getItem('lqa_test_end_time');
+
+        if (!existingEndTimeCheck) {
             startButton.disabled = true;
             startButton.innerText = "Synchronizing security keys...";
             
@@ -569,16 +571,17 @@
 
         engageInterTabCommunicationBroadcast();
 
-        const savedEndTime = localStorage.getItem('lqa_test_end_time');
-        
-        if (savedEndTime) {
-            testEndTime = parseInt(savedEndTime, 10);
+        // Rigid chronological lock preventing background countdown overwrites during F5 stress events
+        if (existingEndTimeCheck) {
+            testEndTime = parseInt(existingEndTimeCheck, 10);
         } else {
             const totalDurationMilliseconds = 2 * 60 * 60 * 1000; 
             testEndTime = Date.now() + totalDurationMilliseconds;
             localStorage.setItem('lqa_test_end_time', testEndTime);
         }
 
+        if (timerRunningEngine) clearInterval(timerRunningEngine);
+        
         timerRunningEngine = setInterval(() => {
             const now = Date.now();
             const timeRemainingMilliseconds = testEndTime - now;
@@ -601,7 +604,7 @@
     }
 </script>
 <!-- END OF BLOCK 8 -->
-<!-- START OF BLOCK 9: RECOVERY-FRIENDLY REHYDRATION PROTOCOL -->
+<!-- START OF BLOCK 9: RIGID PERSISTENT BOOTLOADER INTERFACE -->
 <script>
     // WARNING: DEBUG ENGINE FUNCTION - MUST BE REMOVED BEFORE FINAL IMPLEMENTATION
     function resetQASession() {
@@ -689,9 +692,9 @@
         }
     });
 
-    // Smart, non-punitive rehydration algorithm to recover candidates fluidly on F5/Reload events
+    // Idempotent recovery bootloader architecture preventing initialization time slips
     window.addEventListener('load', async () => {
-        // 1. Instantly restore written answers from cache matrix
+        // 1. Sync and map written text area content values immediately on thread start
         for (let i = 1; i <= 10; i++) {
             const savedAnswer = localStorage.getItem(`lqa_ans_q${i}`);
             if (savedAnswer) {
@@ -700,17 +703,17 @@
             }
         }
 
-        // 2. Continuous session validation core without aggressive false-positive triggers
-        if (localStorage.getItem('lqa_test_end_time')) {
-            // Re-bind the core hardware performance timer baseline for this reload cycle
+        // 2. Strict analytical tracking block bypass checking validation parameters
+        const recoveryTimestampCheck = localStorage.getItem('lqa_test_end_time');
+        if (recoveryTimestampCheck) {
             testStartPerformanceTimestamp = performance.now();
 
-            // Safely recover applicant structural fields from local storage memory pipeline
+            // Enforce registration rehydration schemas using validated active local parameters
             document.getElementById('firstName').value = localStorage.getItem('lqa_candidate_first') || "Restored";
             document.getElementById('lastName').value = localStorage.getItem('lqa_candidate_last') || "Candidate";
             document.getElementById('candidateEmail').value = localStorage.getItem('lqa_candidate_email') || "restored@session.com";
             
-            // Re-lock fields and resume countdown execution seamlessly
+            // Execute runtime sequence activation loop securely
             startTestTimer();
         }
     });
