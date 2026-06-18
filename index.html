@@ -69,7 +69,7 @@
         }
     </style>
 <!-- END OF BLOCK 1 -->
-<!-- START OF BLOCK 2: COMPONENT LAYOUT, FORM STRUCTURE, AND FLOATING TO DO CSS -->
+<!-- START OF BLOCK 2: COMPONENT LAYOUT, MODAL AND ELEGANT WORD COUNT CSS -->
     <style>
         .header-meta { 
             display: flex; justify-content: space-between; align-items: center; 
@@ -98,7 +98,6 @@
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
         
-        /* Non-intrusive floating TO DO board detached from the default registration flow layout grid */
         .temporary-todo-float {
             position: absolute; left: -340px; top: 120px; width: 300px;
             background: var(--panel-bg); border: 2px dashed #eab308; border-radius: 10px;
@@ -113,12 +112,22 @@
         .todo-list { font-size: 13.5px; line-height: 1.8; color: var(--text-color); margin: 0; padding-left: 18px; }
         .todo-list li { margin-bottom: 6px; font-weight: 500; }
         
-        /* Rigid safety visibility override: instantly hides the float to prevent overlapping on narrower viewports */
         @media (max-width: 1750px) {
             .temporary-todo-float { display: none !important; }
         }
         
         .main-content { flex: 1; position: relative; overflow: hidden; }
+
+        /* Structural container wrapping textarea and dynamic counter box closely */
+        .textarea-container { position: relative; width: 100%; display: flex; flex-direction: column; }
+        
+        /* Elegant minimalist word counter aligned tightly below the textarea field */
+        .word-counter-badge {
+            align-self: flex-end; margin-top: 6px; padding: 4px 10px; font-size: 12px;
+            font-weight: 600; color: var(--text-color); opacity: 0.7; border-radius: 4px;
+            border: 1px solid var(--border-color); background: var(--panel-bg);
+            transition: opacity 0.2s ease, border-color 0.3s ease;
+        }
 
         .side-title { font-size: 16px; font-weight: 700; color: #3b82f6; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; border-bottom: 2px solid #2563eb; padding-bottom: 5px; }
         .side-text { font-size: 14px; line-height: 1.6; color: var(--text-color); white-space: pre-wrap; margin-bottom: 20px; }
@@ -158,10 +167,13 @@
 
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); z-index: 200; align-items: center; justify-content: center; }
         .modal-overlay.show { display: flex; }
-        .modal-box { background: var(--container-bg); padding: 30px; border-radius: 12px; max-width: 450px; width: 100%; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.1); color: var(--text-color); }
+        .modal-box { background: var(--container-bg); padding: 30px; border-radius: 12px; max-width: 500px; width: 100%; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.1); color: var(--text-color); }
         .modal-box h3 { margin-top: 0; color: var(--title-color); font-size: 20px; }
-        .modal-box p { color: #64748b; font-size: 15px; margin-bottom: 25px; line-height: 1.4; }
+        .modal-box p { color: #64748b; font-size: 15px; margin-bottom: 25px; line-height: 1.5; text-align: left; white-space: pre-wrap; }
         .modal-box .modal-buttons { display: flex; justify-content: center; gap: 15px; }
+        
+        /* Dedicated dynamic conditional notice font coloring rule selectors */
+        .modal-warning-highlight { color: #dc2626 !important; font-weight: 700; }
         
         .btn-yes { background-color: #22c55e !important; color: #000000 !important; }
         .btn-no { background-color: #ef4444 !important; color: #000000 !important; }
@@ -354,7 +366,7 @@
             </div>
         </div>
 <!-- END OF BLOCK 4 -->
-<!-- START OF BLOCK 5: SECTION C WRITING MATRIX AND MODAL VIEW WRAPPERS -->
+<!-- START OF BLOCK 5: SECTION C WITH INTEGRATED WORD COUNTER WRAPPERS -->
         <!-- ==================== PAGE 4: SECTION C ==================== -->
         <div class="page-view" id="page4">
             <div class="section-title">Section C: Writing Skill</div>
@@ -362,15 +374,24 @@
             
             <div class="form-group">
                 <label id="lbl_q8">8. What was the last game you enjoyed the most recently? Try to tell us why (150 words).</label>
-                <textarea id="q8" rows="4" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
+                <div class="textarea-container">
+                    <textarea id="q8" rows="4" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
+                    <div class="word-counter-badge" id="counter_q8">Word count: 0</div>
+                </div>
             </div>
             <div class="form-group">
                 <label id="lbl_q9">9. Do you think Nicolas is nice? And could you tell us why you said yes? (over 9k words)</label>
-                <textarea id="q9" rows="4" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
+                <div class="textarea-container">
+                    <textarea id="q9" rows="4" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
+                    <div class="word-counter-badge" id="counter_q9">Word count: 0</div>
+                </div>
             </div>
             <div class="form-group">
                 <label id="lbl_q10">10. Tant va la cruche à l'eau qu'à la fin elle se pourfasse. Pensez-vous que Maître Yoda aurait apprécié un tel language ? (250 mots)</label>
-                <textarea id="q10" rows="4" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
+                <div class="textarea-container">
+                    <textarea id="q10" rows="4" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
+                    <div class="word-counter-badge" id="counter_q10">Word count: 0</div>
+                </div>
             </div>
 
             <div class="nav-buttons">
@@ -394,7 +415,7 @@
 <div class="modal-overlay" id="confirmationModal">
     <div class="modal-box">
         <h3>Submit Assessment</h3>
-        <p>You are about to transmit your completed test file. Continue?</p>
+        <p id="modalConfirmationText">You are about to transmit your completed test file. Continue?</p>
         <div class="modal-buttons">
             <button type="button" class="btn-yes" id="confirmYesBtn" onclick="confirmSubmission(true)">Yes, Send</button>
             <button type="button" class="btn-no" onclick="confirmSubmission(false)">No, Back</button>
@@ -402,7 +423,7 @@
     </div>
 </div>
 <!-- END OF BLOCK 5 -->
-<!-- START OF BLOCK 6: STREAMLINED THEME ENGINE AND INTER-TAB BROADCAST LOGIC -->
+<!-- START OF BLOCK 6: STREAMLINED FRONT-END INTERACTION AND DYNAMIC AUDIT MODAL ENGINE -->
 <script>
     let testEndTime; 
     let timerRunningEngine;
@@ -428,7 +449,25 @@
         window.scrollTo(0, 0);
     }
 
+    // Dynamic verification engine reviewing form entries before prompting completion alerts
     function openConfirmationModal() {
+        const missingQuestions = [];
+        for (let i = 1; i <= 10; i++) {
+            const field = document.getElementById(`q${i}`);
+            if (!field || !field.value.trim()) {
+                missingQuestions.push(`Q${i}`);
+            }
+        }
+
+        const textField = document.getElementById('modalConfirmationText');
+        if (missingQuestions.length > 0) {
+            // Alter structural context layout alerting candidate of blank sections remaining
+            textField.innerHTML = `<span class="modal-warning-highlight">WARNING: You have not answered all questions!</span>\n\nThe following input fields are still empty: <span class="modal-warning-highlight">${missingQuestions.join(', ')}</span>.\n\nAre you sure you want to proceed and finalize transmission?`;
+        } else {
+            // Restore native neutral prompt string if validation audits succeed
+            textField.innerHTML = "You are about to transmit your completed test file. Continue?";
+        }
+
         document.getElementById('confirmationModal').classList.add('show');
     }
 
@@ -472,7 +511,7 @@
     }
 </script>
 <!-- END OF BLOCK 6 -->
-<!-- START OF BLOCK 7: IMMUTABLE TIMER CORE, HOOKS AND DATA PERSISTENCE RUNTIME -->
+<!-- START OF BLOCK 7: IMMUTABLE TIMER, REAL-TIME WORD COUNT AND DATA PERSISTENCE -->
 <script>
     // WARNING: DEBUG ENGINE FUNCTION - MUST BE REMOVED BEFORE FINAL IMPLEMENTATION
     function resetQASession() {
@@ -501,6 +540,18 @@
             alert('Action restricted for security compliance.');
         }
     });
+
+    // Helper method calculating text token arrays to update word counters
+    function refreshWordCounterMetric(elementId) {
+        const textarea = document.getElementById(elementId);
+        const badge = document.getElementById(`counter_${elementId}`);
+        if (!textarea || !badge) return;
+
+        const cleanText = textarea.value.trim();
+        // Splitting string across global boundary arrays discarding residual spacing blocks
+        const count = cleanText === "" ? 0 : cleanText.split(/\s+/).length;
+        badge.innerHTML = `Word count: ${count}`;
+    }
 
     async function startTestTimer() {
         const first = document.getElementById('firstName').value.trim();
@@ -610,12 +661,20 @@
         if (activeElement && (activeElement.tagName === 'TEXTAREA' || activeElement.tagName === 'INPUT')) {
             const start = activeElement.selectionStart;
             activeElement.value = activeElement.value.substring(0, start) + "[Paste restricted for security compliance]" + activeElement.value.substring(activeElement.selectionEnd);
+            // Re-trigger counter calculation if a candidate bypass attempt occurs on monitored areas
+            if (activeElement.id === 'q8' || activeElement.id === 'q9' || activeElement.id === 'q10') {
+                refreshWordCounterMetric(activeElement.id);
+            }
         }
     });
 
     document.addEventListener('input', (e) => {
         if (isTestActive && e.target.tagName === 'TEXTAREA') {
             localStorage.setItem(`lqa_ans_${e.target.id}`, e.target.value);
+            // Dynamically refresh tracking counts if input focus is active on section C textareas
+            if (e.target.id === 'q8' || e.target.id === 'q9' || e.target.id === 'q10') {
+                refreshWordCounterMetric(e.target.id);
+            }
         }
     });
 
@@ -630,9 +689,12 @@
         for (let i = 1; i <= 10; i++) {
             const savedAnswer = localStorage.getItem(`lqa_ans_q${i}`);
             if (savedAnswer) {
-                const field = document.getElementById(`q./index.html`);
                 const realField = document.getElementById(`q${i}`);
-                if (realField) realField.value = savedAnswer;
+                if (realField) {
+                    realField.value = savedAnswer;
+                    // Trigger counters upon rehydration to display historical baseline sizes immediately
+                    if (i === 8 || i === 9 || i === 10) refreshWordCounterMetric(`q${i}`);
+                }
             }
         }
 
@@ -655,3 +717,4 @@
 </body>
 </html>
 <!-- END OF BLOCK 7 -->
+
