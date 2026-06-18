@@ -69,7 +69,7 @@
         }
     </style>
 <!-- END OF BLOCK 1 -->
-<!-- START OF BLOCK 2: COMPONENT LAYOUT AND FORM STRUCTURE CSS -->
+<!-- START OF BLOCK 2: COMPONENT LAYOUT, FORM STRUCTURE, AND FLOATING TO DO CSS -->
     <style>
         .header-meta { 
             display: flex; justify-content: space-between; align-items: center; 
@@ -97,6 +97,27 @@
             overflow-y: auto; position: sticky; top: 100px; z-index: 1;
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
+        
+        /* Non-intrusive floating TO DO board detached from the default registration flow layout grid */
+        .temporary-todo-float {
+            position: absolute; left: -340px; top: 120px; width: 300px;
+            background: var(--panel-bg); border: 2px dashed #eab308; border-radius: 10px;
+            padding: 22px; box-sizing: border-box; height: auto; z-index: 10;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        .todo-title {
+            font-size: 15px; font-weight: 800; color: #eab308; text-transform: uppercase;
+            letter-spacing: 0.5px; margin-bottom: 15px; border-bottom: 2px dashed #eab308;
+            padding-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .todo-list { font-size: 13.5px; line-height: 1.8; color: var(--text-color); margin: 0; padding-left: 18px; }
+        .todo-list li { margin-bottom: 6px; font-weight: 500; }
+        
+        /* Rigid safety visibility override: instantly hides the float to prevent overlapping on narrower viewports */
+        @media (max-width: 1750px) {
+            .temporary-todo-float { display: none !important; }
+        }
+        
         .main-content { flex: 1; position: relative; overflow: hidden; }
 
         .side-title { font-size: 16px; font-weight: 700; color: #3b82f6; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; border-bottom: 2px solid #2563eb; padding-bottom: 5px; }
@@ -172,7 +193,7 @@
 
     <div id="mainApplicationWrapper">
 <!-- END OF BLOCK 2 -->
-<!-- START OF BLOCK 3: REGISTRATION FORM AND SECTION A LQA QUESTIONS -->
+<!-- START OF BLOCK 3: REGISTRATION VIEWS CONTAINING INDEPENDENT FLOATING TO DO BOX -->
 <div style="position: fixed; bottom: 20px; left: 20px; z-index: 99999; display: flex; flex-direction: column; gap: 10px;">
     <button type="button" id="qaResetBtn" onclick="resetQASession()" style="background-color: #dc2626; color: white; padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: background 0.2s;" onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'">
         🛠️ Reset QA Session
@@ -188,6 +209,17 @@
 </div>
 
 <div class="container">
+    
+    <!-- Isolated standalone floating project tracking element -->
+    <div class="temporary-todo-float">
+        <div class="todo-title">🚧 TO DO 🚧</div>
+        <ul class="todo-list">
+            <li>Access with unique link/invite</li>
+            <li>Storage for the answers</li>
+            <li>Full l18 implementation</li>
+        </ul>
+    </div>
+
     <div class="header-meta" id="headerMeta">
         <h1 class="test-title">LQA Tester Assessment</h1>
         <div class="timer-bar" id="timerDisplay">Time Left: 2:00:00</div>
