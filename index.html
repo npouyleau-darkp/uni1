@@ -142,14 +142,14 @@
         label { font-weight: 600; display: block; margin-bottom: 10px; color: var(--text-color); line-height: 1.5; white-space: pre-wrap; }
         .required-star { color: #dc2626; margin-left: 3px; }
         
-        textarea, input[type="text"], input[type="email"] { 
+        textarea, input[type="text"], input[type="email"], select { 
             width: 100%; padding: 14px; box-sizing: border-box; border: 1px solid var(--border-color); 
             border-radius: 8px; font-size: 15px; background-color: var(--input-bg); color: var(--title-color);
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
         textarea { white-space: pre-wrap; word-wrap: break-word; }
-        input:focus, textarea:focus { border-color: #2563eb; outline: none; background-color: var(--container-bg); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15); }
-        input:read-only { background-color: var(--border-color); color: #64748b; cursor: not-allowed; }
+        input:focus, textarea:focus, select:focus { border-color: #2563eb; outline: none; background-color: var(--container-bg); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15); }
+        input:read-only, select:disabled { background-color: var(--border-color); color: #64748b; cursor: not-allowed; }
         
         .q-image { max-width: 100%; height: auto; display: block; margin: 15px 0; border: 1px solid var(--border-color); border-radius: 8px; }
         .comparison-sheet { display: flex; width: 75%; margin: 15px auto; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; background: var(--panel-bg); }
@@ -182,6 +182,7 @@
         .summary-header { background: var(--panel-bg); border: 1px solid var(--border-color); padding: 30px; border-radius: 10px; margin-bottom: 40px; }
         .summary-header h2 { margin: 0 0 12px 0; color: var(--title-color); font-size: 24px; font-weight: 700; }
         .summary-header p { margin: 0; color: var(--text-color); font-size: 15px; }
+        .summary-meta-box { margin-top: 15px; padding: 12px; background: var(--container-bg); border: 1px solid var(--border-color); border-radius: 6px; font-size: 14px; font-weight: 600; color: var(--title-color); display: inline-block; }
         
         .summary-item { margin-bottom: 35px; padding-bottom: 25px; border-bottom: 2px solid var(--border-color); }
         .summary-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
@@ -205,7 +206,7 @@
 
     <div id="mainApplicationWrapper">
 <!-- END OF BLOCK 2 -->
-<!-- START OF BLOCK 3: REGISTRATION VIEWS CONTAINING INDEPENDENT FLOATING TO DO BOX -->
+<!-- START OF BLOCK 3: REGISTRATION VIEWS WITH MANDATORY LANGUAGE SELECT AND SECTION A -->
 <div style="position: fixed; bottom: 20px; left: 20px; z-index: 99999; display: flex; flex-direction: column; gap: 10px;">
     <button type="button" id="qaResetBtn" onclick="resetQASession()" style="background-color: #dc2626; color: white; padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: background 0.2s;" onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'">
         🛠️ Reset QA Session
@@ -243,7 +244,7 @@
         <div class="page-view active" id="page1">
             <div class="section-title">Candidate Identity Registration</div>
             <p class="info-text">
-                Please provide your identification credentials below. Only these fields are mandatory.
+                Please provide your identification credentials below. All fields are mandatory.
                 <span class="tip-alert">TIP: You have two hours to complete the test. It will submit automatically after that delay. Read carefully and consult the provided documentation layout.</span>
             </p>
             
@@ -258,6 +259,19 @@
             <div class="form-group">
                 <label for="candidateEmail">E-mail Address<span class="required-star">*</span></label>
                 <input type="email" id="candidateEmail" required placeholder="e.g., john.doe@example.com">
+            </div>
+            <div class="form-group">
+                <label for="candidateLanguage">Assessment Native Language<span class="required-star">*</span></label>
+                <select id="candidateLanguage" required>
+                    <option value="" disabled selected>-- Select your native assessment language --</option>
+                    <option value="English">English</option>
+                    <option value="Français">Français</option>
+                    <option value="Español">Español</option>
+                    <option value="Deutsch">Deutsch</option>
+                    <option value="Italiano">Italiano</option>
+                    <option value="日本語">日本語</option>
+                    <option value="العربية">العربية</option>
+                </select>
             </div>
             
             <div class="nav-buttons">
@@ -309,7 +323,7 @@
             </div>
         </div>
 <!-- END OF BLOCK 3 -->
-<!-- START OF BLOCK 4: GLOSSARY SHEET AND SECTION B QUESTIONS -->
+<!-- START OF BLOCK 4: GLOSSARY SHEET AND SECTION B TRANSLATION QUESTIONS -->
         <!-- ==================== PAGE 3: SECTION B ==================== -->
         <div class="page-view" id="page3">
             <div class="split-layout">
@@ -366,7 +380,7 @@
             </div>
         </div>
 <!-- END OF BLOCK 4 -->
-<!-- START OF BLOCK 5: SECTION C WITH INTEGRATED WORD COUNTER WRAPPERS -->
+<!-- START OF BLOCK 5: SECTION C WORD COUNTERS AND SUMMARY WITH LANGUAGE METADATA -->
         <!-- ==================== PAGE 4: SECTION C ==================== -->
         <div class="page-view" id="page4">
             <div class="section-title">Section C: Writing Skill</div>
@@ -406,6 +420,7 @@
         <div class="summary-header">
             <h2>Thank you for taking part in our test.</h2>
             <p>We will contact you shortly. Your compiled assessment logs are rendered below.</p>
+            <div class="summary-meta-box" id="summaryMetaLanguageBox">Language: Selected</div>
         </div>
         <div class="section-title">Your Submitted Responses</div>
         <div id="summaryContent"></div>
@@ -423,7 +438,7 @@
     </div>
 </div>
 <!-- END OF BLOCK 5 -->
-<!-- START OF BLOCK 6: STREAMLINED FRONT-END INTERACTION AND DYNAMIC AUDIT MODAL ENGINE -->
+<!-- START OF BLOCK 6: INTER-TAB BROADCAST ENGINE AND CONDITIONAL MODAL AUDITOR -->
 <script>
     let testEndTime; 
     let timerRunningEngine;
@@ -461,10 +476,8 @@
 
         const textField = document.getElementById('modalConfirmationText');
         if (missingQuestions.length > 0) {
-            // Alter structural context layout alerting candidate of blank sections remaining
             textField.innerHTML = `<span class="modal-warning-highlight">WARNING: You have not answered all questions!</span>\n\nThe following input fields are still empty: <span class="modal-warning-highlight">${missingQuestions.join(', ')}</span>.\n\nAre you sure you want to proceed and finalize transmission?`;
         } else {
-            // Restore native neutral prompt string if validation audits succeed
             textField.innerHTML = "You are about to transmit your completed test file. Continue?";
         }
 
@@ -477,7 +490,7 @@
             clearInterval(timerRunningEngine);
             if (sessionKeepAliveInterval) clearInterval(sessionKeepAliveInterval);
             lqaBroadcastChannel.close();
-            displaySummaryDashboard(); 
+            displaySummaryDashboard(false); 
         }
     }
 
@@ -511,7 +524,7 @@
     }
 </script>
 <!-- END OF BLOCK 6 -->
-<!-- START OF BLOCK 7: IMMUTABLE TIMER, REAL-TIME WORD COUNT AND DATA PERSISTENCE -->
+<!-- START OF BLOCK 7: IMMUTABLE TIMER, REAL-TIME WORD COUNT AND DATA INTERCEPTION -->
 <script>
     // WARNING: DEBUG ENGINE FUNCTION - MUST BE REMOVED BEFORE FINAL IMPLEMENTATION
     function resetQASession() {
@@ -521,7 +534,6 @@
         }
     }
 
-    // 4. Physical Layout Blur and Snapshot Shields
     const shield = document.getElementById('greyShield');
     const triggerProtection = () => { if (isTestActive) shield.classList.add('active'); };
     const removeProtection = () => shield.classList.remove('active');
@@ -541,35 +553,40 @@
         }
     });
 
-    // Helper method calculating text token arrays to update word counters
+    // Helper token counter method evaluating live length text matrices
+    function getWordCount(textValue) {
+        const cleanText = textValue.trim();
+        return cleanText === "" ? 0 : cleanText.split(/\s+/).length;
+    }
+
     function refreshWordCounterMetric(elementId) {
         const textarea = document.getElementById(elementId);
         const badge = document.getElementById(`counter_${elementId}`);
-        if (!textarea || !badge) return;
-
-        const cleanText = textarea.value.trim();
-        // Splitting string across global boundary arrays discarding residual spacing blocks
-        const count = cleanText === "" ? 0 : cleanText.split(/\s+/).length;
-        badge.innerHTML = `Word count: ${count}`;
+        if (textarea && badge) {
+            badge.innerHTML = `Word count: ${getWordCount(textarea.value)}`;
+        }
     }
 
     async function startTestTimer() {
         const first = document.getElementById('firstName').value.trim();
         const last = document.getElementById('lastName').value.trim();
         const email = document.getElementById('candidateEmail').value.trim();
+        const lang = document.getElementById('candidateLanguage').value;
 
-        if (!first || !last || !email) {
-            alert("Identification parameters (First Name, Last Name, Email) are mandatory.");
+        if (!first || !last || !email || !lang) {
+            alert("All identification parameters (First Name, Last Name, Email, Language) are mandatory.");
             return;
         }
 
         localStorage.setItem('lqa_candidate_first', first);
         localStorage.setItem('lqa_candidate_last', last);
         localStorage.setItem('lqa_candidate_email', email);
+        localStorage.setItem('lqa_candidate_lang', lang);
 
-        document.getElementById('firstName').readOnly = true;
-        document.getElementById('lastName').readOnly = true;
-        document.getElementById('candidateEmail').readOnly = true;
+        document.getElementById('firstName').disabled = true;
+        document.getElementById('lastName').disabled = true;
+        document.getElementById('candidateEmail').disabled = true;
+        document.getElementById('candidateLanguage').disabled = true;
 
         changePageView(2);
         document.getElementById('timerDisplay').style.display = 'block';
@@ -584,6 +601,7 @@
             const totalDurationMilliseconds = 2 * 60 * 60 * 1000; 
             testEndTime = Date.now() + totalDurationMilliseconds;
             localStorage.setItem('lqa_test_end_time', testEndTime);
+            localStorage.setItem('lqa_test_start_anchor', Date.now());
         }
 
         if (timerRunningEngine) clearInterval(timerRunningEngine);
@@ -596,7 +614,7 @@
                 clearInterval(timerRunningEngine);
                 document.getElementById('confirmationModal').classList.remove('show'); 
                 alert("Time has expired! Generating your results screen.");
-                displaySummaryDashboard();
+                displaySummaryDashboard(true);
                 return;
             }
 
@@ -608,51 +626,66 @@
             document.getElementById('timerDisplay').innerHTML = `Time Left: ${hours}:${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
         }, 1000);
     }
-
-    // 5. Build Dynamic Results Page View Component & Send to Server
-    function displaySummaryDashboard() {
+</script>
+<!-- END OF BLOCK 7 -->
+<!-- START OF BLOCK 8: TEAMS PAYLOAD DELIVERY AND STRUCTURAL BOOTLOADER -->
+<script>
+    // Build Microsoft Teams compliant Adaptive Card payload framework
+    function displaySummaryDashboard(isTriggeredByTimeout) {
         isTestActive = false; 
         document.getElementById('timerDisplay').style.display = 'none';
         document.getElementById('assessmentForm').style.display = 'none';
         
-        const payload = {
-            metadata: {
-                firstName: document.getElementById('firstName').value.trim(),
-                lastName: document.getElementById('lastName').value.trim(),
-                email: document.getElementById('candidateEmail').value.trim(),
-                submittedAt: new Date().toISOString()
-            },
-            responses: {}
-        };
+        const first = document.getElementById('firstName').value.trim();
+        const last = document.getElementById('lastName').value.trim();
+        const email = document.getElementById('candidateEmail').value.trim();
+        const lang = localStorage.getItem('lqa_candidate_lang') || "Unknown";
 
+        const startAnchor = parseInt(localStorage.getItem('lqa_test_start_anchor') || Date.now(), 10);
+        const elapsedMinutes = Math.round((Date.now() - startAnchor) / 60000);
+
+        document.getElementById('summaryMetaLanguageBox').innerHTML = `Language: ${lang}`;
         const contentContainer = document.getElementById('summaryContent');
         contentContainer.innerHTML = ''; 
+
+        let teamsBodyText = `**Email:** ${email}\n\n**Duration:** ${elapsedMinutes} minutes\n\n`;
+        if (isTriggeredByTimeout) {
+            teamsBodyText += `⚠️ **AUTOMATIC SUBMISSION - TIME EXPIRED** ⚠️\n\n`;
+        }
 
         for (let i = 1; i <= 10; i++) {
             const origLabel = document.getElementById(`lbl_q${i}`).innerText;
             const targetVal = document.getElementById(`q${i}`).value.trim() || "[Left Blank / No response provided]";
-            payload.responses[`q${i}`] = { question: origLabel, answer: targetVal };
 
             const elementBlock = document.createElement('div');
             elementBlock.className = 'summary-item';
             elementBlock.innerHTML = `<div class="summary-q">${origLabel}</div><div class="summary-a">${targetVal}</div>`;
             contentContainer.appendChild(elementBlock);
+
+            teamsBodyText += `**${origLabel}**\n${targetVal}\n`;
+            if (i === 8 || i === 9 || i === 10) {
+                teamsBodyText += `*(Word count: ${getWordCount(targetVal)} words)*\n`;
+            }
+            teamsBodyText += `\n`;
         }
 
         const cachedTheme = localStorage.getItem('lqa_theme');
         localStorage.clear();
         if (cachedTheme) localStorage.setItem('lqa_theme', cachedTheme);
 
+        // Dispatch native payload matrix matching Microsoft Teams incoming webhook formatting
         fetch('https://votre-serveur.com', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            body: JSON.stringify({
+                title: `${last} ${first} - Language: ${lang}`,
+                text: teamsBodyText
+            })
         }).catch(error => console.error("Network payload delivery exception handled gracefully:", error));
 
         changePageView(5);
     }
 
-    // 6. Clipboard Interception Mechanics
     document.addEventListener('copy', (e) => { e.preventDefault(); e.clipboardData.setData('text/plain', '[Copy restricted]'); });
     document.addEventListener('cut', (e) => { e.preventDefault(); e.clipboardData.setData('text/plain', '[Copy restricted]'); });
     document.addEventListener('paste', (e) => {
@@ -661,24 +694,17 @@
         if (activeElement && (activeElement.tagName === 'TEXTAREA' || activeElement.tagName === 'INPUT')) {
             const start = activeElement.selectionStart;
             activeElement.value = activeElement.value.substring(0, start) + "[Paste restricted for security compliance]" + activeElement.value.substring(activeElement.selectionEnd);
-            // Re-trigger counter calculation if a candidate bypass attempt occurs on monitored areas
-            if (activeElement.id === 'q8' || activeElement.id === 'q9' || activeElement.id === 'q10') {
-                refreshWordCounterMetric(activeElement.id);
-            }
+            if (activeElement.id === 'q8' || activeElement.id === 'q9' || activeElement.id === 'q10') refreshWordCounterMetric(activeElement.id);
         }
     });
 
     document.addEventListener('input', (e) => {
         if (isTestActive && e.target.tagName === 'TEXTAREA') {
             localStorage.setItem(`lqa_ans_${e.target.id}`, e.target.value);
-            // Dynamically refresh tracking counts if input focus is active on section C textareas
-            if (e.target.id === 'q8' || e.target.id === 'q9' || e.target.id === 'q10') {
-                refreshWordCounterMetric(e.target.id);
-            }
+            if (e.target.id === 'q8' || e.target.id === 'q9' || e.target.id === 'q10') refreshWordCounterMetric(e.target.id);
         }
     });
 
-    // Integrated recovery bootloader executing unified initialization setups upon window load
     window.addEventListener('load', () => {
         if (localStorage.getItem('lqa_theme') === 'dark') {
             document.body.classList.add('dark-mode');
@@ -692,7 +718,6 @@
                 const realField = document.getElementById(`q${i}`);
                 if (realField) {
                     realField.value = savedAnswer;
-                    // Trigger counters upon rehydration to display historical baseline sizes immediately
                     if (i === 8 || i === 9 || i === 10) refreshWordCounterMetric(`q${i}`);
                 }
             }
@@ -703,6 +728,11 @@
             document.getElementById('firstName').value = localStorage.getItem('lqa_candidate_first') || "Restored";
             document.getElementById('lastName').value = localStorage.getItem('lqa_candidate_last') || "Candidate";
             document.getElementById('candidateEmail').value = localStorage.getItem('lqa_candidate_email') || "restored@session.com";
+            
+            const savedLang = localStorage.getItem('lqa_candidate_lang') || "";
+            const selectField = document.getElementById('candidateLanguage');
+            if (selectField && savedLang) selectField.value = savedLang;
+
             startTestTimer();
         }
     });
@@ -716,5 +746,4 @@
 </script>
 </body>
 </html>
-<!-- END OF BLOCK 7 -->
-
+<!-- END OF BLOCK 8 -->
