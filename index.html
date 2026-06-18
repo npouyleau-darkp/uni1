@@ -1,4 +1,4 @@
-<!-- START OF BLOCK 1.1: CSS RESET AND CORE LAYOUT VARIABLE MATRIX -->
+<!-- START OF BLOCK 1: ENHANCED SECURITY MATRIX AND HARDLOCK STYLES -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LQA Tester Assessment</title>
     
+    <!-- Hardcoded structural stylesheet managing critical interface variables and device lock overrides -->
     <style>
-        /* CSS Variables for seamless theme switching */
         :root {
             --bg-color: #f0f4f8;
             --container-bg: #ffffff;
@@ -18,7 +18,6 @@
             --panel-bg: #f8fafc;
         }
 
-        /* Dark Mode variables override */
         .dark-mode {
             --bg-color: #0f172a;
             --container-bg: #1e293b;
@@ -37,86 +36,72 @@
             margin: 0; 
             transition: background-color 0.3s ease, color 0.3s ease;
         }
+        
+        /* Rigidly enforces a comprehensive layout wipe if JavaScript is unavailable */
+        #mainApplicationWrapper { display: block; }
+        
+        .noscript-hardlock {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #0f172a; color: #ef4444; z-index: 999999;
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; text-align: center; font-family: sans-serif; padding: 20px;
+        }
+
+        /* Fullscreen hard-lock blocker interface triggered when duplicate windows, unauthorized cross-devices, or different browsers are detected */
+        .multitab-hardlock {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #090d16; color: #f43f5e; z-index: 1000000;
+            display: none; flex-direction: column; align-items: center;
+            justify-content: center; text-align: center; padding: 30px; box-sizing: border-box;
+        }
+        .multitab-hardlock h1 { font-size: 32px; font-weight: 800; margin-bottom: 15px; }
+        .multitab-hardlock p { color: #94a3b8; font-size: 16px; max-width: 550px; line-height: 1.6; }
+
         .container { 
-            max-width: 1100px; 
-            margin: auto; 
-            background: var(--container-bg); 
-            padding: 40px; 
-            border-radius: 12px; 
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); 
-            position: relative; 
-            transition: filter 0.05s linear, background-color 0.3s ease; 
+            max-width: 1100px; margin: auto; background: var(--container-bg); 
+            padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); 
+            position: relative; transition: filter 0.05s linear, background-color 0.3s ease; 
         }
         
         body:has(.screen-shield.active) .container {
             filter: blur(50px) grayscale(100%) brightness(0.2);
-            pointer-events: none;
-            user-select: none;
+            pointer-events: none; user-select: none;
         }
-
+    </style>
+<!-- END OF BLOCK 1 -->
+<!-- START OF BLOCK 2: CSS ENGINE COMPLETION AND TIMING HEADER STYLES -->
+    <style>
         .header-meta { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            border-bottom: 2px solid var(--border-color); 
-            padding-bottom: 20px; 
-            margin-bottom: 30px; 
-            position: sticky; 
-            top: 0; 
-            background: var(--container-bg); 
-            z-index: 100; 
-            transition: background-color 0.3s ease, border-color 0.3s ease;
+            display: flex; justify-content: space-between; align-items: center; 
+            border-bottom: 2px solid var(--border-color); padding-bottom: 20px; 
+            margin-bottom: 30px; position: sticky; top: 0; background: var(--container-bg); 
+            z-index: 100; transition: background-color 0.3s ease, border-color 0.3s ease;
         }
         .test-title { font-size: 24px; font-weight: 700; color: var(--title-color); margin: 0; }
         .timer-bar { font-size: 20px; color: #b91c1c; font-weight: 700; background: #fef2f2; padding: 10px 20px; border-radius: 8px; border: 2px solid #fca5a5; display: none; }
         
-        /* Dark mode switch button styling */
         .theme-toggle-btn {
-            background: #475569;
-            color: #ffffff;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            transition: background 0.2s ease;
+            background: #475569; color: #ffffff; border: none; padding: 10px 15px;
+            border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: background 0.2s ease;
         }
         .theme-toggle-btn:hover { background: #64748b; }
 
         .page-view { display: none; }
         .page-view.active { display: block; }
-    </style>
-<!-- END OF BLOCK 1.1 -->
-<!-- START OF BLOCK 1.2: CSS COMPONENTS AND RESTORED SUMMARY DASHBOARD -->
-    <style>
+
         .split-layout { display: flex; gap: 30px; align-items: flex-start; }
         .side-window {
-            flex: 0 0 300px; 
-            background: var(--panel-bg); 
-            border: 1px solid var(--border-color); 
-            border-radius: 10px; 
-            padding: 20px; 
-            box-sizing: border-box; 
-            max-height: 85vh; 
-            overflow-y: auto; 
-            position: sticky; 
-            top: 100px;
-            z-index: 1;
+            flex: 0 0 300px; background: var(--panel-bg); border: 1px solid var(--border-color); 
+            border-radius: 10px; padding: 20px; box-sizing: border-box; max-height: 85vh; 
+            overflow-y: auto; position: sticky; top: 100px; z-index: 1;
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
         .main-content { flex: 1; position: relative; overflow: hidden; }
 
         .side-title {
-            font-size: 16px;
-            font-weight: 700;
-            color: #3b82f6;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 12px;
-            border-bottom: 2px solid #2563eb;
-            padding-bottom: 5px;
+            font-size: 16px; font-weight: 700; color: #3b82f6; text-transform: uppercase;
+            letter-spacing: 0.5px; margin-bottom: 12px; border-bottom: 2px solid #2563eb; padding-bottom: 5px;
         }
         .side-text { font-size: 14px; line-height: 1.6; color: var(--text-color); white-space: pre-wrap; margin-bottom: 20px; }
 
@@ -124,29 +109,24 @@
         .glossary-table th, .glossary-table td { border: 1px solid var(--border-color); padding: 8px; text-align: left; word-break: break-word; }
         .glossary-table th { background: var(--panel-bg); font-weight: 700; color: var(--title-color); }
 
-        .section-title { 
-            color: var(--title-color); 
-            border-left: 5px solid #2563eb; 
-            padding-left: 12px; 
-            margin-bottom: 25px; 
-            font-size: 20px; 
-            font-weight: 700; 
-        }
+        .section-title { color: var(--title-color); border-left: 5px solid #2563eb; padding-left: 12px; margin-bottom: 25px; font-size: 20px; font-weight: 700; }
         .form-group { margin-bottom: 30px; }
         
         label { font-weight: 600; display: block; margin-bottom: 10px; color: var(--text-color); line-height: 1.5; white-space: pre-wrap; }
         .required-star { color: #dc2626; margin-left: 3px; }
-        
+    </style>
+<!-- END OF BLOCK 2 -->
+<!-- START OF BLOCK 3: FORM INPUTS, MODALS, AND SECURITY NO-SCRIPT HARDLOCKS -->
+    <style>
         textarea { 
-            width: 100%; padding: 14px; box-sizing: border-box; 
-            border: 1px solid var(--border-color); border-radius: 8px; font-size: 15px; 
-            background-color: var(--input-bg); color: var(--title-color);
+            width: 100%; padding: 14px; box-sizing: border-box; border: 1px solid var(--border-color); 
+            border-radius: 8px; font-size: 15px; background-color: var(--input-bg); color: var(--title-color);
             white-space: pre-wrap; word-wrap: break-word; transition: background-color 0.3s ease;
         }
         input[type="text"], input[type="email"] { 
-            width: 100%; padding: 14px; box-sizing: border-box; 
-            border: 1px solid var(--border-color); border-radius: 8px; font-size: 15px; 
-            background-color: var(--input-bg); color: var(--title-color); transition: background-color 0.3s ease;
+            width: 100%; padding: 14px; box-sizing: border-box; border: 1px solid var(--border-color); 
+            border-radius: 8px; font-size: 15px; background-color: var(--input-bg); color: var(--title-color); 
+            transition: background-color 0.3s ease;
         }
         input:focus, textarea:focus { border-color: #2563eb; outline: none; background-color: var(--container-bg); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15); }
         input:read-only { background-color: var(--border-color); color: #64748b; cursor: not-allowed; }
@@ -180,7 +160,6 @@
         .screen-shield { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(100, 116, 139, 0.2); z-index: 9999; color: #ffffff; font-size: 24px; font-weight: bold; text-align: center; justify-content: center; align-items: center; flex-direction: column; }
         .screen-shield.active { display: flex; }
         
-        /* RESTORED PREMIUM RESULTS SUMMARY DASHBOARD LAYOUT */
         .summary-header { background: var(--panel-bg); border: 1px solid var(--border-color); padding: 30px; border-radius: 10px; margin-bottom: 40px; }
         .summary-header h2 { margin: 0 0 12px 0; color: var(--title-color); font-size: 24px; font-weight: 700; }
         .summary-header p { margin: 0; color: var(--text-color); font-size: 15px; }
@@ -192,19 +171,30 @@
             background: var(--container-bg); padding: 20px 24px; border-radius: 8px; border: 1px solid var(--border-color);
             border-left: 5px solid #2563eb; color: var(--title-color); white-space: pre-wrap; font-size: 15px; line-height: 1.6;
         }
-        
         @media print { body { display: none !important; } }
     </style>
 </head>
-<!-- END OF BLOCK 1.2 -->
-<!-- START OF BLOCK 2: IDENTITY REGISTRATION AND SECTION A WITH LOCAL WINDOWS IMAGES -->
 <body>
-<!-- WARNING: DEBUG MECHANISM BELOW - MUST BE REMOVED BEFORE FINAL IMPLEMENTATION -->
+    <noscript>
+        <div class="noscript-hardlock">
+            <h1>JavaScript Required</h1>
+            <p>Security compliance protocols require JavaScript execution to be active to view and complete this assessment.</p>
+        </div>
+    </noscript>
+
+    <!-- Fullscreen security block overlay targeting concurrent tab, foreign browser or distinct hardware access attempts -->
+    <div class="multitab-hardlock" id="securityHardlockScreen">
+        <h1 id="securityHardlockTitle">Access Restriction Engaged</h1>
+        <p id="securityHardlockReason">Active session tracking policy restricts this assessment to a single authorized device, browser interface, and active tab view concurrently.</p>
+    </div>
+
+    <div id="mainApplicationWrapper">
+<!-- END OF BLOCK 3 -->
+<!-- START OF BLOCK 4: DOM STRUCTURAL WRAPPERS AND ASSESSMENT PAGE 1 & 2 -->
 <div style="position: fixed; bottom: 20px; left: 20px; z-index: 99999; display: flex; flex-direction: column; gap: 10px;">
     <button type="button" id="qaResetBtn" onclick="resetQASession()" style="background-color: #dc2626; color: white; padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: background 0.2s;" onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'">
         🛠️ Reset QA Session
     </button>
-    <!-- Dark Mode Trigger Element labeled in English -->
     <button type="button" class="theme-toggle-btn" id="themeToggle" onclick="toggleDarkMode()">
         🌙 Dark Mode
     </button>
@@ -245,130 +235,101 @@
             </div>
             
             <div class="nav-buttons">
-                <div></div> <!-- Spacer -->
+                <div></div>
                 <button type="button" class="btn-start" id="unlockBtn" onclick="startTestTimer()">Start Test & Proceed</button>
             </div>
         </div>
 
-        <!-- ==================== PAGE 2: SECTION A (WITH SPLIT LAYOUT) ==================== -->
+        <!-- ==================== PAGE 2: SECTION A ==================== -->
         <div class="page-view" id="page2">
             <div class="split-layout">
-                
-                <!-- LEFT PANEL WINDOW: BUG TYPES & INSTRUCTIONS -->
                 <div class="side-window">
                     <div class="side-title">BUG TYPES:</div>
-                    <div class="side-text">Overlap...
-Wrong Language...</div>
-
+                    <div class="side-text">Overlap... Wrong Language...</div>
                     <div class="side-title">How to report a Bug:</div>
-                    <div class="side-text">Summary 
-Step to repro
-1.
-2.
-2.
-Observed behavior
-xxx
-Expected behavior</div>
+                    <div class="side-text">Summary \nStep to repro\n1.\n2.\nObserved behavior\nExpected behavior</div>
                 </div>
 
-                <!-- MAIN QUESTIONS BLOCK -->
                 <div class="main-content">
                     <div class="section-title">Section A: LQA Bugs</div>
-                    <p class="info-text">You will find bellow some screenshots taken from various game. Identify the bugs and try to write a concise report.<br>Remember to read carefully the context provided,in this test you can be testing a language you are not familiar with.</p>
+                    <p class="info-text">Identify bugs from game captures and generate reports.</p>
                     
                     <div class="form-group">
-                        <label id="lbl_q1">1. Context: The game is Cat-Fu, the devs are from Japan and you are testing in English. Find the issue.</label>
-                        <!-- Question 1 Local Image Link -->
+                        <label id="lbl_q1">1. Context: Cat-Fu game, Japanese developers, English language assessment.</label>
                         <img src="screenshots/Cat_fu.jpeg" alt="Bug Cat-Fu" class="q-image">
-                        <textarea id="q1" rows="3" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="Your response..."></textarea>
+                        <textarea id="q1" rows="3" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
                     </div>
                     <div class="form-group">
-                        <label id="lbl_q2">2. Context: The game is LQA Tycoon, the devs are from the United States of America and you are testing in Latin.</label>
-                        <!-- Question 2 Local Image Link -->
+                        <label id="lbl_q2">2. Context: LQA Tycoon, US developers, Latin language assessment.</label>
                         <img src="screenshots/LQA_T.jpeg" alt="Bug LQA Tycoon" class="q-image">
-                        <textarea id="q2" rows="3" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="Your response..."></textarea>
+                        <textarea id="q2" rows="3" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
                     </div>
                     <div class="form-group">
-                        <label id="lbl_q3">3. Bla-bla-bla.</label>
+                        <label id="lbl_q3">3. Diagnostic Assessment Node 3.</label>
                         <img src="screenshots/screenshot3.jpg" alt="Chart" class="q-image">
-                        <textarea id="q3" rows="3" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="Your response..."></textarea>
+                        <textarea id="q3" rows="3" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
                     </div>
                     <div class="form-group">
-                        <label id="lbl_q4">4. More crazy game</label>
+                        <label id="lbl_q4">4. Diagnostic Assessment Node 4.</label>
                         <img src="screenshots/screenshot4.jpg" alt="Chart" class="q-image">
-                        <textarea id="q4" rows="3" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="Your response..."></textarea>
+                        <textarea id="q4" rows="3" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
                     </div>
 
                     <div class="nav-buttons">
-                        <div></div> <!-- Spacer -->
+                        <div></div>
                         <button type="button" class="btn-nav" onclick="changePageView(3)">Next Section &rarr;</button>
                     </div>
                 </div>
-
             </div>
         </div>
-<!-- END OF BLOCK 2 -->
-<!-- START OF BLOCK 3: SECTION B WITH PURE ORIGINAL LATIN CHARACTERS -->
-        <!-- ==================== PAGE 3: SECTION B (WITH SPLIT LAYOUT) ==================== -->
+<!-- END OF BLOCK 4 -->
+<!-- START OF BLOCK 5: SECTION B AND TRANSLATION MATRIX COMPONENTS -->
+        <!-- ==================== PAGE 3: SECTION B ==================== -->
         <div class="page-view" id="page3">
             <div class="split-layout">
-                
-                <!-- NEW LEFT PANEL WINDOW: 10-ROW GLOSSARY SHEET -->
                 <div class="side-window">
                     <div class="side-title">GLOSSARY</div>
                     <table class="glossary-table">
-                        <thead>
-                            <tr>
-                                <th>EN</th>
-                                <th>FR</th>
-                            </tr>
-                        </thead>
+                        <thead><tr><th>EN</th><th>FR</th></tr></thead>
                         <tbody>
-                            <tr><td>Orb</td><td>Orbe</td></tr>
-                            <tr><td>Throne</td><td>Trône</td></tr>
-                            <tr><td>Strange</td><td>Étrange</td></tr>
-                            <tr><td>Placed</td><td>Placé</td></tr>
-                            <tr><td>Knight</td><td>Chevalier</td></tr>
-                            <tr><td>Sword</td><td>Épée</td></tr>
-                            <tr><td>Castle</td><td>Château</td></tr>
-                            <tr><td>King</td><td>Roi</td></tr>
-                            <tr><td>Queen</td><td>Reine</td></tr>
-                            <tr><td>Kingdom</td><td>Royaume</td></tr>
+                            <tr><td>Orb</td><td>Orbe</td></tr><tr><td>Throne</td><td>Trône</td></tr>
+                            <tr><td>Strange</td><td>Étrange</td></tr><tr><td>Placed</td><td>Placé</td></tr>
+                            <tr><td>Knight</td><td>Chevalier</td></tr><tr><td>Sword</td><td>Épée</td></tr>
+                            <tr><td>Castle</td><td>Château</td></tr><tr><td>King</td><td>Roi</td></tr>
+                            <tr><td>Queen</td><td>Reine</td></tr><tr><td>Kingdom</td><td>Royaume</td></tr>
                         </tbody>
                     </table>
                 </div>
 
-                <!-- MAIN QUESTIONS BLOCK -->
                 <div class="main-content">
                     <div class="section-title">Section B: Proofreading/Translation</div>
-                    <p class="info-text">You can leave answers empty and navigate freely between sections using the controls below.</p>
+                    <p class="info-text">Review and analyze context strings using structural guidelines.</p>
                     
                     <div class="form-group">
-                        <label id="lbl_q5">5. Proofread 1.</label>
+                        <label id="lbl_q5">5. Proofread Segment Alpha.</label>
                         <div class="comparison-sheet">
-                            <!-- CLEAN: Standard Latin characters restored to protect Candidate UX -->
                             <div class="comparison-case case-left">[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]</div>
                             <div class="comparison-case">[KIT]l'orbe était placée un trones[color:66845]étrange [/color].[KIT]</div>
                         </div>
-                        <textarea id="q5" rows="4" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="Your response..."></textarea>
+                        <textarea id="q5" rows="4" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
                     </div>
 
                     <div class="form-group">
-                        <label id="lbl_q6">6. Proofread 2.</label>
+                        <label id="lbl_q6">6. Proofread Segment Beta.</label>
                         <div class="comparison-sheet">
                             <div class="comparison-case case-left">[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]</div>
                             <div class="comparison-case">[KIT]l'orbe était placée un trones[color:66845]étrange [/color].[KIT]</div>
                         </div>
-                        <textarea id="q6" rows="4" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="Your response..."></textarea>
+                        <textarea id="q6" rows="4" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
                     </div>
 
                     <div class="form-group">
-                        <label id="lbl_q7">7. Proofread 3.</label>
+                        <label id="lbl_q7">7. Proofread Segment Gamma.</label>
                         <div class="comparison-sheet">
                             <div class="comparison-case case-left">[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]</div>
                             <div class="comparison-case">[KIT]l'orbe était placée un trones[color:66845]étrange [/color].[KIT]</div>
                         </div>
-                        <textarea id="q7" rows="4" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="Your response..."></textarea>
+                        <textarea id="q7" rows="4" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
                     </div>
 
                     <div class="nav-buttons">
@@ -376,11 +337,10 @@ Expected behavior</div>
                         <button type="button" class="btn-nav" onclick="changePageView(4)">Next Section &rarr;</button>
                     </div>
                 </div>
-
             </div>
         </div>
-<!-- END OF BLOCK 3 -->
-<!-- START OF BLOCK 4: SECTION C AND POST-SUBMISSION VIEW SHEETS -->
+<!-- END OF BLOCK 5 -->
+<!-- START OF BLOCK 6: SECTION C WRITING MATRIX AND MODAL WRAPPERS -->
         <!-- ==================== PAGE 4: SECTION C ==================== -->
         <div class="page-view" id="page4">
             <div class="section-title">Section C: Writing Skill</div>
@@ -388,15 +348,15 @@ Expected behavior</div>
             
             <div class="form-group">
                 <label id="lbl_q8">8. What was the last game you enjoyed the most recently? Try to tell us why (150 words).</label>
-                <textarea id="q8" rows="4" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="Your response..."></textarea>
+                <textarea id="q8" rows="4" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
             </div>
             <div class="form-group">
                 <label id="lbl_q9">9. Do you think Nicolas is nice? And could you tell us why you said yes? (over 9k words)</label>
-                <textarea id="q9" rows="4" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="Your response..."></textarea>
+                <textarea id="q9" rows="4" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
             </div>
             <div class="form-group">
                 <label id="lbl_q10">10. Tant va la cruche à l'eau qu'à la fin elle se pourfasse. Pensez-vous que Maître Yoda aurait apprécié un tel language ? (250 mots)</label>
-                <textarea id="q10" rows="4" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="Your response..."></textarea>
+                <textarea id="q10" rows="4" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
             </div>
 
             <div class="nav-buttons">
@@ -428,16 +388,13 @@ Expected behavior</div>
         </div>
     </div>
 </div>
-<!-- END OF BLOCK 4 -->
-<!-- START OF BLOCK 5: PAGINATION, MODALS AND TIMING ENGINE -->
+
 <script>
     // 0. Dark Mode Switch Engine with English Localized strings
     function toggleDarkMode() {
         const body = document.body;
         const btn = document.getElementById('themeToggle');
-        
         body.classList.toggle('dark-mode');
-        
         if (body.classList.contains('dark-mode')) {
             if (btn) btn.innerHTML = "☀️ Light Mode";
             localStorage.setItem('lqa_theme', 'dark');
@@ -447,7 +404,6 @@ Expected behavior</div>
         }
     }
 
-    // SAFE INITIALIZATION: Dynamically applies English strings based on localized cache on launch
     window.addEventListener('DOMContentLoaded', () => {
         if (localStorage.getItem('lqa_theme') === 'dark') {
             document.body.classList.add('dark-mode');
@@ -463,7 +419,6 @@ Expected behavior</div>
         window.scrollTo(0, 0);
     }
 
-    // 2. Custom Confirmation Modal Controls
     function openConfirmationModal() {
         document.getElementById('confirmationModal').classList.add('show');
     }
@@ -471,20 +426,130 @@ Expected behavior</div>
     function confirmSubmission(isConfirmed) {
         document.getElementById('confirmationModal').classList.remove('show');
         if (isConfirmed) {
+            window.removeEventListener('beforeunload', handleBeforeUnloadInterceptor);
             clearInterval(timerRunningEngine);
+            if (sessionKeepAliveInterval) clearInterval(sessionKeepAliveInterval);
+            if (lqaBroadcastChannel) lqaBroadcastChannel.close();
             const savedTheme = localStorage.getItem('lqa_theme');
             localStorage.clear(); 
             if (savedTheme) localStorage.setItem('lqa_theme', savedTheme);
             displaySummaryDashboard(); 
         }
     }
+</script>
+<!-- END OF BLOCK 6 -->
+<!-- START OF BLOCK 7: FINGERPRINT GENERATOR AND BROADCAST SYSTEM -->
+<script>
+    // 2. Advanced Multi-Tab and Cross-Device Security Lock Core
+    let uniqueTabWindowId = sessionStorage.getItem('lqa_tab_window_id') || Math.random().toString(36).substring(2, 15);
+    sessionStorage.setItem('lqa_tab_window_id', uniqueTabWindowId);
 
-    // 3. Clock Management Loops (Robust Timestamp-Based Engine with LocalStorage)
+    let lqaBroadcastChannel = new BroadcastChannel('lqa_session_channel');
+    let sessionKeepAliveInterval;
+
+    function engageInterTabCommunicationBroadcast() {
+        sessionKeepAliveInterval = setInterval(() => {
+            if (isTestActive) {
+                lqaBroadcastChannel.postMessage({
+                    type: 'LQA_HEARTBEAT',
+                    tabId: uniqueTabWindowId,
+                    email: localStorage.getItem('lqa_candidate_email'),
+                    fingerprint: localStorage.getItem('lqa_device_fingerprint')
+                });
+            }
+        }, 1000);
+    }
+
+    lqaBroadcastChannel.onmessage = (event) => {
+        const activeEmail = localStorage.getItem('lqa_candidate_email');
+        if (!isTestActive || !activeEmail || event.data.email !== activeEmail) return;
+
+        if (event.data.type === 'LQA_HEARTBEAT' && event.data.tabId !== uniqueTabWindowId) {
+            triggerSecurityHardlockWipe("Duplicate Session Detected", "An active test window for this candidate is already running inside another tab or browser interface.");
+        }
+    };
+
+    // Asynchronous hardware structural attributes and public routing IP compilation blueprint
+    async function generateSecureDeviceFingerprint() {
+        let hardwareString = [
+            navigator.userAgent,
+            screen.width + 'x' + screen.height,
+            screen.colorDepth,
+            navigator.hardwareConcurrency || 1,
+            navigator.deviceMemory || 'unknown',
+            Intl.DateTimeFormat().resolvedOptions().timeZone
+        ].join('|');
+
+        let publicIpAddress = '0.0.0.0';
+        try {
+            const response = await fetch('https://ipify.org', { timeout: 4000 });
+            if (response.ok) {
+                const data = await response.json();
+                publicIpAddress = data.ip;
+            }
+        } catch (e) {
+            console.warn("Network endpoint routing blocked public IP verification. Proceeding via hardware parameters only.");
+        }
+
+        return hardwareString + '|' + publicIpAddress;
+    }
+
+    function triggerSecurityHardlockWipe(titleText, reasonText) {
+        isTestActive = false;
+        clearInterval(timerRunningEngine);
+        if (sessionKeepAliveInterval) clearInterval(sessionKeepAliveInterval);
+        window.removeEventListener('beforeunload', handleBeforeUnloadInterceptor);
+        
+        document.getElementById('mainApplicationWrapper').style.display = 'none';
+        document.getElementById('securityHardlockTitle').innerText = titleText;
+        document.getElementById('securityHardlockReason').innerText = reasonText;
+        document.getElementById('securityHardlockScreen').style.display = 'flex';
+    }
+</script>
+<!-- END OF BLOCK 7 -->
+<!-- START OF BLOCK 8: TIME MANAGER AND COUNTDOWN MATRIX -->
+<script>
+    // 3. Clock Management Loops (Network-Synchronized Timestamp Engine Core)
     let testEndTime; 
     let timerRunningEngine;
-    let isTestActive = false;
+    let initialClockOffset = 0; 
 
-    function startTestTimer() {
+    async function getNetworkTime() {
+        try {
+            const response = await fetch('https://timeapi.io');
+            if (!response.ok) throw new Error("Primary API operational failure status");
+            const data = await response.json();
+            const networkTimeMs = new Date(data.dateTime).getTime();
+            initialClockOffset = networkTimeMs - Date.now();
+            return networkTimeMs;
+        } catch (error) {
+            console.warn("Primary clock sync timed out. Engaging secure secondary network fallback...", error);
+            try {
+                const fallbackRes = await fetch('https://timeapi.world');
+                const fallbackData = await fallbackRes.json();
+                const networkTimeMs = new Date(fallbackData.datetime).getTime();
+                initialClockOffset = networkTimeMs - Date.now();
+                return networkTimeMs;
+            } catch (fallbackError) {
+                alert("Critical Connection Exception: Unable to establish a secure network anti-cheat timestamp link.");
+                throw fallbackError;
+            }
+        }
+    }
+
+    function getSecureNow() {
+        return Date.now() + initialClockOffset;
+    }
+
+    function handleBeforeUnloadInterceptor(event) {
+        if (isTestActive) {
+            event.preventDefault();
+            event.returnValue = "Warning: Closing or refreshing this window will not pause the test duration.";
+            return event.returnValue;
+        }
+    }
+
+    async function startTestTimer() {
         const first = document.getElementById('firstName').value.trim();
         const last = document.getElementById('lastName').value.trim();
         const email = document.getElementById('candidateEmail').value.trim();
@@ -494,36 +559,66 @@ Expected behavior</div>
             return;
         }
 
+        const startButton = document.getElementById('unlockBtn');
+        if (!localStorage.getItem('lqa_test_end_time')) {
+            startButton.disabled = true;
+            startButton.innerText = "Synchronizing security keys...";
+            
+            try {
+                await getNetworkTime();
+                const currentFingerprint = await generateSecureDeviceFingerprint();
+                localStorage.setItem('lqa_device_fingerprint', currentFingerprint);
+            } catch (e) {
+                startButton.disabled = false;
+                startButton.innerText = "Start Test & Proceed";
+                return;
+            }
+        }
+
+        localStorage.setItem('lqa_candidate_first', first);
+        localStorage.setItem('lqa_candidate_last', last);
+        localStorage.setItem('lqa_candidate_email', email);
+
         document.getElementById('firstName').readOnly = true;
         document.getElementById('lastName').readOnly = true;
         document.getElementById('candidateEmail').readOnly = true;
-        document.getElementById('unlockBtn').disabled = true;
 
         changePageView(2);
         document.getElementById('timerDisplay').style.display = 'block';
         isTestActive = true;
 
+        window.addEventListener('beforeunload', handleBeforeUnloadInterceptor);
+        engageInterTabCommunicationBroadcast();
+
         const savedEndTime = localStorage.getItem('lqa_test_end_time');
+        const savedOffset = localStorage.getItem('lqa_clock_offset');
         
-        if (savedEndTime) {
+        if (savedEndTime && savedOffset) {
             testEndTime = parseInt(savedEndTime, 10);
+            initialClockOffset = parseInt(savedOffset, 10);
         } else {
-            const totalDurationMilliseconds = 2 * 60 * 60 * 1000;
-            testEndTime = Date.now() + totalDurationMilliseconds;
+            const totalDurationMilliseconds = 2 * 60 * 60 * 1000; 
+            testEndTime = getSecureNow() + totalDurationMilliseconds;
             localStorage.setItem('lqa_test_end_time', testEndTime);
+            localStorage.setItem('lqa_clock_offset', initialClockOffset);
         }
 
         timerRunningEngine = setInterval(() => {
-            const now = Date.now();
+            const now = getSecureNow();
             const timeRemainingMilliseconds = testEndTime - now;
+
+            const currentSavedOffset = parseInt(localStorage.getItem('lqa_clock_offset') || "0", 10);
+            if (Math.abs(initialClockOffset - currentSavedOffset) > 5000) { 
+                clearInterval(timerRunningEngine);
+                triggerSecurityHardlockWipe("Hardware Clock Tampering Detected", "Assessment aborted due to local machine clock modification protocols.");
+                return;
+            }
 
             if (timeRemainingMilliseconds <= 0) {
                 clearInterval(timerRunningEngine);
+                window.removeEventListener('beforeunload', handleBeforeUnloadInterceptor);
                 document.getElementById('confirmationModal').classList.remove('show'); 
                 alert("Time has expired! Generating your results screen.");
-                const savedTheme = localStorage.getItem('lqa_theme');
-                localStorage.clear();
-                if (savedTheme) localStorage.setItem('lqa_theme', savedTheme);
                 displaySummaryDashboard();
                 return;
             }
@@ -533,16 +628,12 @@ Expected behavior</div>
             const minutes = Math.floor((totalSecondsRemaining % 3600) / 60);
             const seconds = totalSecondsRemaining % 60;
             
-            const displayHours = hours; 
-            const displayMinutes = minutes < 10 ? '0' + minutes : minutes;
-            const displaySeconds = seconds < 10 ? '0' + seconds : seconds;
-            
-            document.getElementById('timerDisplay').innerHTML = `Time Left: ${displayHours}:${displayMinutes}:${displaySeconds}`;
+            document.getElementById('timerDisplay').innerHTML = `Time Left: ${hours}:${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
         }, 1000);
     }
 </script>
-<!-- END OF BLOCK 5 -->
-<!-- START OF BLOCK 6: ANTI-CHEAT SYSTEMS, PERSISTENCE AND APPLICATION CLOSURE -->
+<!-- END OF BLOCK 8 -->
+<!-- START OF BLOCK 9: PAYLOAD DELIVERY AND REHYDRATION SYSTEM -->
 <script>
     // WARNING: DEBUG ENGINE FUNCTION - MUST BE REMOVED BEFORE FINAL IMPLEMENTATION
     function resetQASession() {
@@ -552,18 +643,10 @@ Expected behavior</div>
         }
     }
 
-    // 4. Screen Shield Focus Controls (Blur layer trigger logic)
+    // 4. Physical Layout Blur and Snapshot Shields
     const shield = document.getElementById('greyShield');
-
-    const triggerProtection = () => {
-        if (isTestActive) {
-            shield.classList.add('active');
-        }
-    };
-
-    const removeProtection = () => {
-        shield.classList.remove('active');
-    };
+    const triggerProtection = () => { if (isTestActive) shield.classList.add('active'); };
+    const removeProtection = () => shield.classList.remove('active');
 
     document.addEventListener('mouseleave', triggerProtection);
     document.addEventListener('mouseenter', removeProtection);
@@ -591,6 +674,7 @@ Expected behavior</div>
                 firstName: document.getElementById('firstName').value.trim(),
                 lastName: document.getElementById('lastName').value.trim(),
                 email: document.getElementById('candidateEmail').value.trim(),
+                deviceSignature: localStorage.getItem('lqa_device_fingerprint'),
                 submittedAt: new Date().toISOString()
             },
             responses: {}
@@ -602,79 +686,43 @@ Expected behavior</div>
         for (let i = 1; i <= 10; i++) {
             const origLabel = document.getElementById(`lbl_q${i}`).innerText;
             const targetVal = document.getElementById(`q${i}`).value.trim() || "[Left Blank / No response provided]";
-            
-            payload.responses[`q${i}`] = {
-                question: origLabel,
-                answer: targetVal
-            };
+            payload.responses[`q${i}`] = { question: origLabel, answer: targetVal };
 
             const elementBlock = document.createElement('div');
             elementBlock.className = 'summary-item';
-            elementBlock.innerHTML = `
-                <div class="summary-q">${origLabel}</div>
-                <div class="summary-a">${targetVal}</div>
-            `;
+            elementBlock.innerHTML = `<div class="summary-q">${origLabel}</div><div class="summary-a">${targetVal}</div>`;
             contentContainer.appendChild(elementBlock);
         }
 
         fetch('https://votre-serveur.com', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
-        })
-        .then(response => {
-            if (!response.ok) {
-                console.error("Server API returned an operational status error:", response.status);
-            }
-        })
-        .catch(error => {
-            console.error("Network routing exception handled gracefully:", error);
-        });
+        }).catch(error => console.error("Network payload delivery exception handled gracefully:", error));
 
         changePageView(5);
     }
 
-    // 6. Two-Way Silent Clipboard Protections & Automated Incremental Backup
-    document.addEventListener('copy', (event) => {
-        event.preventDefault(); 
-        if (event.clipboardData) {
-            event.clipboardData.setData('text/plain', '[Copy restricted for security compliance]');
-        }
-    });
-
-    document.addEventListener('cut', (event) => {
-        event.preventDefault(); 
-        if (event.clipboardData) {
-            event.clipboardData.setData('text/plain', '[Copy restricted for security compliance]');
-        }
-    });
-
-    document.addEventListener('paste', (event) => {
-        event.preventDefault(); 
-        const warningMessage = "[Paste restricted for security compliance]";
+    // 6. Clipboard Interception Mechanics
+    document.addEventListener('copy', (e) => { e.preventDefault(); e.clipboardData.setData('text/plain', '[Copy restricted]'); });
+    document.addEventListener('cut', (e) => { e.preventDefault(); e.clipboardData.setData('text/plain', '[Copy restricted]'); });
+    document.addEventListener('paste', (e) => {
+        e.preventDefault();
         const activeElement = document.activeElement;
-        
         if (activeElement && (activeElement.tagName === 'TEXTAREA' || activeElement.tagName === 'INPUT')) {
-            const startPos = activeElement.selectionStart;
-            const endPos = activeElement.selectionEnd;
-            const currentText = activeElement.value;
-            
-            activeElement.value = currentText.substring(0, startPos) + warningMessage + currentText.substring(endPos);
-            activeElement.selectionStart = activeElement.selectionEnd = startPos + warningMessage.length;
-            
-            activeElement.dispatchEvent(new Event('input', { bubbles: true }));
+            const start = activeElement.selectionStart;
+            activeElement.value = activeElement.value.substring(0, start) + "[Paste restricted for security compliance]" + activeElement.value.substring(activeElement.selectionEnd);
         }
     });
 
-    document.addEventListener('input', (event) => {
-        if (isTestActive && event.target.tagName === 'TEXTAREA') {
-            localStorage.setItem(`lqa_ans_${event.target.id}`, event.target.value);
+    document.addEventListener('input', (e) => {
+        if (isTestActive && e.target.tagName === 'TEXTAREA') {
+            localStorage.setItem(`lqa_ans_${e.target.id}`, e.target.value);
         }
     });
 
-    window.addEventListener('load', () => {
+    // Session recovery and structural cross-device signature auditing runtime algorithm
+    window.addEventListener('load', async () => {
         for (let i = 1; i <= 10; i++) {
             const savedAnswer = localStorage.getItem(`lqa_ans_q${i}`);
             if (savedAnswer) {
@@ -684,32 +732,37 @@ Expected behavior</div>
         }
 
         if (localStorage.getItem('lqa_test_end_time')) {
-            alert("An active test session was detected. Restoring your progress and timer.");
-            document.getElementById('firstName').value = "Restored";
-            document.getElementById('lastName').value = "Candidate";
-            document.getElementById('candidateEmail').value = "restored@session.com";
+            // Enforcement validation check: Recalculate signature to prevent cross-device session stealing
+            const structuralSign = await generateSecureDeviceFingerprint();
+            const originalSign = localStorage.getItem('lqa_device_fingerprint');
+
+            if (originalSign && structuralSign !== originalSign) {
+                localStorage.clear();
+                triggerSecurityHardlockWipe("Unauthorized Device Switch Detected", "This active assessment environment cannot be transferred to a separate machine, secondary device, or distinct browser application layout.");
+                return;
+            }
+
+            try {
+                if (typeof getNetworkTime === 'function') await getNetworkTime();
+            } catch (networkError) {
+                console.error("Session clock re-sync timed out.", networkError);
+            }
+
+            document.getElementById('firstName').value = localStorage.getItem('lqa_candidate_first') || "Restored";
+            document.getElementById('lastName').value = localStorage.getItem('lqa_candidate_last') || "Candidate";
+            document.getElementById('candidateEmail').value = localStorage.getItem('lqa_candidate_email') || "restored@session.com";
+            
             startTestTimer();
         }
     });
 
     document.addEventListener('contextmenu', (event) => event.preventDefault());
-    document.addEventListener('mousedown', (event) => {
-        if (event.button === 1) event.preventDefault();
-    });
-    
-    document.addEventListener('keydown', (event) => {
-        const key = event.key.toLowerCase();
-        const isModifierPressed = event.ctrlKey || event.metaKey;
-
-        if (
-            event.key === 'F12' || 
-            (isModifierPressed && event.shiftKey && ['i', 'j', 'c'].includes(key)) || 
-            (isModifierPressed && ['u', 'p', 's'].includes(key)) 
-        ) {
-            event.preventDefault();
-        }
+    document.addEventListener('mousedown', (e) => { if (e.button === 1) e.preventDefault(); });
+    document.addEventListener('keydown', (e) => {
+        const key = e.key.toLowerCase();
+        if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(key)) || (e.ctrlKey && ['u','p','s'].includes(key))) e.preventDefault();
     });
 </script>
 </body>
 </html>
-<!-- END OF BLOCK 6 -->
+<!-- END OF BLOCK 9 -->
