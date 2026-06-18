@@ -1,4 +1,4 @@
-<!-- START OF BLOCK 1: CORE INTERFACE VARIABLES AND SECURITY OVERLAYS CSS -->
+<!-- START OF BLOCK 1: GRADIENT BACKGROUND MATRIX AND SECURITY OVERLAYS CSS -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,32 +9,36 @@
     <!-- Unified structural stylesheet optimizing critical interface properties -->
     <style>
         :root {
-            --bg-color: #f0f4f8;
+            /* Authoritative hardware component block colors preserved for clear contrast styling */
             --container-bg: #ffffff;
             --text-color: #1e293b;
             --title-color: #0f172a;
             --border-color: #cbd5e1;
             --input-bg: #f8fafc;
             --panel-bg: #f8fafc;
+            /* High-definition linear gradient background extrapolated from user layout reference image */
+            --bg-gradient: linear-gradient(135deg, #0284c7 0%, #1e40af 50%, #7c3aed 100%);
         }
 
         .dark-mode {
-            --bg-color: #0f172a;
             --container-bg: #1e293b;
             --text-color: #cbd5e1;
             --title-color: #f8fafc;
             --border-color: #475569;
             --input-bg: #334155;
             --panel-bg: #1e293b;
+            /* Specialized low-luminosity overlay mapping preserves color hues while preventing screen glare */
+            --bg-gradient: linear-gradient(135deg, #0c4a6e 0%, #1e3a8a 50%, #4c1d95 100%);
         }
 
         body { 
             font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; 
             padding: 40px 20px; 
-            background-color: var(--bg-color); 
+            background: var(--bg-gradient);
+            background-attachment: fixed;
             color: var(--text-color); 
             margin: 0; 
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background 0.3s ease, color 0.3s ease;
         }
         
         #mainApplicationWrapper { display: block; }
@@ -59,7 +63,7 @@
 
         .container { 
             max-width: 1100px; margin: auto; background: var(--container-bg); 
-            padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); 
+            padding: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); 
             position: relative; transition: filter 0.05s linear, background-color 0.3s ease; 
         }
         
@@ -69,7 +73,7 @@
         }
     </style>
 <!-- END OF BLOCK 1 -->
-<!-- START OF BLOCK 2: COMPONENT LAYOUT, MODAL AND ELEGANT WORD COUNT CSS -->
+<!-- START OF BLOCK 2.1: LAYOUT COMPONENTS AND FLOATING TO DO CSS -->
     <style>
         .header-meta { 
             display: flex; justify-content: space-between; align-items: center; 
@@ -117,11 +121,11 @@
         }
         
         .main-content { flex: 1; position: relative; overflow: hidden; }
-
-        /* Structural container wrapping textarea and dynamic counter box closely */
+    </style>
+<!-- END OF BLOCK 2.1 -->
+<!-- START OF BLOCK 2.2: INPUT FIELDS, TABLES AND SHEET OBJECTS CSS -->
+    <style>
         .textarea-container { position: relative; width: 100%; display: flex; flex-direction: column; }
-        
-        /* Elegant minimalist word counter aligned tightly below the textarea field */
         .word-counter-badge {
             align-self: flex-end; margin-top: 6px; padding: 4px 10px; font-size: 12px;
             font-weight: 600; color: var(--text-color); opacity: 0.7; border-radius: 4px;
@@ -155,12 +159,17 @@
         .comparison-sheet { display: flex; width: 75%; margin: 15px auto; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; background: var(--panel-bg); }
         .comparison-case { flex: 1; padding: 15px; font-size: 14px; line-height: 1.5; word-break: break-word; white-space: pre-wrap; color: var(--title-color); }
         .case-left { border-right: 1px solid var(--border-color); background-color: var(--container-bg); }
-        
+    </style>
+<!-- END OF BLOCK 2.2 -->
+<!-- START OF BLOCK 2.3: BUTTONS, MODALS, FEEDBACK OVERLAYS AND PRINT STYLES CSS -->
+    <style>
         .nav-buttons { display: flex; justify-content: space-between; margin-top: 35px; border-top: 1px solid var(--border-color); padding-top: 20px; }
         button { padding: 14px 30px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.2s ease; }
         .btn-start { background-color: #2563eb; color: white; }
         .btn-nav { background-color: #475569; color: white; }
         .btn-submit { background-color: #10b981; color: white; }
+        .btn-download { background-color: #3b82f6; color: white; margin-top: 20px; }
+        .btn-feedback { background-color: #0ea5e9; color: white; margin-top: 15px; width: 100%; }
         button:disabled { background-color: #cbd5e1; color: #94a3b8; cursor: not-allowed; }
         .info-text { color: #64748b; margin-bottom: 25px; font-size: 14px; }
         .tip-alert { color: #dc2626; font-weight: 700; display: block; margin-top: 15px; font-size: 14px; }
@@ -172,9 +181,7 @@
         .modal-box p { color: #64748b; font-size: 15px; margin-bottom: 25px; line-height: 1.5; text-align: left; white-space: pre-wrap; }
         .modal-box .modal-buttons { display: flex; justify-content: center; gap: 15px; }
         
-        /* Dedicated dynamic conditional notice font coloring rule selectors */
         .modal-warning-highlight { color: #dc2626 !important; font-weight: 700; }
-        
         .btn-yes { background-color: #22c55e !important; color: #000000 !important; }
         .btn-no { background-color: #ef4444 !important; color: #000000 !important; }
         .screen-shield { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(100, 116, 139, 0.2); z-index: 9999; color: #ffffff; font-size: 24px; font-weight: bold; text-align: center; justify-content: center; align-items: center; flex-direction: column; }
@@ -188,7 +195,21 @@
         .summary-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
         .summary-q { font-weight: 700; color: var(--title-color); margin-bottom: 12px; font-size: 16px; line-height: 1.5; }
         .summary-a { background: var(--container-bg); padding: 20px 24px; border-radius: 8px; border: 1px solid var(--border-color); border-left: 5px solid #2563eb; color: var(--title-color); white-space: pre-wrap; font-size: 15px; line-height: 1.6; }
-        @media print { body { display: none !important; } }
+        
+        /* Anonymous feedback workspace layouts */
+        .feedback-container { margin-top: 40px; padding: 30px; background: var(--panel-bg); border: 2px dashed var(--border-color); border-radius: 10px; text-align: left; }
+        .feedback-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
+        .feedback-label { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--text-color); cursor: pointer; }
+        .feedback-label input { width: auto; margin: 0; cursor: pointer; }
+        .feedback-success-msg { display: none; color: #16a34a; font-size: 16px; font-weight: 700; text-align: center; padding: 20px; border: 2px solid #bbf7d0; background: #f0fdf4; border-radius: 8px; margin-top: 20px; }
+
+        /* Print Layout Rules: Purges question text prompts dynamically on hardware printer export triggers */
+        @media print {
+            body { background: #ffffff !important; color: #000000 !important; padding: 0 !important; }
+            .container { box-shadow: none !important; padding: 0 !important; background: #ffffff !important; }
+            .summary-q span { display: none !important; } /* Strips down question content on print layout */
+            button, .theme-toggle-btn, .temporary-todo-float, .feedback-container, .feedback-success-msg, #qaResetBtn { display: none !important; }
+        }
     </style>
 </head>
 <body>
@@ -205,8 +226,8 @@
     </div>
 
     <div id="mainApplicationWrapper">
-<!-- END OF BLOCK 2 -->
-<!-- START OF BLOCK 3: REGISTRATION VIEWS WITH MANDATORY LANGUAGE SELECT AND SECTION A -->
+<!-- END OF BLOCK 2.3 -->
+<!-- START OF BLOCK 3: CORE PROTECTION WRAPPERS AND REGISTRATION INTERFACE -->
 <div style="position: fixed; bottom: 20px; left: 20px; z-index: 99999; display: flex; flex-direction: column; gap: 10px;">
     <button type="button" id="qaResetBtn" onclick="resetQASession()" style="background-color: #dc2626; color: white; padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: background 0.2s;" onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'">
         🛠️ Reset QA Session
@@ -279,7 +300,8 @@
                 <button type="button" class="btn-start" id="unlockBtn" onclick="startTestTimer()">Start Test & Proceed</button>
             </div>
         </div>
-
+<!-- END OF BLOCK 3 -->
+<!-- START OF BLOCK 4: ASSESSMENT PAGE 2 (SECTION A LQA QUESTIONS) -->
         <!-- ==================== PAGE 2: SECTION A ==================== -->
         <div class="page-view" id="page2">
             <div class="split-layout">
@@ -322,8 +344,8 @@
                 </div>
             </div>
         </div>
-<!-- END OF BLOCK 3 -->
-<!-- START OF BLOCK 4: GLOSSARY SHEET AND SECTION B TRANSLATION QUESTIONS -->
+<!-- END OF BLOCK 4 -->
+<!-- START OF BLOCK 5: ASSESSMENT PAGE 3 (SECTION B TRANSLATION MATRIX) -->
         <!-- ==================== PAGE 3: SECTION B ==================== -->
         <div class="page-view" id="page3">
             <div class="split-layout">
@@ -379,8 +401,8 @@
                 </div>
             </div>
         </div>
-<!-- END OF BLOCK 4 -->
-<!-- START OF BLOCK 5: SECTION C WORD COUNTERS AND SUMMARY WITH LANGUAGE METADATA -->
+<!-- END OF BLOCK 5 -->
+<!-- START OF BLOCK 6: WRITING SKILL MATRIX, RESULTS DISPLAY AND ANONYMOUS FEEDBACK INTERFACE -->
         <!-- ==================== PAGE 4: SECTION C ==================== -->
         <div class="page-view" id="page4">
             <div class="section-title">Section C: Writing Skill</div>
@@ -421,9 +443,33 @@
             <h2>Thank you for taking part in our test.</h2>
             <p>We will contact you shortly. Your compiled assessment logs are rendered below.</p>
             <div class="summary-meta-box" id="summaryMetaLanguageBox">Language: Selected</div>
+            <div>
+                <button type="button" class="btn-download" onclick="triggerCandidatePdfDownload()">Download My Responses (PDF)</button>
+            </div>
         </div>
+        
         <div class="section-title">Your Submitted Responses</div>
         <div id="summaryContent"></div>
+
+        <!-- Independent secure anonymous feedback workspace container -->
+        <div class="feedback-container" id="feedbackFormBlock">
+            <h3 style="margin-top:0; color:var(--title-color);">Help us improve this assessment</h3>
+            <p class="info-text" style="margin-bottom:15px;">Please share your experience. This form is completely anonymous and detached from your candidate files.</p>
+            
+            <div class="feedback-options">
+                <label class="feedback-label"><input type="checkbox" name="fb_opt" value="Not enough time"> Not enough time</label>
+                <label class="feedback-label"><input type="checkbox" name="fb_opt" value="Functional issue"> Functional issue</label>
+                <label class="feedback-label"><input type="checkbox" name="fb_opt" value="Unclear instructions"> Unclear instructions</label>
+                <label class="feedback-label"><input type="checkbox" name="fb_opt" value="Other problem"> Other problem</label>
+            </div>
+            
+            <div class="form-group" style="margin-bottom:15px;">
+                <textarea id="feedbackText" rows="3" placeholder="Share your detailed thoughts (optional)..."></textarea>
+            </div>
+            
+            <button type="button" class="btn-feedback" id="feedbackSubmitBtn" onclick="submitAnonymousFeedbackForm()">Submit Feedback</button>
+        </div>
+        <div class="feedback-success-msg" id="feedbackSuccessMessage">Thank you so much for your feedback!</div>
     </div>
 </div>
 
@@ -437,8 +483,8 @@
         </div>
     </div>
 </div>
-<!-- END OF BLOCK 5 -->
-<!-- START OF BLOCK 6: INTER-TAB BROADCAST ENGINE AND CONDITIONAL MODAL AUDITOR -->
+<!-- END OF BLOCK 6 -->
+<!-- START OF BLOCK 7: GRAPHICAL ENGINE, INTER-TAB BROADCAST AND CONDITIONAL MODAL AUDITOR -->
 <script>
     let testEndTime; 
     let timerRunningEngine;
@@ -523,17 +569,9 @@
         document.getElementById('securityHardlockScreen').style.display = 'flex';
     }
 </script>
-<!-- END OF BLOCK 6 -->
-<!-- START OF BLOCK 7: IMMUTABLE TIMER, REAL-TIME WORD COUNT AND DATA INTERCEPTION -->
+<!-- END OF BLOCK 7 -->
+<!-- START OF BLOCK 8: HARDWARE SHIELDS, WORD COUNTS AND CHRONO ACCELERATOR -->
 <script>
-    // WARNING: DEBUG ENGINE FUNCTION - MUST BE REMOVED BEFORE FINAL IMPLEMENTATION
-    function resetQASession() {
-        if (confirm("QA Warning: This will wipe all LocalStorage data and completely reload the test. Proceed?")) {
-            localStorage.clear();
-            window.location.reload();
-        }
-    }
-
     const shield = document.getElementById('greyShield');
     const triggerProtection = () => { if (isTestActive) shield.classList.add('active'); };
     const removeProtection = () => shield.classList.remove('active');
@@ -553,7 +591,6 @@
         }
     });
 
-    // Helper token counter method evaluating live length text matrices
     function getWordCount(textValue) {
         const cleanText = textValue.trim();
         return cleanText === "" ? 0 : cleanText.split(/\s+/).length;
@@ -627,9 +664,25 @@
         }, 1000);
     }
 </script>
-<!-- END OF BLOCK 7 -->
-<!-- START OF BLOCK 8: TEAMS PAYLOAD DELIVERY AND STRUCTURAL BOOTLOADER -->
+<!-- END OF BLOCK 8 -->
+<!-- START OF BLOCK 9: CANDIDATE SUMMARY GENERATOR AND TEAMS TRANSFER ENGINE -->
 <script>
+    // Trigger the native browser print subsystem to generate a clean, question-less PDF layout
+    function triggerCandidatePdfDownload() {
+        // Dynamically append temporary markers to hide question bodies on print viewports
+        for (let i = 1; i <= 10; i++) {
+            const labelNode = document.getElementById(`lbl_q${i}`);
+            if (labelNode) {
+                // Wrap the text prompt inside a span to allow selective CSS print blocking
+                if (!labelNode.querySelector('span')) {
+                    const originalText = labelNode.innerText;
+                    labelNode.innerHTML = `Response ${i} <span style="display:none;">${originalText}</span>`;
+                }
+            }
+        }
+        window.print();
+    }
+
     // Build Microsoft Teams compliant Adaptive Card payload framework
     function displaySummaryDashboard(isTriggeredByTimeout) {
         isTestActive = false; 
@@ -685,7 +738,44 @@
 
         changePageView(5);
     }
+</script>
+<!-- END OF BLOCK 9 -->
+<!-- START OF BLOCK 10: ANONYMOUS FEEDBACK PIPELINE AND RUNTIME REHYDRATION BOOTLOADER -->
+<script>
+    // Dispatch selected choices and text to a secondary independent Microsoft Teams webhook channel
+    function submitAnonymousFeedbackForm() {
+        const selectedOptions = [];
+        const checkboxes = document.querySelectorAll('input[name="fb_opt"]:checked');
+        checkboxes.forEach(cb => selectedOptions.push(cb.value));
 
+        const feedbackNotes = document.getElementById('feedbackText').value.trim();
+        if (selectedOptions.length === 0 && !feedbackNotes) {
+            alert("Please select at least one issue checkbox or write a comment before submitting.");
+            return;
+        }
+
+        // Lock form elements immediately to prevent concurrent duplicate delivery requests
+        document.getElementById('feedbackSubmitBtn').disabled = true;
+
+        let feedbackBodyString = `**Identified Categories:** ${selectedOptions.length > 0 ? selectedOptions.join(', ') : 'None selected'}\n\n`;
+        feedbackBodyString += `**Detailed Candidate Commentary:**\n${feedbackNotes || '[No detailed comments provided]'}`;
+
+        // Hide input workspace smoothly and unmask the localized success confirmation container
+        document.getElementById('feedbackFormBlock').style.display = 'none';
+        document.getElementById('feedbackSuccessMessage').style.display = 'block';
+
+        // Securely transmit to secondary dedicated webhook endpoint without reading identity storage metrics
+        fetch('https://votre-deuxieme-serveur-teams.com', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                title: `Anonymous Assessment Feedback Log`,
+                text: feedbackBodyString
+            })
+        }).catch(err => console.error("Anonymized survey tracking routing exception handled gracefully:", err));
+    }
+
+    // 6. Clipboard Interception Mechanics
     document.addEventListener('copy', (e) => { e.preventDefault(); e.clipboardData.setData('text/plain', '[Copy restricted]'); });
     document.addEventListener('cut', (e) => { e.preventDefault(); e.clipboardData.setData('text/plain', '[Copy restricted]'); });
     document.addEventListener('paste', (e) => {
@@ -705,6 +795,7 @@
         }
     });
 
+    // Integrated recovery bootloader executing unified initialization setups upon window load
     window.addEventListener('load', () => {
         if (localStorage.getItem('lqa_theme') === 'dark') {
             document.body.classList.add('dark-mode');
@@ -746,4 +837,4 @@
 </script>
 </body>
 </html>
-<!-- END OF BLOCK 8 -->
+<!-- END OF BLOCK 10 -->
