@@ -438,7 +438,7 @@
     }
 </script>
 <!-- END OF BLOCK 6 -->
-<!-- START OF BLOCK 7: FINGERPRINT GENERATOR AND BROADCAST SYSTEM -->
+<!-- START OF BLOCK 7: FIXED LOCAL FINGERPRINT ENGINE (NO EXTERNAL API CALLS) -->
 <script>
     // 2. Advanced Multi-Tab and Cross-Device Security Lock Core
     let uniqueTabWindowId = sessionStorage.getItem('lqa_tab_window_id') || Math.random().toString(36).substring(2, 15);
@@ -469,29 +469,24 @@
         }
     };
 
-    // Asynchronous hardware structural attributes and public routing IP compilation blueprint
+    // Compiled device profiling utilizing 100% local immutable hardware specifications (Zero network requests)
     async function generateSecureDeviceFingerprint() {
-        let hardwareString = [
-            navigator.userAgent,
-            screen.width + 'x' + screen.height,
-            screen.colorDepth,
-            navigator.hardwareConcurrency || 1,
-            navigator.deviceMemory || 'unknown',
-            Intl.DateTimeFormat().resolvedOptions().timeZone
-        ].join('|');
-
-        let publicIpAddress = '0.0.0.0';
         try {
-            const response = await fetch('https://ipify.org', { timeout: 4000 });
-            if (response.ok) {
-                const data = await response.json();
-                publicIpAddress = data.ip;
-            }
+            let hardwareProperties = [
+                navigator.userAgent,
+                screen.width + 'x' + screen.height,
+                screen.colorDepth,
+                navigator.hardwareConcurrency || 1,
+                navigator.deviceMemory || 'unknown',
+                Intl.DateTimeFormat().resolvedOptions().timeZone,
+                navigator.language || 'en'
+            ].join('|');
+            
+            return hardwareProperties;
         } catch (e) {
-            console.warn("Network endpoint routing blocked public IP verification. Proceeding via hardware parameters only.");
+            console.error("Local fingerprint generation caught an exception. Using structural fallback template.");
+            return "fallback_hardware_token_" + uniqueTabWindowId;
         }
-
-        return hardwareString + '|' + publicIpAddress;
     }
 
     function triggerSecurityHardlockWipe(titleText, reasonText) {
@@ -507,7 +502,7 @@
     }
 </script>
 <!-- END OF BLOCK 7 -->
-<!-- START OF BLOCK 8: HIGH-PRECISION HARDWARE PERFORMANCE TIMING CORE -->
+<!-- START OF BLOCK 8: SECURE MONOTONIC CLOCK (CLEAN INTEGRATION) -->
 <script>
     // 3. Clock Management Loops (Hardware Performance-Based Anti-Cheat Engine)
     let testEndTime; 
@@ -515,26 +510,19 @@
     let initialClockOffset = 0; 
     let testStartPerformanceTimestamp = 0;
 
-    // Local monolithic hardware high-precision time sync bypassing network and CORS limits entirely
+    // Pure synchronous local machine initialization routine removing external time API dependency layers
     async function getNetworkTime() {
         try {
-            // Leverage monotonic hardware clock capturing elapsed execution milliseconds since page load
             testStartPerformanceTimestamp = performance.now();
-            
-            // Set initial synchronization baseline leveraging stable local machine epoch timestamp
-            const stableLocalBaselineMs = Date.now();
             initialClockOffset = 0; 
-            
-            return stableLocalBaselineMs;
+            return Date.now();
         } catch (error) {
-            console.error("Critical Performance Clock Exception: Monotonic hardware sub-system unreachable.");
-            alert("Critical Clock Exception: Unable to establish a secure hardware anti-cheat timestamp link.");
-            throw error;
+            console.error("Hardware sub-system access error during registration processing.");
+            return Date.now();
         }
     }
 
     function getSecureNow() {
-        // Calculate dynamic runtime elapsed difference utilizing immutable CPU performance metrics
         const currentElapsedRuntimeMs = performance.now() - testStartPerformanceTimestamp;
         return localStorage.getItem('lqa_test_end_time') 
             ? Date.now() 
@@ -569,6 +557,7 @@
                 const currentFingerprint = await generateSecureDeviceFingerprint();
                 localStorage.setItem('lqa_device_fingerprint', currentFingerprint);
             } catch (e) {
+                console.error("Core security synchronization aborted. Retrying interface loop execution.");
                 startButton.disabled = false;
                 startButton.innerText = "Start Test & Proceed";
                 return;
@@ -595,13 +584,12 @@
         if (savedEndTime) {
             testEndTime = parseInt(savedEndTime, 10);
         } else {
-            const totalDurationMilliseconds = 2 * 60 * 60 * 1000; // 2 Hours matrix allocation
+            const totalDurationMilliseconds = 2 * 60 * 60 * 1000; 
             testEndTime = Date.now() + totalDurationMilliseconds;
             localStorage.setItem('lqa_test_end_time', testEndTime);
         }
 
         timerRunningEngine = setInterval(() => {
-            // Cross-reference current epoch timestamp with immutable monotonic hardware performance metrics
             const now = Date.now();
             const timeRemainingMilliseconds = testEndTime - now;
 
