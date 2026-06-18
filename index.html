@@ -340,7 +340,7 @@
             </div>
         </div>
 <!-- END OF BLOCK 5 -->
-<!-- START OF BLOCK 6: SECTION C WRITING MATRIX AND MODAL WRAPPERS -->
+<!-- START OF BLOCK 6: CLEAN SUBMISSION CORE (WITHOUT BEFOREUNLOAD BLOCK) -->
         <!-- ==================== PAGE 4: SECTION C ==================== -->
         <div class="page-view" id="page4">
             <div class="section-title">Section C: Writing Skill</div>
@@ -426,7 +426,6 @@
     function confirmSubmission(isConfirmed) {
         document.getElementById('confirmationModal').classList.remove('show');
         if (isConfirmed) {
-            window.removeEventListener('beforeunload', handleBeforeUnloadInterceptor);
             clearInterval(timerRunningEngine);
             if (sessionKeepAliveInterval) clearInterval(sessionKeepAliveInterval);
             if (lqaBroadcastChannel) lqaBroadcastChannel.close();
@@ -502,7 +501,7 @@
     }
 </script>
 <!-- END OF BLOCK 7 -->
-<!-- START OF BLOCK 8: SECURE MONOTONIC CLOCK (CLEAN INTEGRATION) -->
+<!-- START OF BLOCK 8: HIGH-PRECISION SECURE CLOCK (WITHOUT UNLOAD INTERCEPTOR) -->
 <script>
     // 3. Clock Management Loops (Hardware Performance-Based Anti-Cheat Engine)
     let testEndTime; 
@@ -527,14 +526,6 @@
         return localStorage.getItem('lqa_test_end_time') 
             ? Date.now() 
             : (Date.now() + currentElapsedRuntimeMs);
-    }
-
-    function handleBeforeUnloadInterceptor(event) {
-        if (isTestActive) {
-            event.preventDefault();
-            event.returnValue = "Warning: Closing or refreshing this window will not pause the test duration.";
-            return event.returnValue;
-        }
     }
 
     async function startTestTimer() {
@@ -576,7 +567,6 @@
         document.getElementById('timerDisplay').style.display = 'block';
         isTestActive = true;
 
-        window.addEventListener('beforeunload', handleBeforeUnloadInterceptor);
         engageInterTabCommunicationBroadcast();
 
         const savedEndTime = localStorage.getItem('lqa_test_end_time');
@@ -595,7 +585,6 @@
 
             if (timeRemainingMilliseconds <= 0) {
                 clearInterval(timerRunningEngine);
-                window.removeEventListener('beforeunload', handleBeforeUnloadInterceptor);
                 document.getElementById('confirmationModal').classList.remove('show'); 
                 alert("Time has expired! Generating your results screen.");
                 displaySummaryDashboard();
@@ -612,7 +601,7 @@
     }
 </script>
 <!-- END OF BLOCK 8 -->
-<!-- START OF BLOCK 9: PERSISTENT REHYDRATION SYSTEM AND APPLICATION CLOSURE -->
+<!-- START OF BLOCK 9: RECOVERY-FRIENDLY REHYDRATION PROTOCOL -->
 <script>
     // WARNING: DEBUG ENGINE FUNCTION - MUST BE REMOVED BEFORE FINAL IMPLEMENTATION
     function resetQASession() {
@@ -700,8 +689,9 @@
         }
     });
 
-    // Session recovery and structural cross-device signature auditing runtime algorithm
+    // Smart, non-punitive rehydration algorithm to recover candidates fluidly on F5/Reload events
     window.addEventListener('load', async () => {
+        // 1. Instantly restore written answers from cache matrix
         for (let i = 1; i <= 10; i++) {
             const savedAnswer = localStorage.getItem(`lqa_ans_q${i}`);
             if (savedAnswer) {
@@ -710,24 +700,17 @@
             }
         }
 
+        // 2. Continuous session validation core without aggressive false-positive triggers
         if (localStorage.getItem('lqa_test_end_time')) {
-            // Enforcement validation check: Recalculate signature to prevent cross-device session stealing
-            const structuralSign = await generateSecureDeviceFingerprint();
-            const originalSign = localStorage.getItem('lqa_device_fingerprint');
-
-            if (originalSign && structuralSign !== originalSign) {
-                localStorage.clear();
-                triggerSecurityHardlockWipe("Unauthorized Device Switch Detected", "This active assessment environment cannot be transferred to a separate machine, secondary device, or distinct browser application layout.");
-                return;
-            }
-
-            // Establish hardware performance timers baseline on page rehydration
+            // Re-bind the core hardware performance timer baseline for this reload cycle
             testStartPerformanceTimestamp = performance.now();
 
+            // Safely recover applicant structural fields from local storage memory pipeline
             document.getElementById('firstName').value = localStorage.getItem('lqa_candidate_first') || "Restored";
             document.getElementById('lastName').value = localStorage.getItem('lqa_candidate_last') || "Candidate";
             document.getElementById('candidateEmail').value = localStorage.getItem('lqa_candidate_email') || "restored@session.com";
             
+            // Re-lock fields and resume countdown execution seamlessly
             startTestTimer();
         }
     });
