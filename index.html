@@ -1,4 +1,4 @@
-<!-- START OF BLOCK 1: ENHANCED SECURITY MATRIX AND HARDLOCK STYLES -->
+<!-- START OF BLOCK 1: CORE INTERFACE VARIABLES AND SECURITY OVERLAYS CSS -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LQA Tester Assessment</title>
     
-    <!-- Hardcoded structural stylesheet managing critical interface variables and device lock overrides -->
+    <!-- Unified structural stylesheet optimizing critical interface properties -->
     <style>
         :root {
             --bg-color: #f0f4f8;
@@ -37,17 +37,17 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
         
-        /* Rigidly enforces a comprehensive layout wipe if JavaScript is unavailable */
         #mainApplicationWrapper { display: block; }
         
+        /* Rigid layout wipe layer if JavaScript execution is disabled */
         .noscript-hardlock {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: #0f172a; color: #ef4444; z-index: 999999;
             display: flex; flex-direction: column; align-items: center;
-            justify-content: center; text-align: center; font-family: sans-serif; padding: 20px;
+            justify-content: center; text-align: center; padding: 20px;
         }
 
-        /* Fullscreen hard-lock blocker interface triggered when duplicate windows, unauthorized cross-devices, or different browsers are detected */
+        /* Fullscreen block screen shielding against duplicate window views */
         .multitab-hardlock {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: #090d16; color: #f43f5e; z-index: 1000000;
@@ -69,7 +69,7 @@
         }
     </style>
 <!-- END OF BLOCK 1 -->
-<!-- START OF BLOCK 2: CSS ENGINE COMPLETION AND TIMING HEADER STYLES -->
+<!-- START OF BLOCK 2: COMPONENT LAYOUT AND FORM STRUCTURE CSS -->
     <style>
         .header-meta { 
             display: flex; justify-content: space-between; align-items: center; 
@@ -99,10 +99,7 @@
         }
         .main-content { flex: 1; position: relative; overflow: hidden; }
 
-        .side-title {
-            font-size: 16px; font-weight: 700; color: #3b82f6; text-transform: uppercase;
-            letter-spacing: 0.5px; margin-bottom: 12px; border-bottom: 2px solid #2563eb; padding-bottom: 5px;
-        }
+        .side-title { font-size: 16px; font-weight: 700; color: #3b82f6; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; border-bottom: 2px solid #2563eb; padding-bottom: 5px; }
         .side-text { font-size: 14px; line-height: 1.6; color: var(--text-color); white-space: pre-wrap; margin-bottom: 20px; }
 
         .glossary-table { width: 100%; border-collapse: collapse; font-size: 13px; background: var(--container-bg); }
@@ -114,26 +111,19 @@
         
         label { font-weight: 600; display: block; margin-bottom: 10px; color: var(--text-color); line-height: 1.5; white-space: pre-wrap; }
         .required-star { color: #dc2626; margin-left: 3px; }
-    </style>
-<!-- END OF BLOCK 2 -->
-<!-- START OF BLOCK 3: FORM INPUTS, MODALS, AND SECURITY NO-SCRIPT HARDLOCKS -->
-    <style>
-        textarea { 
+        
+        textarea, input[type="text"], input[type="email"] { 
             width: 100%; padding: 14px; box-sizing: border-box; border: 1px solid var(--border-color); 
             border-radius: 8px; font-size: 15px; background-color: var(--input-bg); color: var(--title-color);
-            white-space: pre-wrap; word-wrap: break-word; transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
-        input[type="text"], input[type="email"] { 
-            width: 100%; padding: 14px; box-sizing: border-box; border: 1px solid var(--border-color); 
-            border-radius: 8px; font-size: 15px; background-color: var(--input-bg); color: var(--title-color); 
-            transition: background-color 0.3s ease;
-        }
+        textarea { white-space: pre-wrap; word-wrap: break-word; }
         input:focus, textarea:focus { border-color: #2563eb; outline: none; background-color: var(--container-bg); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15); }
         input:read-only { background-color: var(--border-color); color: #64748b; cursor: not-allowed; }
-        .q-image { max-width: 100%; height: auto; display: block; margin: 15px 0; border: 1px solid var(--border-color); border-radius: 8px; }
         
+        .q-image { max-width: 100%; height: auto; display: block; margin: 15px 0; border: 1px solid var(--border-color); border-radius: 8px; }
         .comparison-sheet { display: flex; width: 75%; margin: 15px auto; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; background: var(--panel-bg); }
-        .comparison-case { flex: 1; padding: 15px; font-size: 14px; line-height: 1.5; word-break: break-word; white-space: pre-wrap; height: auto; color: var(--title-color); }
+        .comparison-case { flex: 1; padding: 15px; font-size: 14px; line-height: 1.5; word-break: break-word; white-space: pre-wrap; color: var(--title-color); }
         .case-left { border-right: 1px solid var(--border-color); background-color: var(--container-bg); }
         
         .nav-buttons { display: flex; justify-content: space-between; margin-top: 35px; border-top: 1px solid var(--border-color); padding-top: 20px; }
@@ -153,12 +143,8 @@
         .modal-box .modal-buttons { display: flex; justify-content: center; gap: 15px; }
         
         .btn-yes { background-color: #22c55e !important; color: #000000 !important; }
-        .btn-yes:hover { background-color: #16a34a !important; }
         .btn-no { background-color: #ef4444 !important; color: #000000 !important; }
-        .btn-no:hover { background-color: #dc2626 !important; }
-
         .screen-shield { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(100, 116, 139, 0.2); z-index: 9999; color: #ffffff; font-size: 24px; font-weight: bold; text-align: center; justify-content: center; align-items: center; flex-direction: column; }
-        .screen-shield.active { display: flex; }
         
         .summary-header { background: var(--panel-bg); border: 1px solid var(--border-color); padding: 30px; border-radius: 10px; margin-bottom: 40px; }
         .summary-header h2 { margin: 0 0 12px 0; color: var(--title-color); font-size: 24px; font-weight: 700; }
@@ -167,10 +153,7 @@
         .summary-item { margin-bottom: 35px; padding-bottom: 25px; border-bottom: 2px solid var(--border-color); }
         .summary-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
         .summary-q { font-weight: 700; color: var(--title-color); margin-bottom: 12px; font-size: 16px; line-height: 1.5; }
-        .summary-a { 
-            background: var(--container-bg); padding: 20px 24px; border-radius: 8px; border: 1px solid var(--border-color);
-            border-left: 5px solid #2563eb; color: var(--title-color); white-space: pre-wrap; font-size: 15px; line-height: 1.6;
-        }
+        .summary-a { background: var(--container-bg); padding: 20px 24px; border-radius: 8px; border: 1px solid var(--border-color); border-left: 5px solid #2563eb; color: var(--title-color); white-space: pre-wrap; font-size: 15px; line-height: 1.6; }
         @media print { body { display: none !important; } }
     </style>
 </head>
@@ -182,15 +165,14 @@
         </div>
     </noscript>
 
-    <!-- Fullscreen security block overlay targeting concurrent tab, foreign browser or distinct hardware access attempts -->
     <div class="multitab-hardlock" id="securityHardlockScreen">
         <h1 id="securityHardlockTitle">Access Restriction Engaged</h1>
-        <p id="securityHardlockReason">Active session tracking policy restricts this assessment to a single authorized device, browser interface, and active tab view concurrently.</p>
+        <p id="securityHardlockReason">Active session tracking policy restricts this assessment to a single authorized tab view concurrently.</p>
     </div>
 
     <div id="mainApplicationWrapper">
-<!-- END OF BLOCK 3 -->
-<!-- START OF BLOCK 4: DOM STRUCTURAL WRAPPERS AND ASSESSMENT PAGE 1 & 2 -->
+<!-- END OF BLOCK 2 -->
+<!-- START OF BLOCK 3: REGISTRATION FORM AND SECTION A LQA QUESTIONS -->
 <div style="position: fixed; bottom: 20px; left: 20px; z-index: 99999; display: flex; flex-direction: column; gap: 10px;">
     <button type="button" id="qaResetBtn" onclick="resetQASession()" style="background-color: #dc2626; color: white; padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: background 0.2s;" onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'">
         🛠️ Reset QA Session
@@ -217,8 +199,8 @@
         <div class="page-view active" id="page1">
             <div class="section-title">Candidate Identity Registration</div>
             <p class="info-text">
-                Please provide your identification credentials below. Only these fields are mandatory. The countdown triggers immediately after clicking start.
-                <span class="tip-alert">TIP: You have two hours to complete the test it will be sent automatically after that delay. You will find 3 pages, read carefully, check the provided documentation.</span>
+                Please provide your identification credentials below. Only these fields are mandatory.
+                <span class="tip-alert">TIP: You have two hours to complete the test. It will submit automatically after that delay. Read carefully and consult the provided documentation layout.</span>
             </p>
             
             <div class="form-group">
@@ -247,30 +229,30 @@
                     <div class="side-title">BUG TYPES:</div>
                     <div class="side-text">Overlap... Wrong Language...</div>
                     <div class="side-title">How to report a Bug:</div>
-                    <div class="side-text">Summary \nStep to repro\n1.\n2.\nObserved behavior\nExpected behavior</div>
+                    <div class="side-text">Summary&#10;Step to repro&#10;1.&#10;2.&#10;Observed behavior&#10;Expected behavior</div>
                 </div>
 
                 <div class="main-content">
                     <div class="section-title">Section A: LQA Bugs</div>
-                    <p class="info-text">Identify bugs from game captures and generate reports.</p>
+                    <p class="info-text">Identify structural or translation bugs from the provided gaming screenshots.</p>
                     
                     <div class="form-group">
-                        <label id="lbl_q1">1. Context: Cat-Fu game, Japanese developers, English language assessment.</label>
+                        <label id="lbl_q1">1. Context: The game is Cat-Fu, the devs are from Japan and you are testing in English. Find the issue.</label>
                         <img src="screenshots/Cat_fu.jpeg" alt="Bug Cat-Fu" class="q-image">
                         <textarea id="q1" rows="3" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
                     </div>
                     <div class="form-group">
-                        <label id="lbl_q2">2. Context: LQA Tycoon, US developers, Latin language assessment.</label>
+                        <label id="lbl_q2">2. Context: The game is LQA Tycoon, the devs are from the United States of America and you are testing in Latin.</label>
                         <img src="screenshots/LQA_T.jpeg" alt="Bug LQA Tycoon" class="q-image">
                         <textarea id="q2" rows="3" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
                     </div>
                     <div class="form-group">
-                        <label id="lbl_q3">3. Diagnostic Assessment Node 3.</label>
+                        <label id="lbl_q3">3. Diagnostic Node 3.</label>
                         <img src="screenshots/screenshot3.jpg" alt="Chart" class="q-image">
                         <textarea id="q3" rows="3" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
                     </div>
                     <div class="form-group">
-                        <label id="lbl_q4">4. Diagnostic Assessment Node 4.</label>
+                        <label id="lbl_q4">4. Diagnostic Node 4.</label>
                         <img src="screenshots/screenshot4.jpg" alt="Chart" class="q-image">
                         <textarea id="q4" rows="3" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
                     </div>
@@ -282,8 +264,8 @@
                 </div>
             </div>
         </div>
-<!-- END OF BLOCK 4 -->
-<!-- START OF BLOCK 5: SECTION B AND TRANSLATION MATRIX COMPONENTS -->
+<!-- END OF BLOCK 3 -->
+<!-- START OF BLOCK 4: GLOSSARY SHEET AND SECTION B QUESTIONS -->
         <!-- ==================== PAGE 3: SECTION B ==================== -->
         <div class="page-view" id="page3">
             <div class="split-layout">
@@ -303,7 +285,7 @@
 
                 <div class="main-content">
                     <div class="section-title">Section B: Proofreading/Translation</div>
-                    <p class="info-text">Review and analyze context strings using structural guidelines.</p>
+                    <p class="info-text">Review and track translation accuracy with the help of the local documentation matrix.</p>
                     
                     <div class="form-group">
                         <label id="lbl_q5">5. Proofread Segment Alpha.</label>
@@ -339,12 +321,12 @@
                 </div>
             </div>
         </div>
-<!-- END OF BLOCK 5 -->
-<!-- START OF BLOCK 6: CLEAN SUBMISSION CORE (WITHOUT BEFOREUNLOAD BLOCK) -->
+<!-- END OF BLOCK 4 -->
+<!-- START OF BLOCK 5: SECTION C WRITING MATRIX AND MODAL VIEW WRAPPERS -->
         <!-- ==================== PAGE 4: SECTION C ==================== -->
         <div class="page-view" id="page4">
             <div class="section-title">Section C: Writing Skill</div>
-            <p class="info-text">In this part we will assess your writing skills in English and in French, answer in the same language as the question. Remember to read carefully before answering</p>
+            <p class="info-text">Assess and record writing patterns. Answer utilizing the language specified in the question prompts.</p>
             
             <div class="form-group">
                 <label id="lbl_q8">8. What was the last game you enjoyed the most recently? Try to tell us why (150 words).</label>
@@ -370,49 +352,44 @@
     <div class="page-view" id="page5">
         <div class="summary-header">
             <h2>Thank you for taking part in our test.</h2>
-            <p>We will contact you shortly. Meanwhile, remember to follow us...</p>
+            <p>We will contact you shortly. Your compiled assessment logs are rendered below.</p>
         </div>
         <div class="section-title">Your Submitted Responses</div>
         <div id="summaryContent"></div>
     </div>
 </div>
 
-<!-- ==================== CUSTOM WARNING MODAL WINDOW ==================== -->
 <div class="modal-overlay" id="confirmationModal">
     <div class="modal-box">
         <h3>Submit Assessment</h3>
-        <p>You are about to send your test. Continue?</p>
+        <p>You are about to transmit your completed test file. Continue?</p>
         <div class="modal-buttons">
             <button type="button" class="btn-yes" id="confirmYesBtn" onclick="confirmSubmission(true)">Yes, Send</button>
             <button type="button" class="btn-no" onclick="confirmSubmission(false)">No, Back</button>
         </div>
     </div>
 </div>
-
+<!-- END OF BLOCK 5 -->
+<!-- START OF BLOCK 6: STREAMLINED THEME ENGINE AND INTER-TAB BROADCAST LOGIC -->
 <script>
-    // 0. Dark Mode Switch Engine with English Localized strings
+    let testEndTime; 
+    let timerRunningEngine;
+    let isTestActive = false;
+    let uniqueTabWindowId = sessionStorage.getItem('lqa_tab_window_id') || Math.random().toString(36).substring(2, 15);
+    sessionStorage.setItem('lqa_tab_window_id', uniqueTabWindowId);
+
+    let lqaBroadcastChannel = new BroadcastChannel('lqa_session_channel');
+    let sessionKeepAliveInterval;
+
     function toggleDarkMode() {
         const body = document.body;
         const btn = document.getElementById('themeToggle');
         body.classList.toggle('dark-mode');
-        if (body.classList.contains('dark-mode')) {
-            if (btn) btn.innerHTML = "☀️ Light Mode";
-            localStorage.setItem('lqa_theme', 'dark');
-        } else {
-            if (btn) btn.innerHTML = "🌙 Dark Mode";
-            localStorage.setItem('lqa_theme', 'light');
-        }
+        const mode = body.classList.contains('dark-mode') ? 'dark' : 'light';
+        if (btn) btn.innerHTML = mode === 'dark' ? "☀️ Light Mode" : "🌙 Dark Mode";
+        localStorage.setItem('lqa_theme', mode);
     }
 
-    window.addEventListener('DOMContentLoaded', () => {
-        if (localStorage.getItem('lqa_theme') === 'dark') {
-            document.body.classList.add('dark-mode');
-            const btn = document.getElementById('themeToggle');
-            if (btn) btn.innerHTML = "☀️ Light Mode";
-        }
-    });
-
-    // 1. Pagination View Switching Function
     function changePageView(targetPageId) {
         document.querySelectorAll('.page-view').forEach(view => view.classList.remove('active'));
         document.getElementById(`page${targetPageId}`).classList.add('active');
@@ -428,23 +405,10 @@
         if (isConfirmed) {
             clearInterval(timerRunningEngine);
             if (sessionKeepAliveInterval) clearInterval(sessionKeepAliveInterval);
-            if (lqaBroadcastChannel) lqaBroadcastChannel.close();
-            const savedTheme = localStorage.getItem('lqa_theme');
-            localStorage.clear(); 
-            if (savedTheme) localStorage.setItem('lqa_theme', savedTheme);
+            lqaBroadcastChannel.close();
             displaySummaryDashboard(); 
         }
     }
-</script>
-<!-- END OF BLOCK 6 -->
-<!-- START OF BLOCK 7: FIXED LOCAL FINGERPRINT ENGINE (NO EXTERNAL API CALLS) -->
-<script>
-    // 2. Advanced Multi-Tab and Cross-Device Security Lock Core
-    let uniqueTabWindowId = sessionStorage.getItem('lqa_tab_window_id') || Math.random().toString(36).substring(2, 15);
-    sessionStorage.setItem('lqa_tab_window_id', uniqueTabWindowId);
-
-    let lqaBroadcastChannel = new BroadcastChannel('lqa_session_channel');
-    let sessionKeepAliveInterval;
 
     function engageInterTabCommunicationBroadcast() {
         sessionKeepAliveInterval = setInterval(() => {
@@ -452,8 +416,7 @@
                 lqaBroadcastChannel.postMessage({
                     type: 'LQA_HEARTBEAT',
                     tabId: uniqueTabWindowId,
-                    email: localStorage.getItem('lqa_candidate_email'),
-                    fingerprint: localStorage.getItem('lqa_device_fingerprint')
+                    email: localStorage.getItem('lqa_candidate_email')
                 });
             }
         }, 1000);
@@ -461,72 +424,51 @@
 
     lqaBroadcastChannel.onmessage = (event) => {
         const activeEmail = localStorage.getItem('lqa_candidate_email');
-        if (!isTestActive || !activeEmail || event.data.email !== activeEmail) return;
-
-        if (event.data.type === 'LQA_HEARTBEAT' && event.data.tabId !== uniqueTabWindowId) {
-            triggerSecurityHardlockWipe("Duplicate Session Detected", "An active test window for this candidate is already running inside another tab or browser interface.");
+        if (isTestActive && activeEmail && event.data.email === activeEmail && event.data.tabId !== uniqueTabWindowId) {
+            triggerSecurityHardlockWipe("Duplicate Session Detected", "An active assessment workflow for this email parameter is already running inside an independent tab window context.");
         }
     };
-
-    // Compiled device profiling utilizing 100% local immutable hardware specifications (Zero network requests)
-    async function generateSecureDeviceFingerprint() {
-        try {
-            let hardwareProperties = [
-                navigator.userAgent,
-                screen.width + 'x' + screen.height,
-                screen.colorDepth,
-                navigator.hardwareConcurrency || 1,
-                navigator.deviceMemory || 'unknown',
-                Intl.DateTimeFormat().resolvedOptions().timeZone,
-                navigator.language || 'en'
-            ].join('|');
-            
-            return hardwareProperties;
-        } catch (e) {
-            console.error("Local fingerprint generation caught an exception. Using structural fallback template.");
-            return "fallback_hardware_token_" + uniqueTabWindowId;
-        }
-    }
 
     function triggerSecurityHardlockWipe(titleText, reasonText) {
         isTestActive = false;
         clearInterval(timerRunningEngine);
         if (sessionKeepAliveInterval) clearInterval(sessionKeepAliveInterval);
-        window.removeEventListener('beforeunload', handleBeforeUnloadInterceptor);
-        
         document.getElementById('mainApplicationWrapper').style.display = 'none';
         document.getElementById('securityHardlockTitle').innerText = titleText;
         document.getElementById('securityHardlockReason').innerText = reasonText;
         document.getElementById('securityHardlockScreen').style.display = 'flex';
     }
 </script>
-<!-- END OF BLOCK 7 -->
-<!-- START OF BLOCK 8: LOCKED MONOTONIC TIMER CORE (ANTI-F5 RESTART FIX) -->
+<!-- END OF BLOCK 6 -->
+<!-- START OF BLOCK 7: IMMUTABLE TIMER CORE, HOOKS AND DATA PERSISTENCE RUNTIME -->
 <script>
-    // 3. Clock Management Loops (Hardware Performance-Based Anti-Cheat Engine)
-    let testEndTime; 
-    let timerRunningEngine;
-    let initialClockOffset = 0; 
-    let testStartPerformanceTimestamp = 0;
-
-    // Pure synchronous local machine initialization routine removing external time API dependency layers
-    async function getNetworkTime() {
-        try {
-            testStartPerformanceTimestamp = performance.now();
-            initialClockOffset = 0; 
-            return Date.now();
-        } catch (error) {
-            console.error("Hardware sub-system access error during registration processing.");
-            return Date.now();
+    // WARNING: DEBUG ENGINE FUNCTION - MUST BE REMOVED BEFORE FINAL IMPLEMENTATION
+    function resetQASession() {
+        if (confirm("QA Warning: This will wipe all LocalStorage data and completely reload the test. Proceed?")) {
+            localStorage.clear();
+            window.location.reload();
         }
     }
 
-    function getSecureNow() {
-        const currentElapsedRuntimeMs = performance.now() - testStartPerformanceTimestamp;
-        return localStorage.getItem('lqa_test_end_time') 
-            ? Date.now() 
-            : (Date.now() + currentElapsedRuntimeMs);
-    }
+    // 4. Physical Layout Blur and Snapshot Shields
+    const shield = document.getElementById('greyShield');
+    const triggerProtection = () => { if (isTestActive) shield.classList.add('active'); };
+    const removeProtection = () => shield.classList.remove('active');
+
+    document.addEventListener('mouseleave', triggerProtection);
+    document.addEventListener('mouseenter', removeProtection);
+    window.addEventListener('blur', triggerProtection);
+    window.addEventListener('focus', removeProtection);
+
+    document.addEventListener('keyup', (event) => {
+        if (event.key === 'PrintScreen' || event.key === 'Snapshot') {
+            triggerProtection();
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText("[Screenshot restricted for security compliance]");
+            }
+            alert('Action restricted for security compliance.');
+        }
+    });
 
     async function startTestTimer() {
         const first = document.getElementById('firstName').value.trim();
@@ -536,25 +478,6 @@
         if (!first || !last || !email) {
             alert("Identification parameters (First Name, Last Name, Email) are mandatory.");
             return;
-        }
-
-        const startButton = document.getElementById('unlockBtn');
-        const existingEndTimeCheck = localStorage.getItem('lqa_test_end_time');
-
-        if (!existingEndTimeCheck) {
-            startButton.disabled = true;
-            startButton.innerText = "Synchronizing security keys...";
-            
-            try {
-                await getNetworkTime();
-                const currentFingerprint = await generateSecureDeviceFingerprint();
-                localStorage.setItem('lqa_device_fingerprint', currentFingerprint);
-            } catch (e) {
-                console.error("Core security synchronization aborted. Retrying interface loop execution.");
-                startButton.disabled = false;
-                startButton.innerText = "Start Test & Proceed";
-                return;
-            }
         }
 
         localStorage.setItem('lqa_candidate_first', first);
@@ -571,7 +494,7 @@
 
         engageInterTabCommunicationBroadcast();
 
-        // Rigid chronological lock preventing background countdown overwrites during F5 stress events
+        const existingEndTimeCheck = localStorage.getItem('lqa_test_end_time');
         if (existingEndTimeCheck) {
             testEndTime = parseInt(existingEndTimeCheck, 10);
         } else {
@@ -602,37 +525,6 @@
             document.getElementById('timerDisplay').innerHTML = `Time Left: ${hours}:${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
         }, 1000);
     }
-</script>
-<!-- END OF BLOCK 8 -->
-<!-- START OF BLOCK 9: RIGID PERSISTENT BOOTLOADER INTERFACE -->
-<script>
-    // WARNING: DEBUG ENGINE FUNCTION - MUST BE REMOVED BEFORE FINAL IMPLEMENTATION
-    function resetQASession() {
-        if (confirm("QA Warning: This will wipe all LocalStorage data and completely reload the test. Proceed?")) {
-            localStorage.clear();
-            window.location.reload();
-        }
-    }
-
-    // 4. Physical Layout Blur and Snapshot Shields
-    const shield = document.getElementById('greyShield');
-    const triggerProtection = () => { if (isTestActive) shield.classList.add('active'); };
-    const removeProtection = () => shield.classList.remove('active');
-
-    document.addEventListener('mouseleave', triggerProtection);
-    document.addEventListener('mouseenter', removeProtection);
-    window.addEventListener('blur', triggerProtection);
-    window.addEventListener('focus', removeProtection);
-
-    document.addEventListener('keyup', (event) => {
-        if (event.key === 'PrintScreen' || event.key === 'Snapshot') {
-            triggerProtection();
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText("[Screenshot restricted for security compliance]");
-            }
-            alert('Action restricted for security compliance.');
-        }
-    });
 
     // 5. Build Dynamic Results Page View Component & Send to Server
     function displaySummaryDashboard() {
@@ -645,7 +537,6 @@
                 firstName: document.getElementById('firstName').value.trim(),
                 lastName: document.getElementById('lastName').value.trim(),
                 email: document.getElementById('candidateEmail').value.trim(),
-                deviceSignature: localStorage.getItem('lqa_device_fingerprint'),
                 submittedAt: new Date().toISOString()
             },
             responses: {}
@@ -664,6 +555,10 @@
             elementBlock.innerHTML = `<div class="summary-q">${origLabel}</div><div class="summary-a">${targetVal}</div>`;
             contentContainer.appendChild(elementBlock);
         }
+
+        const cachedTheme = localStorage.getItem('lqa_theme');
+        localStorage.clear();
+        if (cachedTheme) localStorage.setItem('lqa_theme', cachedTheme);
 
         fetch('https://votre-serveur.com', {
             method: 'POST',
@@ -692,28 +587,28 @@
         }
     });
 
-    // Idempotent recovery bootloader architecture preventing initialization time slips
-    window.addEventListener('load', async () => {
-        // 1. Sync and map written text area content values immediately on thread start
+    // Integrated recovery bootloader executing unified initialization setups upon window load
+    window.addEventListener('load', () => {
+        if (localStorage.getItem('lqa_theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            const btn = document.getElementById('themeToggle');
+            if (btn) btn.innerHTML = "☀️ Light Mode";
+        }
+
         for (let i = 1; i <= 10; i++) {
             const savedAnswer = localStorage.getItem(`lqa_ans_q${i}`);
             if (savedAnswer) {
-                const field = document.getElementById(`q${i}`);
-                if (field) field.value = savedAnswer;
+                const field = document.getElementById(`q./index.html`);
+                const realField = document.getElementById(`q${i}`);
+                if (realField) realField.value = savedAnswer;
             }
         }
 
-        // 2. Strict analytical tracking block bypass checking validation parameters
         const recoveryTimestampCheck = localStorage.getItem('lqa_test_end_time');
         if (recoveryTimestampCheck) {
-            testStartPerformanceTimestamp = performance.now();
-
-            // Enforce registration rehydration schemas using validated active local parameters
             document.getElementById('firstName').value = localStorage.getItem('lqa_candidate_first') || "Restored";
             document.getElementById('lastName').value = localStorage.getItem('lqa_candidate_last') || "Candidate";
             document.getElementById('candidateEmail').value = localStorage.getItem('lqa_candidate_email') || "restored@session.com";
-            
-            // Execute runtime sequence activation loop securely
             startTestTimer();
         }
     });
@@ -727,4 +622,4 @@
 </script>
 </body>
 </html>
-<!-- END OF BLOCK 9 -->
+<!-- END OF BLOCK 7 -->
