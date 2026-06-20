@@ -67,7 +67,8 @@
             position: relative; transition: filter 0.05s linear, background-color 0.3s ease; 
         }
         
-        body:has(.screen-shield.active) .container {
+        /* Optimized structural block preventing layout reflow calculation lag */
+        body.shield-activated .container {
             filter: blur(50px) grayscale(100%) brightness(0.2);
             pointer-events: none; user-select: none;
         }
@@ -585,8 +586,18 @@
 <!-- START OF BLOCK 8: HARDWARE SHIELDS, WORD COUNTS AND CHRONO ACCELERATOR -->
 <script>
     const shield = document.getElementById('greyShield');
-    const triggerProtection = () => { if (isTestActive) shield.classList.add('active'); };
-    const removeProtection = () => shield.classList.remove('active');
+    
+    // Explicitly add/remove structural lock states on the root body element
+    const triggerProtection = () => { 
+        if (isTestActive) {
+            shield.classList.add('active');
+            document.body.classList.add('shield-activated');
+        } 
+    };
+    const removeProtection = () => {
+        shield.classList.remove('active');
+        document.body.classList.remove('shield-activated');
+    };
 
     document.addEventListener('mouseleave', triggerProtection);
     document.addEventListener('mouseenter', removeProtection);
@@ -799,7 +810,7 @@
         if (activeElement && (activeElement.tagName === 'TEXTAREA' || activeElement.tagName === 'INPUT')) {
             const start = activeElement.selectionStart;
             activeElement.value = activeElement.value.substring(0, start) + "[Paste restricted for security compliance]" + activeElement.value.substring(activeElement.selectionEnd);
-            if (activeElement.id === 'q8' || activeElement.id === 'q9' || activeElement.id === 'q10') refreshWordCounterMetric(activeElement.id);
+            // The global 'input' event listener captures this state mutation automatically, removing CPU redundancy here
         }
     });
 
