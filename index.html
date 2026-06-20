@@ -971,17 +971,7 @@ Expected behavior</div>
 <script>
     // Trigger the native browser print subsystem to generate a clean, question-less PDF layout
     function triggerCandidatePdfDownload() {
-        // Dynamically append temporary markers to hide question bodies on print viewports
-        for (let i = 1; i <= 10; i++) {
-            const labelNode = document.getElementById(`lbl_q${i}`);
-            if (labelNode) {
-                // Wrap the text prompt inside a span to allow selective CSS print blocking
-                if (!labelNode.querySelector('span')) {
-                    const originalText = labelNode.innerText;
-                    labelNode.innerHTML = `Response ${i} <span style="display:none;">${originalText}</span>`;
-                }
-            }
-        }
+        // Force the rendering loop across the generated summary viewports before triggering print
         window.print();
     }
 
@@ -1012,17 +1002,14 @@ Expected behavior</div>
             const labelNode = document.getElementById(`lbl_q${i}`);
             let origLabel = labelNode ? labelNode.innerText : `Question ${i}`;
             
-            // Clean up print injection text references if present inside the node context
-            if (labelNode && labelNode.querySelector('span')) {
-                origLabel = labelNode.querySelector('span').innerText;
-            }
-            
             const field = document.getElementById(`q${i}`);
             const targetVal = field ? field.value.trim() : "[Left Blank / No response provided]";
 
             const elementBlock = document.createElement('div');
             elementBlock.className = 'summary-item';
-            elementBlock.innerHTML = `<div class="summary-q">${origLabel}</div><div class="summary-a">${targetVal}</div>`;
+            
+            // Fix: Wrap the prompt text in a span to allow the print CSS rule (.summary-q span) to block it correctly
+            elementBlock.innerHTML = `<div class="summary-q">Response ${i} <span>(${origLabel})</span></div><div class="summary-a">${targetVal}</div>`;
             contentContainer.appendChild(elementBlock);
 
             teamsBodyText += `**${origLabel}**\n${targetVal}\n`;
