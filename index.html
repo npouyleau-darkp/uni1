@@ -124,7 +124,7 @@
         .main-content { flex: 1; position: relative; overflow: hidden; }
     </style>
 <!-- END OF BLOCK 2.1 -->
-<!-- START OF BLOCK 2.2: INPUT FIELDS, TABLES AND SHEET OBJECTS CSS -->
+<!-- START OF BLOCK 2.2: INPUT FIELDS, TABLES, SHEET OBJECTS AND LIGHTBOX IMAGE CSS -->
     <style>
         .textarea-container { position: relative; width: 100%; display: flex; flex-direction: column; }
         .word-counter-badge {
@@ -156,10 +156,74 @@
         input:focus, textarea:focus, select:focus { border-color: #2563eb; outline: none; background-color: var(--container-bg); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15); }
         input:read-only, select:disabled { background-color: var(--border-color); color: #64748b; cursor: not-allowed; }
         
-        .q-image { max-width: 100%; height: auto; display: block; margin: 15px 0; border: 1px solid var(--border-color); border-radius: 8px; }
         .comparison-sheet { display: flex; width: 75%; margin: 15px auto; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; background: var(--panel-bg); }
         .comparison-case { flex: 1; padding: 15px; font-size: 14px; line-height: 1.5; word-break: break-word; white-space: pre-wrap; color: var(--title-color); }
         .case-left { border-right: 1px solid var(--border-color); background-color: var(--container-bg); }
+
+        /* --- LIGHTBOX MINIATURE ARCHITECTURE --- */
+        .image-interactive-wrapper {
+            display: inline-block;
+            margin: 15px 0;
+            cursor: zoom-in;
+        }
+        
+        /* Enforces Option A 16:9 Aspect Ratio dimensions layout safely */
+        .q-image-thumb {
+            width: 320px;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+        
+        .image-interactive-wrapper:hover .q-image-thumb {
+            transform: scale(1.02);
+            border-color: #2563eb;
+        }
+
+        .click-enlarge-indicator {
+            display: block;
+            margin-top: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: color 0.2s ease;
+        }
+
+        .image-interactive-wrapper:hover .click-enlarge-indicator {
+            color: #2563eb;
+        }
+
+        /* Fullscreen hardware-accelerated overlay curtain shielding the test page views */
+        .lightbox-overlay-curtain {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(9, 13, 22, 0.9);
+            z-index: 999999;
+            justify-content: center;
+            align-items: center;
+            cursor: zoom-out;
+        }
+        
+        .lightbox-overlay-curtain.active {
+            display: flex;
+        }
+
+        .lightbox-full-image {
+            max-width: 92%;
+            max-height: 92%;
+            object-fit: contain;
+            border-radius: 4px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            user-select: none;
+            -webkit-user-drag: none;
+        }
     </style>
 <!-- END OF BLOCK 2.2 -->
 <!-- START OF BLOCK 2.3: ELEGANT MULTILINGUAL SELECTOR GRID CSS -->
@@ -537,22 +601,37 @@ Expected behavior</div>
                     
                     <div class="form-group">
                         <label id="lbl_q1">1. Context: The game is Cat-Fu, the devs are from Japan and you are testing in English. Find the issue.</label>
-                        <img src="screenshots/Cat_fu.jpeg" alt="Bug Cat-Fu" class="q-image">
+                        <div class="image-interactive-wrapper" onclick="openFullscreenLightbox('screenshots/Cat_fu.jpeg')">
+                            <img src="screenshots/Cat_fu.jpeg" alt="Bug Cat-Fu" class="q-image-thumb">
+                            <span class="click-enlarge-indicator">🔍 Click to enlarge</span>
+                        </div>
                         <textarea id="q1" rows="3" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
                     </div>
+
                     <div class="form-group">
                         <label id="lbl_q2">2. Context: The game is LQA Tycoon, the devs are from the United States of America and you are testing in Latin.</label>
-                        <img src="screenshots/LQA_T.jpeg" alt="Bug LQA Tycoon" class="q-image">
+                        <div class="image-interactive-wrapper" onclick="openFullscreenLightbox('screenshots/LQA_T.jpeg')">
+                            <img src="screenshots/LQA_T.jpeg" alt="Bug LQA Tycoon" class="q-image-thumb">
+                            <span class="click-enlarge-indicator">🔍 Click to enlarge</span>
+                        </div>
                         <textarea id="q2" rows="3" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
                     </div>
+
                     <div class="form-group">
                         <label id="lbl_q3">3. Diagnostic Node 3.</label>
-                        <img src="screenshots/screenshot3.jpg" alt="Chart" class="q-image">
+                        <div class="image-interactive-wrapper" onclick="openFullscreenLightbox('screenshots/screenshot3.jpg')">
+                            <img src="screenshots/screenshot3.jpg" alt="Chart" class="q-image-thumb">
+                            <span class="click-enlarge-indicator">🔍 Click to enlarge</span>
+                        </div>
                         <textarea id="q3" rows="3" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
                     </div>
+
                     <div class="form-group">
                         <label id="lbl_q4">4. Diagnostic Node 4.</label>
-                        <img src="screenshots/screenshot4.jpg" alt="Chart" class="q-image">
+                        <div class="image-interactive-wrapper" onclick="openFullscreenLightbox('screenshots/screenshot4.jpg')">
+                            <img src="screenshots/screenshot4.jpg" alt="Chart" class="q-image-thumb">
+                            <span class="click-enlarge-indicator">🔍 Click to enlarge</span>
+                        </div>
                         <textarea id="q4" rows="3" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
                     </div>
 
@@ -562,6 +641,11 @@ Expected behavior</div>
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- Standalone isolated Lightbox markup portal appended natively onto the lower body boundary -->
+        <div class="lightbox-overlay-curtain" id="globalLightboxPortal" onclick="closeFullscreenLightbox()">
+            <img src="" id="lightboxFullscreenImage" class="lightbox-full-image" alt="Fullscreen Asset View">
         </div>
 <!-- END OF BLOCK 4 -->
 <!-- START OF BLOCK 5: ASSESSMENT PAGE 3 (SECTION B TRANSLATION MATRIX) -->
@@ -1003,7 +1087,6 @@ Expected behavior</div>
             const labelNode = document.getElementById(`lbl_q${i}`);
             let origLabel = "Question " + i;
             if (labelNode) {
-                // Read original localized text while stripping runtime HTML indicators cleanly
                 const clone = labelNode.cloneNode(true);
                 const embeddedSpan = clone.querySelector('.print-strip');
                 origLabel = embeddedSpan ? embeddedSpan.innerText : clone.innerText;
@@ -1015,8 +1098,8 @@ Expected behavior</div>
             const elementBlock = document.createElement('div');
             elementBlock.className = 'summary-item';
             
-            // Explicit encapsulation matching style block masking rules (.summary-q span)
-            elementBlock.innerHTML = `<div class="summary-q">Response ${i} <span>(${origLabel})</span></div><div class="summary-a">${targetVal}</div>`;
+            // Refined Output Architecture: Strips the text prompt content completely to show only the response index label
+            elementBlock.innerHTML = `<div class="summary-q">Response ${i}</div><div class="summary-a">${targetVal}</div>`;
             contentContainer.appendChild(elementBlock);
 
             teamsBodyText += `**${origLabel}**\n${targetVal}\n`;
@@ -1340,7 +1423,6 @@ Expected behavior</div>
     });
 
     // 2. High-Frequency Input Mutation Engine (Extreme Hybrid Touch Defenses)
-    // Tracks character length deltas between successive inputs to intercept touch clipboard bypasses
     let previousTextLengthsStore = {};
 
     document.addEventListener('input', (e) => {
@@ -1353,7 +1435,6 @@ Expected behavior</div>
             const absolutePreviousLength = previousTextLengthsStore[currentFieldId] || 0;
             const lengthDelta = currentStringValue.length - absolutePreviousLength;
 
-            // Catch touch context menu injections or software keyboard pasting actions
             if (e.inputType === 'insertFromPaste' || lengthDelta > 4) {
                 e.preventDefault();
                 targetField.value = "[Paste restricted for security compliance]";
@@ -1362,7 +1443,6 @@ Expected behavior</div>
                 return;
             }
 
-            // Save standard text input changes to localStorage backup
             previousTextLengthsStore[currentFieldId] = currentStringValue.length;
             if (targetField.tagName === 'TEXTAREA') {
                 localStorage.setItem(`lqa_ans_${currentFieldId}`, currentStringValue);
@@ -1371,15 +1451,12 @@ Expected behavior</div>
         }
     });
 
-    // 3. Document Selection & Selection Change Monitoring
-    // Prevents touch-and-hold operations from keeping native platform copy menus active
+    // 3. Document Selection Change Monitoring
     document.addEventListener('selectionchange', () => {
         if (!isTestActive) return;
         const activeNode = document.activeElement;
         if (activeNode && (activeNode.tagName === 'TEXTAREA' || activeNode.tagName === 'INPUT')) {
-            // Check if selection bounds are non-zero, indicating a highlight operation
             if (activeNode.selectionStart !== activeNode.selectionEnd) {
-                // Collapses selection state immediately back to normal focus baseline
                 activeNode.selectionEnd = activeNode.selectionStart;
             }
         }
@@ -1392,6 +1469,27 @@ Expected behavior</div>
         const key = e.key.toLowerCase();
         if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(key)) || (e.ctrlKey && ['u','p','s'].includes(key))) e.preventDefault();
     });
+
+    // --- LIGHTBOX INTERACTIVE RUNTIME LOGIC ---
+    // Deploys the fullscreen fixed curtain overlay displaying the target screenshot asset image
+    function openFullscreenLightbox(imageSourcePath) {
+        const portal = document.getElementById('globalLightboxPortal');
+        const imgTarget = document.getElementById('lightboxFullscreenImage');
+        if (portal && imgTarget) {
+            imgTarget.src = imageSourcePath;
+            portal.classList.add('active');
+        }
+    }
+
+    // Instantly drops the overlay view container and clears source pointers in one click anywhere
+    function closeFullscreenLightbox() {
+        const portal = document.getElementById('globalLightboxPortal');
+        const imgTarget = document.getElementById('lightboxFullscreenImage');
+        if (portal) {
+            portal.classList.remove('active');
+            if (imgTarget) imgTarget.src = "";
+        }
+    }
 </script>
 <!-- END OF BLOCK 11 -->
 <!-- START OF BLOCK 12: RUNTIME REHYDRATION BOOTLOADER AND HARDWARE DETECTOR -->
