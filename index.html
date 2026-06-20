@@ -1121,6 +1121,7 @@ Expected behavior</div>
 <!-- END OF BLOCK 9 -->
 <!-- START OF BLOCK 10.1: VOLATILE LOCAL TRANSLATION DATA MATRIX - REGIONAL PACK ALPHA -->
 <script>
+    // Universal volatile dictionary holding temporary evaluation text strings for local UI injection
     const lqaLocalTranslationMatrix = {
         "fr-FR": {
             "glossaryHeader": "GLOSSAIRE",
@@ -1132,7 +1133,8 @@ Expected behavior</div>
             "q5": "[KIT]l'orbe était placée un trones[color:66845]étrange [/color].[KIT]",
             "q6": "[KIT]l'orbe était placée un trones[color:66845]étrange [/color].[KIT]",
             "q7": "[KIT]l'orbe était placée un trones[color:66845]étrange [/color].[KIT]",
-            "q10": "Tant va la cruche à l'eau qu'à la fin elle se pourfasse. Pensez-vous que Maître Yoda aurait apprécié un tel language ?"
+            "q10": "Tant va la cruche à l'eau qu'à la fin elle se pourfasse. Pensez-vous que Maître Yoda aurait apprécié un tel language ?",
+            "volumeLabel": "250 mots"
         },
         "de-DE": {
             "glossaryHeader": "GLOSSAR",
@@ -1144,7 +1146,8 @@ Expected behavior</div>
             "q5": "[KIT]Die Kugel wurde auf einen seltsamen [color:65845]Thron[/color] platziert.[KIT]",
             "q6": "[KIT]Die Kugel wurde auf einen seltsamen [color:65845]Thron[/color] platziert.[KIT]",
             "q7": "[KIT]Die Kugel wurde auf einen seltsamen [color:65845]Thron[/color] platziert.[KIT]",
-            "q10": "Was ist dein Lieblingsvideospiel und warum?"
+            "q10": "Was ist dein Lieblingsvideospiel und warum?",
+            "volumeLabel": "250 Wörter"
         },
         "it-IT": {
             "glossaryHeader": "GLOSSARIO",
@@ -1156,7 +1159,8 @@ Expected behavior</div>
             "q5": "[KIT]L'orba è stata piazzata su uno strano [color:65845]trono[/color].[KIT]",
             "q6": "[KIT]L'orba è stata piazzata su uno strano [color:65845]trono[/color].[KIT]",
             "q7": "[KIT]L'orba è stata piazzata su uno strano [color:65845]trono[/color].[KIT]",
-            "q10": "Qual è il tuo videogioco preferito, dicci perché?"
+            "q10": "Qual è il tuo videogioco preferito, dicci perché?",
+            "volumeLabel": "250 parole"
         },
         "es-ES": {
             "glossaryHeader": "GLOSARIO",
@@ -1168,7 +1172,8 @@ Expected behavior</div>
             "q5": "[KIT]El orbe fue colocado en un extraño [color:65845]trono[/color].[KIT]",
             "q6": "[KIT]El orbe fue colocado en un extraño [color:65845]trono[/color].[KIT]",
             "q7": "[KIT]El orbe fue colocado en un extraño [color:65845]trono[/color].[KIT]",
-            "q10": "¿Cuál es tu videojuego favorito, cuéntanos por qué?"
+            "q10": "¿Cuál es tu videojuego favorito, cuéntanos por qué?",
+            "volumeLabel": "250 palabras"
         },
         "es-419": {
             "glossaryHeader": "GLOSARIO",
@@ -1180,7 +1185,8 @@ Expected behavior</div>
             "q5": "[KIT]El orbe fue colocado en un extraño [color:65845]trono[/color].[KIT]",
             "q6": "[KIT]El orbe fue colocado en un extraño [color:65845]trono[/color].[KIT]",
             "q7": "[KIT]El orbe fue colocado en un extraño [color:65845]trono[/color].[KIT]",
-            "q10": "¿Cuál es tu videojuego favorito, cuéntanos por qué?"
+            "q10": "¿Cuál es tu videojuego favorito, cuéntanos por qué?",
+            "volumeLabel": "250 palabras"
         },
         "pt-PT": {
             "glossaryHeader": "GLOSSÁRIO",
@@ -1192,7 +1198,8 @@ Expected behavior</div>
             "q5": "[KIT]O orbe foi colocado num estranho [color:65845]trono[/color].[KIT]",
             "q6": "[KIT]O orbe foi colocado num estranho [color:65845]trono[/color].[KIT]",
             "q7": "[KIT]O orbe foi colocado num estranho [color:65845]trono[/color].[KIT]",
-            "q10": "Qual é o teu jogo de videojogos favorito, diz-nos porquê?"
+            "q10": "Qual é o teu jogo de videojogos favorito, diz-nos porquê?",
+            "volumeLabel": "250 palavras"
         },
         "pt-BR": {
             "glossaryHeader": "GLOSSÁRIO",
@@ -1201,10 +1208,11 @@ Expected behavior</div>
                 ["Knight", "Cavaleiro"], ["Sword", "Espada"], ["Castle", "Castelo"], ["King", "Rei"],
                 ["Queen", "Rainha"], ["Kingdom", "Reino"]
             ],
-            "q5": "[KIT]O orbe foi colocado em um arrogant [color:65845]trono[/color].[KIT]",
-            "q6": "[KIT]O orbe foi colocado em um arrogant [color:65845]trono[/color].[KIT]",
-            "q7": "[KIT]O orbe foi colocado em um arrogant [color:65845]trono[/color].[KIT]",
-            "q10": "Qual é o seu videogame favorito, conte-nos porquê?"
+            "q5": "[KIT]O orbe foi colocado em um estranho [color:65845]trono[/color].[KIT]",
+            "q6": "[KIT]O orbe foi colocado em um estranho [color:65845]trono[/color].[KIT]",
+            "q7": "[KIT]O orbe foi colocado em um estranho [color:65845]trono[/color].[KIT]",
+            "q10": "Qual é o seu videogame favorito, conte-nos porquê?",
+            "volumeLabel": "250 palavras"
         },
         "ru-RU": {
             "glossaryHeader": "ГЛОССАРИЙ",
@@ -1216,10 +1224,12 @@ Expected behavior</div>
             "q5": "[KIT]Сфера была помещена на странный [color:65845]трон[/color].[KIT]",
             "q6": "[KIT]Сфера была помещена на странный [color:65845]трон[/color].[KIT]",
             "q7": "[KIT]Сфера была помещена на странный [color:65845]трон[/color].[KIT]",
-            "q10": "Какая ваша любимая видеоигра, расскажите почему?"
+            "q10": "Какая ваша любимая видеоигра, расскажите почему?",
+            "volumeLabel": "250 слов"
         }
     };
 
+    // Hot-swaps the text components dynamically across the view layers based on selected isolation constraints
     function triggerDynamicLocalContentHydration(langCode) {
         const targetCode = langCode || "fr-FR";
         localStorage.setItem('lqa_candidate_lang', targetCode);
@@ -1227,6 +1237,7 @@ Expected behavior</div>
         const dataPack = lqaLocalTranslationMatrix[targetCode];
         if (!dataPack) return;
 
+        // Synchronize Section B Glossary panel translations
         const targetHeader = document.getElementById('glossaryTargetHeader');
         if (targetHeader && dataPack.glossaryHeader) targetHeader.innerText = dataPack.glossaryHeader;
         
@@ -1240,6 +1251,7 @@ Expected behavior</div>
             });
         }
 
+        // Hot-swap comparative sheet text contents across alpha, beta, and gamma prompts
         const sheet5 = document.getElementById('sheet_q5_right');
         const sheet6 = document.getElementById('sheet_q6_right');
         const sheet7 = document.getElementById('sheet_q7_right');
@@ -1247,12 +1259,20 @@ Expected behavior</div>
         if (sheet6 && dataPack.q6) sheet6.innerText = dataPack.q6;
         if (sheet7 && dataPack.q7) sheet7.innerText = dataPack.q7;
 
+        // Hot-swap prompt context for writing skill question 10 with adaptive secure encapsulation wrappers
         const lbl10 = document.getElementById('lbl_q10');
         if (lbl10 && dataPack.q10) {
-            if (targetCode === "fr-FR") {
-                lbl10.innerHTML = `10. <span class="print-strip">Tant va la cruche à l'eau qu'à la fin elle se pourfasse. Pensez-vous que Maître Yoda aurait apprécié un tel language ?</span> (250 mots)`;
+            // Check for character-density based languages (Chinese, Japanese, Korean, Thai)
+            if (/^(zh|ja|ko|th)/i.test(targetCode)) {
+                lbl10.innerHTML = `10. <span class="print-strip">${dataPack.q10}</span> (Equivalent of 250 English words (dynamically calculated based on character density))`;
             } else {
-                lbl10.innerHTML = `10. <span class="print-strip">${dataPack.q10}</span> (250 mots)`;
+                // Apply pure local translated volume constraints for spaced scripts (French, Spanish, Turkish, etc.)
+                const localizedSuffix = dataPack.volumeLabel || "250 words";
+                if (targetCode === "fr-FR") {
+                    lbl10.innerHTML = `10. <span class="print-strip">Tant va la cruche à l'eau qu'à la fin elle se pourfasse. Pensez-vous que Maître Yoda aurait apprécié un tel language ?</span> (${localizedSuffix})`;
+                } else {
+                    lbl10.innerHTML = `10. <span class="print-strip">${dataPack.q10}</span> (${localizedSuffix})`;
+                }
             }
         }
     }
