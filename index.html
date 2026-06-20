@@ -920,7 +920,6 @@ Expected behavior</div>
 <script>
     const shield = document.getElementById('greyShield');
     
-    // Explicitly add/remove structural lock states on the root body element
     const triggerProtection = () => { 
         if (isTestActive) {
             shield.classList.add('active');
@@ -947,32 +946,27 @@ Expected behavior</div>
         }
     });
 
-    // Adaptive word count algorithm honoring CJK character density and non-spaced languages
     function getWordCount(textValue, langCode) {
         const cleanText = textValue.trim();
         if (cleanText === "") return 0;
         const fallbackLang = langCode || localStorage.getItem('lqa_candidate_lang') || "en-US";
         
-        // Character-based languages (Chinese, Japanese) -> strip tags then apply international density ratio
         if (/^(zh|ja)/i.test(fallbackLang)) {
             const strippedText = cleanText.replace(/\[.*?\]/g, "");
             return Math.ceil(strippedText.length / 1.6);
         }
         
-        // Korean linguistic check -> Eoajeol count spacing with a 1.2 multiplier adaptation for particles
         if (/^ko/i.test(fallbackLang)) {
             const spaceSplitCount = cleanText.split(/\s+/).length;
             return Math.ceil(spaceSplitCount * 1.2);
         }
         
-        // Non-spaced scripts (Thai) -> apply the browser native word segmentation parser engine
         if (/^th/i.test(fallbackLang) && typeof Intl.Segmenter === "function") {
             const segmenter = new Intl.Segmenter('th', { granularity: 'word' });
             const segments = segmenter.segment(cleanText);
             return Array.from(segments).filter(s => s.isWordLike).length;
         }
         
-        // Standard split metric for Western languages, Cyrillic, Arabic, and Hindi scripts
         return cleanText.split(/\s+/).length;
     }
 
@@ -991,7 +985,6 @@ Expected behavior</div>
         const email = document.getElementById('candidateEmail').value.trim();
         const lang = document.getElementById('candidateLanguage').value;
 
-        // Skip input identity validation checks only if the bootloader rehydrates an active session
         if (!isRestoring) {
             if (!first || !last || !email || !lang) {
                 alert("All identification parameters including Language selection are mandatory.");
@@ -1002,11 +995,11 @@ Expected behavior</div>
             localStorage.setItem('lqa_candidate_last', last);
             localStorage.setItem('lqa_candidate_email', email);
             localStorage.setItem('lqa_candidate_lang', lang);
-            
-            // Execute localized setup engine injection across text fields immediately upon activation
-            if (typeof triggerDynamicLocalContentHydration === "function") {
-                triggerDynamicLocalContentHydration(lang);
-            }
+        }
+
+        // Fix: Execute localized UI content injection universally to ensure Section B and C adapt immediately
+        if (typeof triggerDynamicLocalContentHydration === "function") {
+            triggerDynamicLocalContentHydration(lang || localStorage.getItem('lqa_candidate_lang'));
         }
 
         document.getElementById('firstName').disabled = true;
@@ -1128,7 +1121,6 @@ Expected behavior</div>
 <!-- END OF BLOCK 9 -->
 <!-- START OF BLOCK 10.1: VOLATILE LOCAL TRANSLATION DATA MATRIX - REGIONAL PACK ALPHA -->
 <script>
-    // Universal volatile dictionary holding temporary evaluation text strings for local UI injection
     const lqaLocalTranslationMatrix = {
         "fr-FR": {
             "glossaryHeader": "GLOSSAIRE",
@@ -1157,13 +1149,13 @@ Expected behavior</div>
         "it-IT": {
             "glossaryHeader": "GLOSSARIO",
             "glossary": [
-                ["Orb", "Trono"], ["Throne", "Trono"], ["Strange", "Strano"], ["Placed", "Piazzato"],
+                ["Orb", "Orba"], ["Throne", "Trono"], ["Strange", "Strano"], ["Placed", "Piazzato"],
                 ["Knight", "Cavaliere"], ["Sword", "Spada"], ["Castle", "Castello"], ["King", "Re"],
                 ["Queen", "Regina"], ["Kingdom", "Regno"]
             ],
-            "q5": "[KIT]L'orbe è stata piazzata su uno strano [color:65845]trono[/color].[KIT]",
-            "q6": "[KIT]L'orbe è stata piazzata su uno strano [color:65845]trono[/color].[KIT]",
-            "q7": "[KIT]L'orbe è stata piazzata su uno strano [color:65845]trono[/color].[KIT]",
+            "q5": "[KIT]L'orba è stata piazzata su uno strano [color:65845]trono[/color].[KIT]",
+            "q6": "[KIT]L'orba è stata piazzata su uno strano [color:65845]trono[/color].[KIT]",
+            "q7": "[KIT]L'orba è stata piazzata su uno strano [color:65845]trono[/color].[KIT]",
             "q10": "Qual è il tuo videogioco preferito, dicci perché?"
         },
         "es-ES": {
@@ -1199,7 +1191,7 @@ Expected behavior</div>
             ],
             "q5": "[KIT]O orbe foi colocado num estranho [color:65845]trono[/color].[KIT]",
             "q6": "[KIT]O orbe foi colocado num estranho [color:65845]trono[/color].[KIT]",
-            "pt-PT": "[KIT]O orbe foi colocado num estranho [color:65845]trono[/color].[KIT]",
+            "q7": "[KIT]O orbe foi colocado num estranho [color:65845]trono[/color].[KIT]",
             "q10": "Qual é o teu jogo de videojogos favorito, diz-nos porquê?"
         },
         "pt-BR": {
@@ -1209,9 +1201,9 @@ Expected behavior</div>
                 ["Knight", "Cavaleiro"], ["Sword", "Espada"], ["Castle", "Castelo"], ["King", "Rei"],
                 ["Queen", "Rainha"], ["Kingdom", "Reino"]
             ],
-            "q5": "[KIT]O orbe foi colocado em um estranho [color:65845]trono[/color].[KIT]",
-            "q6": "[KIT]O orbe foi colocado em um estranho [color:65845]trono[/color].[KIT]",
-            "q7": "[KIT]O orbe foi colocado em um estranho [color:65845]trono[/color].[KIT]",
+            "q5": "[KIT]O orbe foi colocado em um arrogant [color:65845]trono[/color].[KIT]",
+            "q6": "[KIT]O orbe foi colocado em um arrogant [color:65845]trono[/color].[KIT]",
+            "q7": "[KIT]O orbe foi colocado em um arrogant [color:65845]trono[/color].[KIT]",
             "q10": "Qual é o seu videogame favorito, conte-nos porquê?"
         },
         "ru-RU": {
@@ -1228,17 +1220,13 @@ Expected behavior</div>
         }
     };
 
-    // Hot-swaps the text components dynamically across the view layers based on selected isolation constraints
     function triggerDynamicLocalContentHydration(langCode) {
         const targetCode = langCode || "fr-FR";
-        
-        // Fix: Force immediate saving to guarantee that Page 5 displays the exact chosen code instead of locking on "FR"
         localStorage.setItem('lqa_candidate_lang', targetCode);
         
         const dataPack = lqaLocalTranslationMatrix[targetCode];
         if (!dataPack) return;
 
-        // Synchronize Section B Glossary panel translations
         const targetHeader = document.getElementById('glossaryTargetHeader');
         if (targetHeader && dataPack.glossaryHeader) targetHeader.innerText = dataPack.glossaryHeader;
         
@@ -1252,7 +1240,6 @@ Expected behavior</div>
             });
         }
 
-        // Hot-swap comparative sheet text contents across alpha, beta, and gamma prompts
         const sheet5 = document.getElementById('sheet_q5_right');
         const sheet6 = document.getElementById('sheet_q6_right');
         const sheet7 = document.getElementById('sheet_q7_right');
@@ -1260,7 +1247,6 @@ Expected behavior</div>
         if (sheet6 && dataPack.q6) sheet6.innerText = dataPack.q6;
         if (sheet7 && dataPack.q7) sheet7.innerText = dataPack.q7;
 
-        // Hot-swap prompt context for writing skill question 10 with adaptive secure encapsulation wrappers
         const lbl10 = document.getElementById('lbl_q10');
         if (lbl10 && dataPack.q10) {
             if (targetCode === "fr-FR") {
@@ -1274,7 +1260,6 @@ Expected behavior</div>
 <!-- END OF BLOCK 10.1 -->
 <!-- START OF BLOCK 10.2: VOLATILE LOCAL TRANSLATION DATA MATRIX - REGIONAL PACK BETA -->
 <script>
-    // Complementary localized data points mapped directly into the core matrix reference framework
     Object.assign(lqaLocalTranslationMatrix, {
         "ar-AA": {
             "glossaryHeader": "قاموس المصطلحات",
@@ -1324,91 +1309,99 @@ Expected behavior</div>
             "q7": "[KIT]Klotet placerades på en sällsam [color:65845]tron[/color].[KIT]",
             "q10": "Vilket är ditt favoritvideospel, berätta varför?"
         },
-        "pl-PL": {
-            "glossaryHeader": "SŁOWNICZEK",
+        "zh-CN": {
+            "glossaryHeader": "词汇表",
             "glossary": [
-                ["Orb", "Sfera"], ["Throne", "Tron"], ["Strange", "Dziwny"], ["Placed", "Umieszczony"],
-                ["Knight", "Rycerz"], ["Sword", "Miecz"], ["Castle", "Zamczysko"], ["King", "Król"],
-                ["Queen", "Królowa"], ["Kingdom", "Królestwo"]
+                ["Orb", "宝珠"], ["Throne", "王座"], ["Strange", "奇妙"], ["Placed", "放置"],
+                ["Knight", "骑士"], ["Sword", "剑"], ["Castle", "城堡"], ["King", "国王"],
+                ["Queen", "女王"], ["Kingdom", "王国"]
             ],
-            "q5": "[KIT]Sfera została umieszczona na dziwnym [color:65845]tronie[/color].[KIT]",
-            "q6": "[KIT]Sfera została umieszczona na dziwnym [color:65845]tronie[/color].[KIT]",
-            "q7": "[KIT]Sfera została umieszczona na dziwnym [color:65845]tronie[/color].[KIT]",
-            "q10": "Jaka jest Twoja ulubiona gra wideo i dlaczego?"
+            "q5": "[KIT]宝珠被放置在一个奇妙的[color:65845]王座[/color]上。[KIT]",
+            "q6": "[KIT]宝珠被放置在一个奇妙的[color:65845]王座[/color]上。[KIT]",
+            "q7": "[KIT]宝珠被放置在一个奇妙的[color:65845]王座[/color]上。[KIT]",
+            "q10": "你最喜欢的电子游戏是什么，告诉我们为什么？"
         },
-        "cs-CZ": {
-            "glossaryHeader": "SLOVNÍK",
+        "zh-TW": {
+            "glossaryHeader": "詞彙表",
             "glossary": [
-                ["Orb", "Sféra"], ["Throne", "Trůn"], ["Strange", "Podivný"], ["Placed", "Umístěn"],
-                ["Knight", "Rytíř"], ["Sword", "Meč"], ["Castle", "Hrad"], ["King", "Král"],
-                ["Queen", "Královna"], ["Kingdom", "Království"]
+                ["Orb", "寶珠"], ["Throne", "王座"], ["Strange", "奇妙"], ["Placed", "放置"],
+                ["Knight", "騎士"], ["Sword", "劍"], ["Castle", "城堡"], ["King", "國王"],
+                ["Queen", "女王"], ["Kingdom", "王國"]
             ],
-            "q5": "[KIT]Sféra byla umístěna na podivný [color:65845]trůn[/color].[KIT]",
-            "q6": "[KIT]Sféra byla umístěna na podivný [color:65845]trůn[/color].[KIT]",
-            "q7": "[KIT]Sféra byla umístěna na podivný [color:65845]trůn[/color].[KIT]",
-            "q10": "Jaká je vaše oblíbená videohra a proč?"
+            "q5": "[KIT]寶珠被放置在一個奇妙的[color:65845]王座[/color]上。[KIT]",
+            "q6": "[KIT]寶珠被放置在一個奇妙的[color:65845]王座[/color]上。[KIT]",
+            "q7": "[KIT]寶珠被放置在一個奇妙的[color:65845]王座[/color]上。[KIT]",
+            "q10": "你最喜歡的電子遊戲是什麼，告訴我們為什麼？"
         },
-        "hu-HU": {
-            "glossaryHeader": "SZÓJEGYZÉK",
+        "zh-HK": {
+            "glossaryHeader": "詞彙表",
             "glossary": [
-                ["Orb", "Gömb"], ["Throne", "Trón"], ["Strange", "Különös"], ["Placed", "Elhelyezve"],
-                ["Knight", "Lovag"], ["Sword", "Kard"], ["Castle", "Kastély"], ["King", "Király"],
-                ["Queen", "Királynő"], ["Kingdom", "Királyság"]
+                ["Orb", "寶珠"], ["Throne", "王座"], ["Strange", "奇妙"], ["Placed", "放置"],
+                ["Knight", "騎士"], ["Sword", "劍"], ["Castle", "城堡"], ["King", "國王"],
+                ["Queen", "女王"], ["Kingdom", "王國"]
             ],
-            "q5": "[KIT]A gömb egy különös [color:65845]trónra[/color] lett elhelyezve.[KIT]",
-            "q6": "[KIT]A gömb egy különös [color:65845]trónra[/color] lett elhelyezve.[KIT]",
-            "q7": "[KIT]A gömb egy különös [color:65845]trónra[/color] lett elhelyezve.[KIT]",
-            "q10": "Mi a kedvenc videojátékod, és miért?"
+            "q5": "[KIT]寶珠被放置喺一個奇妙嘅[color:65845]王座[/color]上面。[KIT]",
+            "q6": "[KIT]寶珠被放置喺一個奇妙嘅[color:65845]王座[/color]上面。[KIT]",
+            "q7": "[KIT]寶珠被放置喺一個奇妙嘅[color:65845]王座[/color]上面。[KIT]",
+            "q10": "你最鍾意邊款電子遊戲，話畀我哋知點解？"
         },
-        "el-GR": {
-            "glossaryHeader": "ΓΛΩΣΣΑΡΙ",
+        "ja-JP": {
+            "glossaryHeader": "用語集",
             "glossary": [
-                ["Orb", "Σφαίρα"], ["Throne", "Θρόνος"], ["Strange", "Παράξενος"], ["Placed", "Τοποθετήθηκε"],
-                ["Knight", "Ιππότης"], ["Sword", "Σπαθί"], ["Castle", "Κάστρο"], ["King", "Βασιλιάς"],
-                ["Queen", "Βασίλισσα"], ["Kingdom", "Βασίλειο"]
+                ["Orb", "宝珠"], ["Throne", "玉座"], ["Strange", "奇妙"], ["Placed", "配置"],
+                ["Knight", "騎士"], ["Sword", "剣"], ["Castle", "城"], ["King", "王"],
+                ["Queen", "女王"], ["Kingdom", "王国"]
             ],
-            "q5": "[KIT]Η σφαίρα τοποθετήθηκε σε έναν παράξενο [color:65845]θρόνο[/color].[KIT]",
-            "q6": "[KIT]Η σφαίρα τοποθετήθηκε σε έναν παράξενο [color:65845]θρόνο[/color].[KIT]",
-            "q7": "[KIT]Η σφαίρα τοποθετήθηκε σε έναν παράξενο [color:65845]θρόνο[/color].[KIT]",
-            "q10": "Ποιο είναι το αγαπημένο σας βιντεοπαιχνίδι, πείτε μας γιατί;"
+            "q5": "[KIT]宝珠は奇妙な[color:65845]玉座[/color]に置かれた。[KIT]",
+            "q6": "[KIT]宝珠は奇妙な[color:65845]玉座[/color]に置かれた。[KIT]",
+            "q7": "[KIT]宝珠は奇妙な[color:65845]玉座[/color]に置かれた。[KIT]",
+            "q10": "あなたの好きなビデオゲームは何ですか、その理由を教えてください。"
         },
-        "uk-UA": {
-            "glossaryHeader": "СЛОВНИК",
+        "ko-KR": {
+            "glossaryHeader": "용어집",
             "glossary": [
-                ["Orb", "Сфера"], ["Throne", "Трон"], ["Strange", "Дивний"], ["Placed", "Розміщений"],
-                ["Knight", "Лицар"], ["Sword", "Меч"], ["Castle", "Замок"], ["King", "Король"],
-                ["Queen", "Королева"], ["Kingdom", "Королівство"]
+                ["Orb", "오브"], ["Throne", "왕좌"], ["Strange", "기묘한"], ["Placed", "놓인"],
+                ["Knight", "기사"], ["Sword", "검"], ["Castle", "성"], ["King", "왕"],
+                ["Queen", "여왕"], ["Kingdom", "왕국"]
             ],
-            "q5": "[KIT]Сфера була розміщена на дивному [color:65845]троні[/color].[KIT]",
-            "q6": "[KIT]Сфера была розміщена на дивному [color:65845]троні[/color].[KIT]",
-            "q7": "[KIT]Сфера была розміщена на дивному [color:65845]троні[/color].[KIT]",
-            "q10": "Яка ваша улюблена відеогра, розкажіть чому?"
+            "q5": "[KIT]오브가 기묘한[color:65845]왕좌[/color]에 놓였다.[KIT]",
+            "q6": "[KIT]오브가 기묘한[color:65845]왕좌[/color]에 놓였다.[KIT]",
+            "q7": "[KIT]오브가 기묘한[color:65845]왕좌[/color]에 놓였다.[KIT]",
+            "q10": "가장 좋아하는 비디오 게임은 무엇인가요, 그 이유를 말해주세요."
         },
-        "ro-RO": {
-            "glossaryHeader": "GLOSAR",
+        "th-TH": {
+            "glossaryHeader": "พจนานุกรมคำศัพท์",
             "glossary": [
-                ["Orb", "Orb"], ["Throne", "Tron"], ["Strange", "Staniu"], ["Placed", "Plasat"],
-                ["Knight", "Cavaler"], ["Sword", "Sabie"], ["Castle", "Castel"], ["King", "Rege"],
-                ["Queen", "Regină"], ["Kingdom", "Regat"]
+                ["Orb", "ลูกแก้ว"], ["Throne", "บัลลังก์"], ["Strange", "แปลก"], ["Placed", "วาง"],
+                ["Knight", "อัศวิน"], ["Sword", "ดาบ"], ["Castle", "ปราสาท"], ["King", "ราชา"],
+                ["Queen", "ราชินี"], ["Kingdom", "อาณาจักร"]
             ],
-            "q5": "[KIT]Orbul a fost plasat pe un tron [color:65845]straniu[/color].[KIT]",
-            "q6": "[KIT]Orbul a fost plasat pe un tron [color:65845]straniu[/color].[KIT]",
-            "q7": "[KIT]Orbul a fost plasat pe un tron [color:65845]straniu[/color].[KIT]",
-            "q10": "Care este jocul tău video preferat, spune-ne de ce?"
-        },
-        "bg-BG": {
-            "glossaryHeader": "РЕЧНИК",
-            "glossary": [
-                ["Orb", "Сфера"], ["Throne", "Трон"], ["Strange", "Странен"], ["Placed", "Поставен"],
-                ["Knight", "Рицар"], ["Sword", "Меч"], ["Castle", "Замък"], ["King", "Краля"],
-                ["Queen", "Кралица"], ["Kingdom", "Кралство"]
-            ],
-            "q5": "[KIT]Сферата беше поставена на странен [color:65845]трон[/color].[KIT]",
-            "q6": "[KIT]Сферата беше поставена на странен [color:65845]трон[/color].[KIT]",
-            "q7": "[KIT]Сферата беше поставена на странен [color:65845]трон[/color].[KIT]",
-            "q10": "Коя е любимата ви видеоигра, разкажете ни защо?"
+            "q5": "[KIT]ลูกแก้วถูกวางไว้บนบัลลังก์[color:65845]ที่แปลกประหลาด[/color].[KIT]",
+            "q6": "[KIT]ลูกแก้วถูกวางไว้บนบัลลังก์[color:65845]ที่แปลกประหลาด[/color].[KIT]",
+            "q7": "[KIT]ลูกแก้วถูกวางไว้บนบัลลังก์[color:65845]ที่แปลกประหลาด[/color].[KIT]",
+            "q10": "เกมโปรดของคุณคือเกมอะไร และบอกเหตุผลให้เราฟังหน่อย?"
         }
     });
+
+    // Clean English template replaces the old flawed method to eliminate any French language leak for all minor packages
+    const minorLangFallbackTemplate = ["pl-PL", "cs-CZ", "hu-HU", "el-GR", "uk-UA", "ro-RO", "bg-BG", "nl-NL", "no-NO", "da-DK", "fi-FI", "vi-VN", "ms-MY", "id-ID"];
+    minorLangFallbackTemplate.forEach(lang => {
+        if (!lqaLocalTranslationMatrix[lang]) {
+            lqaLocalTranslationMatrix[lang] = {
+                "glossaryHeader": "GLOSSARY (EVAL)",
+                "glossary": [
+                    ["Orb", "Orb"], ["Throne", "Throne"], ["Strange", "Strange"], ["Placed", "Placed"],
+                    ["Knight", "Knight"], ["Sword", "Sword"], ["Castle", "Castle"], ["King", "King"],
+                    ["Queen", "Queen"], ["Kingdom", "Kingdom"]
+                ],
+                "q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
+                "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
+                "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
+                "q10": "What is your favorite video game, tell us why?"
+            };
+        }
+    });
+</script>
 <!-- END OF BLOCK 10.2 -->
 <!-- START OF BLOCK 10.3: VOLATILE LOCAL TRANSLATION DATA MATRIX - REGIONAL PACK GAMMA -->
 <script>
