@@ -67,7 +67,8 @@
             position: relative; transition: filter 0.05s linear, background-color 0.3s ease; 
         }
         
-        body:has(.screen-shield.active) .container {
+        /* Optimized structural class selector on body context preventing expensive browser style reflow lags */
+        body.shield-activated .container {
             filter: blur(50px) grayscale(100%) brightness(0.2);
             pointer-events: none; user-select: none;
         }
@@ -123,7 +124,7 @@
         .main-content { flex: 1; position: relative; overflow: hidden; }
     </style>
 <!-- END OF BLOCK 2.1 -->
-<!-- START OF BLOCK 2.2: INPUT FIELDS, TABLES AND SHEET OBJECTS CSS -->
+<!-- START OF BLOCK 2.2: INPUT FIELDS, TABLES, SHEET OBJECTS AND LIGHTBOX IMAGE CSS -->
     <style>
         .textarea-container { position: relative; width: 100%; display: flex; flex-direction: column; }
         .word-counter-badge {
@@ -155,13 +156,151 @@
         input:focus, textarea:focus, select:focus { border-color: #2563eb; outline: none; background-color: var(--container-bg); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15); }
         input:read-only, select:disabled { background-color: var(--border-color); color: #64748b; cursor: not-allowed; }
         
-        .q-image { max-width: 100%; height: auto; display: block; margin: 15px 0; border: 1px solid var(--border-color); border-radius: 8px; }
         .comparison-sheet { display: flex; width: 75%; margin: 15px auto; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; background: var(--panel-bg); }
         .comparison-case { flex: 1; padding: 15px; font-size: 14px; line-height: 1.5; word-break: break-word; white-space: pre-wrap; color: var(--title-color); }
         .case-left { border-right: 1px solid var(--border-color); background-color: var(--container-bg); }
+
+        /* --- LIGHTBOX MINIATURE ARCHITECTURE --- */
+        .image-interactive-wrapper {
+            display: inline-block;
+            margin: 15px 0;
+            cursor: zoom-in;
+        }
+        
+        /* Enforces Option A 16:9 Aspect Ratio dimensions layout safely */
+        .q-image-thumb {
+            width: 320px;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+        
+        .image-interactive-wrapper:hover .q-image-thumb {
+            transform: scale(1.02);
+            border-color: #2563eb;
+        }
+
+        .click-enlarge-indicator {
+            display: block;
+            margin-top: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: color 0.2s ease;
+        }
+
+        .image-interactive-wrapper:hover .click-enlarge-indicator {
+            color: #2563eb;
+        }
+
+        /* Fullscreen hardware-accelerated overlay curtain shielding the test page views */
+        .lightbox-overlay-curtain {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(9, 13, 22, 0.9);
+            z-index: 999999;
+            justify-content: center;
+            align-items: center;
+            cursor: zoom-out;
+        }
+        
+        .lightbox-overlay-curtain.active {
+            display: flex;
+        }
+
+        .lightbox-full-image {
+            max-width: 92%;
+            max-height: 92%;
+            object-fit: contain;
+            border-radius: 4px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            user-select: none;
+            -webkit-user-drag: none;
+        }
     </style>
 <!-- END OF BLOCK 2.2 -->
-<!-- START OF BLOCK 2.3: BUTTONS, MODALS, FEEDBACK OVERLAYS AND PRINT STYLES CSS -->
+<!-- START OF BLOCK 2.3: ELEGANT MULTILINGUAL SELECTOR GRID CSS -->
+    <style>
+        .language-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+            margin-bottom: 35px;
+        }
+
+        .language-card {
+            background: var(--panel-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            user-select: none;
+            transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
+        }
+
+        .language-card:hover {
+            border-color: #3b82f6;
+            background: var(--container-bg);
+            transform: translateY(-2px);
+        }
+
+        .language-card.active {
+            border-color: #2563eb;
+            background: var(--container-bg);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+        }
+
+        .language-flag {
+            font-size: 24px;
+            line-height: 1;
+            display: inline-block;
+            min-width: 32px;
+            text-align: center;
+        }
+
+        .language-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            overflow: hidden;
+        }
+
+        .language-name {
+            font-size: 14.5px;
+            font-weight: 700;
+            color: var(--title-color);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .language-region {
+            font-size: 12px;
+            font-weight: 500;
+            color: #64748b;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Enforce system typography safety if standard flag emojis encounter environment rendering limitations */
+        @media screen and (-webkit-min-device-pixel-ratio:0) {
+            .language-flag { font-family: 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif; }
+        }
+    </style>
+<!-- END OF BLOCK 2.3 -->
+<!-- START OF BLOCK 2.4: BUTTONS, MODALS, FEEDBACK OVERLAYS AND PRINT STYLES CSS -->
     <style>
         .nav-buttons { display: flex; justify-content: space-between; margin-top: 35px; border-top: 1px solid var(--border-color); padding-top: 20px; }
         button { padding: 14px 30px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.2s ease; }
@@ -184,6 +323,7 @@
         .modal-warning-highlight { color: #dc2626 !important; font-weight: 700; }
         .btn-yes { background-color: #22c55e !important; color: #000000 !important; }
         .btn-no { background-color: #ef4444 !important; color: #000000 !important; }
+        
         .screen-shield { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(100, 116, 139, 0.2); z-index: 9999; color: #ffffff; font-size: 24px; font-weight: bold; text-align: center; justify-content: center; align-items: center; flex-direction: column; }
         
         .summary-header { background: var(--panel-bg); border: 1px solid var(--border-color); padding: 30px; border-radius: 10px; margin-bottom: 40px; }
@@ -196,7 +336,6 @@
         .summary-q { font-weight: 700; color: var(--title-color); margin-bottom: 12px; font-size: 16px; line-height: 1.5; }
         .summary-a { background: var(--container-bg); padding: 20px 24px; border-radius: 8px; border: 1px solid var(--border-color); border-left: 5px solid #2563eb; color: var(--title-color); white-space: pre-wrap; font-size: 15px; line-height: 1.6; }
         
-        /* Anonymous feedback workspace layouts */
         .feedback-container { margin-top: 40px; padding: 30px; background: var(--panel-bg); border: 2px dashed var(--border-color); border-radius: 10px; text-align: left; }
         .feedback-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
         .feedback-label { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--text-color); cursor: pointer; }
@@ -207,7 +346,9 @@
         @media print {
             body { background: #ffffff !important; color: #000000 !important; padding: 0 !important; }
             .container { box-shadow: none !important; padding: 0 !important; background: #ffffff !important; }
-            .summary-q span { display: none !important; } /* Strips down question content on print layout */
+            
+            /* Enhanced global erasure mapping blocks text prompts on both live forms and summaries */
+            .print-strip, .summary-q span { display: none !important; }
             button, .theme-toggle-btn, .temporary-todo-float, .feedback-container, .feedback-success-msg, #qaResetBtn { display: none !important; }
         }
     </style>
@@ -226,8 +367,8 @@
     </div>
 
     <div id="mainApplicationWrapper">
-<!-- END OF BLOCK 2.3 -->
-<!-- START OF BLOCK 3: CORE PROTECTION WRAPPERS AND REGISTRATION INTERFACE -->
+<!-- END OF BLOCK 2.4 -->
+<!-- START OF BLOCK 3.1: CORE PROTECTION WRAPPERS AND REGISTRATION STRUCTURAL INITIALIZATION -->
 <div style="position: fixed; bottom: 20px; left: 20px; z-index: 99999; display: flex; flex-direction: column; gap: 10px;">
     <button type="button" id="qaResetBtn" onclick="resetQASession()" style="background-color: #dc2626; color: white; padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: background 0.2s;" onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'">
         🛠️ Reset QA Session
@@ -251,7 +392,7 @@
             <li>Access with unique link/invite</li>
             <li>Configure Webhooks for Teams</li>
             <li>Full l18 implementation</li>
-			<li>Repair QA Button</li>
+            <li>Repair QA Button</li>
         </ul>
     </div>
 
@@ -282,26 +423,162 @@
                 <label for="candidateEmail">E-mail Address<span class="required-star">*</span></label>
                 <input type="email" id="candidateEmail" required placeholder="e.g., john.doe@example.com">
             </div>
-            <div class="form-group">
-                <label for="candidateLanguage">Assessment Native Language<span class="required-star">*</span></label>
-                <select id="candidateLanguage" required>
-                    <option value="" disabled selected>-- Select your native assessment language --</option>
-                    <option value="English">English</option>
-                    <option value="Français">Français</option>
-                    <option value="Español">Español</option>
-                    <option value="Deutsch">Deutsch</option>
-                    <option value="Italiano">Italiano</option>
-                    <option value="日本語">日本語</option>
-                    <option value="العربية">العربية</option>
-                </select>
+            
+            <div class="form-group" style="position: relative;">
+                <label>Assessment Target Language<span class="required-star">*</span></label>
+                <!-- HTML5 compliance correction: style wrapper ensures target accessibility during validation checks -->
+                <input type="text" id="candidateLanguage" value="" required style="position: absolute; bottom: 0; left: 50%; width: 1px; height: 1px; padding: 0; margin: 0; opacity: 0; pointer-events: none;">
+                
+                <div class="language-grid" id="langGridContainer">
+                    <!-- Western & Northern Europe -->
+                    <div class="language-card" data-lang="fr-FR" onclick="selectGridLanguage(this)">
+                        <span class="language-flag">🇫🇷</span>
+                        <div class="language-info"><span class="language-name">Français</span><span class="language-region">French (FR)</span></div>
+                    </div>
+                    <div class="language-card" data-lang="de-DE" onclick="selectGridLanguage(this)">
+                        <span class="language-flag">🇩🇪</span>
+                        <div class="language-info"><span class="language-name">Deutsch</span><span class="language-region">German (DE)</span></div>
+                    </div>
+                    <div class="language-card" data-lang="it-IT" onclick="selectGridLanguage(this)">
+                        <span class="language-flag">🇮🇹</span>
+                        <div class="language-info"><span class="language-name">Italiano</span><span class="language-region">Italian (IT)</span></div>
+                    </div>
+                    <div class="language-card" data-lang="nl-NL" onclick="selectGridLanguage(this)">
+                        <span class="language-flag">🇳🇱</span>
+                        <div class="language-info"><span class="language-name">Nederlands</span><span class="language-region">Dutch (NL)</span></div>
+                    </div>
+                    <div class="language-card" data-lang="sv-SE" onclick="selectGridLanguage(this)">
+                        <span class="language-flag">🇸🇪</span>
+                        <div class="language-info"><span class="language-name">Svenska</span><span class="language-region">Swedish (SE)</span></div>
+                    </div>
+                    <div class="language-card" data-lang="no-NO" onclick="selectGridLanguage(this)">
+                        <span class="language-flag">🇳🇴</span>
+                        <div class="language-info"><span class="language-name">Norsk</span><span class="language-region">Norwegian (NO)</span></div>
+                    </div>
+                    <div class="language-card" data-lang="da-DK" onclick="selectGridLanguage(this)">
+                        <span class="language-flag">🇩🇰</span>
+                        <div class="language-info"><span class="language-name">Dansk</span><span class="language-region">Danish (DK)</span></div>
+                    </div>
+                    <div class="language-card" data-lang="fi-FI" onclick="selectGridLanguage(this)">
+                        <span class="language-flag">🇫🇮</span>
+                        <div class="language-info"><span class="language-name">Suomi</span><span class="language-region">Finnish (FI)</span></div>
+                    </div>
+
+                    <!-- Ibero-Romance Variants -->
+                    <div class="language-card" data-lang="es-ES" onclick="selectGridLanguage(this)">
+                        <span class="language-flag">🇪🇸</span>
+                        <div class="language-info"><span class="language-name">Español</span><span class="language-region">Spain (ES)</span></div>
+                    </div>
+                    <div class="language-card" data-lang="es-419" onclick="selectGridLanguage(this)">
+                        <span class="language-flag">🌎</span>
+                        <div class="language-info"><span class="language-name">Español</span><span class="language-region">Latin America (419)</span></div>
+                    </div>
+                    <div class="language-card" data-lang="pt-PT" onclick="selectGridLanguage(this)">
+                        <span class="language-flag">🇵🇹</span>
+                        <div class="language-info"><span class="language-name">Português</span><span class="language-region">Portugal (PT)</span></div>
+                    </div>
+                    <div class="language-card" data-lang="pt-BR" onclick="selectGridLanguage(this)">
+                        <span class="language-flag">🇧🇷</span>
+                        <div class="language-info"><span class="language-name">Português</span><span class="language-region">Brasil (BR)</span></div>
+                    </div>
+<!-- END OF BLOCK 3.1 -->
+<!-- START OF BLOCK 3.2: REGISTRATION TARGET LANGUAGE GRID COMPLETION -->
+                    <!-- Eastern Europe, Balkans & Eurasia -->
+                    <div class="language-card" data-lang="ru-RU" onclick="selectGridLanguage(this)">
+                        <span class="language-flag">🇷🇺</span>
+                        <div class="language-info"><span class="language-name">Русский</span><span class="language-region">Russian (RU)</span></div>
+                    </div>
+                    <div class="language-card" data-lang="pl-PL" onclick="selectGridLanguage(this)">
+                        <span class="language-flag">🇵🇱</span>
+                        <div class="language-info"><span class="language-name">Polski</span><span class="language-region">Polish (PL)</span></div>
+                    </div>
+                    <div class="language-card" data-lang="cs-CZ" onclick="selectGridLanguage(this)">
+                        <span class="language-flag">🇨🇿</span>
+                        <div class="language-info"><span class="language-name">Čeština</span><span class="language-region">Czech (CZ)</span></div>
+                    </div>
+                    <div class="language-card" data-lang="hu-HU" onclick="selectGridLanguage(this)">
+                        <span class="language-flag">🇭🇺</span>
+                        <div class="language-info"><span class="language-name">Magyar</span><span class="language-region">Hungarian (HU)</span></div>
+                    </div>
+                    <div class="language-card" data-lang="el-GR" onclick="selectGridLanguage(this)">
+                        <span class="language-flag">🇬🇷</span>
+                        <div class="language-info"><span class="language-name">Ελληνικά</span><span class="language-region">Greek (GR)</span></div>
+                    </div>
+                    <div class="language-card" data-lang="tr-TR" onclick="selectGridLanguage(this)">
+                        <span class="language-flag">🇹🇷</span>
+                        <div class="language-info"><span class="language-name">Türkçe</span><span class="language-region">Turkish (TR)</span></div>
+                    </div>
+                    <div class="language-card" data-lang="uk-UA" onclick="selectGridLanguage(this)">
+                        <span class="language-flag">🇺🇦</span>
+                        <div class="language-info"><span class="language-name">Українська</span><span class="language-region">Ukrainian (UA)</span></div>
+                    </div>
+                    <div class="language-card" data-lang="ro-RO" onclick="selectGridLanguage(this)">
+                        <span class="language-flag">🇷🇴</span>
+                        <div class="language-info"><span class="language-name">Română</span><span class="language-region">Romanian (RO)</span></div>
+                    </div>
+                    <div class="language-card" data-lang="bg-BG" onclick="selectGridLanguage(this)">
+                        <span class="language-flag">🇧🇬</span>
+                        <div class="language-info"><span class="language-name">Български</span><span class="language-region">Bulgarian (BG)</span></div>
+                    </div>
+
+                    <!-- Middle East & South Asia -->
+                    <div class="language-card" data-lang="ar-AA" onclick="selectGridLanguage(this)">
+                        <span class="language-flag">🇦🇪</span>
+                        <div class="language-info"><span class="language-name">العربية</span><span class="language-region">Arabic (RTL)</span></div>
+                    </div>
+                    <div class="language-card" data-lang="hi-IN" onclick="selectGridLanguage(this)">
+                        <span class="language-flag">🇮🇳</span>
+                        <div class="language-info"><span class="language-name">हिन्दी</span><span class="language-region">Hindi (IN)</span></div>
+                    </div>
+
+                    <!-- East Asia (CJKV & Dialects) -->
+                    <div class="language-card" data-lang="zh-CN" onclick="selectGridLanguage(this)">
+                        <span class="language-flag">🇨🇳</span>
+                        <div class="language-info"><span class="language-name">简体中文</span><span class="language-region">Simplified Chinese</span></div>
+                    </div>
+                    <div class="language-card" data-lang="zh-TW" onclick="selectGridLanguage(this)">
+                        <span class="language-flag">🇹🇼</span>
+                        <div class="language-info"><span class="language-name">繁體中文</span><span class="language-region">Taiwan (TW)</span></div>
+                    </div>
+                    <div class="language-card" data-lang="zh-HK" onclick="selectGridLanguage(this)">
+                        <span class="language-flag">🇭🇰</span>
+                        <div class="language-info"><span class="language-name">繁體中文</span><span class="language-region">Hong Kong (HK)</span></div>
+                    </div>
+                    <div class="language-card" data-lang="ja-JP" onclick="selectGridLanguage(this)">
+                        <span class="language-flag">🇯🇵</span>
+                        <div class="language-info"><span class="language-name">日本語</span><span class="language-region">Japanese (JP)</span></div>
+                    </div>
+                    <div class="language-card" data-lang="ko-KR" onclick="selectGridLanguage(this)">
+                        <span class="language-flag">🇰🇷</span>
+                        <div class="language-info"><span class="language-name">한국어</span><span class="language-region">Korean (KR)</span></div>
+                    </div>
+                    <div class="language-card" data-lang="vi-VN" onclick="selectGridLanguage(this)">
+                        <span class="language-flag">🇻🇳</span>
+                        <div class="language-info"><span class="language-name">Tiếng Việt</span><span class="language-region">Vietnamese (VN)</span></div>
+                    </div>
+
+                    <!-- Southeast Asia -->
+                    <div class="language-card" data-lang="th-TH" onclick="selectGridLanguage(this)">
+                        <span class="language-flag">🇹🇭</span>
+                        <div class="language-info"><span class="language-name">ไทย</span><span class="language-region">Thai (TH)</span></div>
+                    </div>
+                    <div class="language-card" data-lang="ms-MY" onclick="selectGridLanguage(this)">
+                        <span class="language-flag">🇲🇾</span>
+                        <div class="language-info"><span class="language-name">Bahasa Melayu</span><span class="language-region">Malay (MY)</span></div>
+                    </div>
+                    <div class="language-card" data-lang="id-ID" onclick="selectGridLanguage(this)">
+                        <span class="language-flag">🇮🇩</span>
+                        <div class="language-info"><span class="language-name">Bahasa Indonesia</span><span class="language-region">Indonesian (ID)</span></div>
+                    </div>
+                </div>
             </div>
             
             <div class="nav-buttons">
                 <div></div>
-                <button type="button" class="btn-start" id="unlockBtn" onclick="startTestTimer()">Start Test & Proceed</button>
+                <button type="button" class="btn-start" id="unlockBtn" onclick="startTestTimer(false)">Start Test & Proceed</button>
             </div>
         </div>
-<!-- END OF BLOCK 3 -->
+<!-- END OF BLOCK 3.2 -->
 <!-- START OF BLOCK 4: ASSESSMENT PAGE 2 (SECTION A LQA QUESTIONS) -->
         <!-- ==================== PAGE 2: SECTION A ==================== -->
         <div class="page-view" id="page2">
@@ -310,7 +587,12 @@
                     <div class="side-title">BUG TYPES:</div>
                     <div class="side-text">Overlap... Wrong Language...</div>
                     <div class="side-title">How to report a Bug:</div>
-                    <div class="side-text">Summary&#10;Step to repro&#10;1.&#10;2.&#10;Observed behavior&#10;Expected behavior</div>
+                    <div class="side-text">Summary
+Step to repro
+1.
+2.
+Observed behavior
+Expected behavior</div>
                 </div>
 
                 <div class="main-content">
@@ -319,22 +601,37 @@
                     
                     <div class="form-group">
                         <label id="lbl_q1">1. Context: The game is Cat-Fu, the devs are from Japan and you are testing in English. Find the issue.</label>
-                        <img src="screenshots/Cat_fu.jpeg" alt="Bug Cat-Fu" class="q-image">
+                        <div class="image-interactive-wrapper" onclick="openFullscreenLightbox('screenshots/Cat_fu.jpeg')">
+                            <img src="screenshots/Cat_fu.jpeg" alt="Bug Cat-Fu" class="q-image-thumb">
+                            <span class="click-enlarge-indicator">🔍 Click to enlarge</span>
+                        </div>
                         <textarea id="q1" rows="3" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
                     </div>
+
                     <div class="form-group">
                         <label id="lbl_q2">2. Context: The game is LQA Tycoon, the devs are from the United States of America and you are testing in Latin.</label>
-                        <img src="screenshots/LQA_T.jpeg" alt="Bug LQA Tycoon" class="q-image">
+                        <div class="image-interactive-wrapper" onclick="openFullscreenLightbox('screenshots/LQA_T.jpeg')">
+                            <img src="screenshots/LQA_T.jpeg" alt="Bug LQA Tycoon" class="q-image-thumb">
+                            <span class="click-enlarge-indicator">🔍 Click to enlarge</span>
+                        </div>
                         <textarea id="q2" rows="3" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
                     </div>
+
                     <div class="form-group">
                         <label id="lbl_q3">3. Diagnostic Node 3.</label>
-                        <img src="screenshots/screenshot3.jpg" alt="Chart" class="q-image">
+                        <div class="image-interactive-wrapper" onclick="openFullscreenLightbox('screenshots/screenshot3.jpg')">
+                            <img src="screenshots/screenshot3.jpg" alt="Chart" class="q-image-thumb">
+                            <span class="click-enlarge-indicator">🔍 Click to enlarge</span>
+                        </div>
                         <textarea id="q3" rows="3" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
                     </div>
+
                     <div class="form-group">
                         <label id="lbl_q4">4. Diagnostic Node 4.</label>
-                        <img src="screenshots/screenshot4.jpg" alt="Chart" class="q-image">
+                        <div class="image-interactive-wrapper" onclick="openFullscreenLightbox('screenshots/screenshot4.jpg')">
+                            <img src="screenshots/screenshot4.jpg" alt="Chart" class="q-image-thumb">
+                            <span class="click-enlarge-indicator">🔍 Click to enlarge</span>
+                        </div>
                         <textarea id="q4" rows="3" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
                     </div>
 
@@ -345,21 +642,36 @@
                 </div>
             </div>
         </div>
+
+        <!-- Standalone isolated Lightbox markup portal appended natively onto the lower body boundary -->
+        <div class="lightbox-overlay-curtain" id="globalLightboxPortal" onclick="closeFullscreenLightbox()">
+            <img src="" id="lightboxFullscreenImage" class="lightbox-full-image" alt="Fullscreen Asset View">
+        </div>
 <!-- END OF BLOCK 4 -->
 <!-- START OF BLOCK 5: ASSESSMENT PAGE 3 (SECTION B TRANSLATION MATRIX) -->
         <!-- ==================== PAGE 3: SECTION B ==================== -->
         <div class="page-view" id="page3">
             <div class="split-layout">
                 <div class="side-window">
-                    <div class="side-title">GLOSSARY</div>
+                    <div class="side-title" id="glossaryTitle">GLOSSARY</div>
                     <table class="glossary-table">
-                        <thead><tr><th>EN</th><th>FR</th></tr></thead>
-                        <tbody>
-                            <tr><td>Orb</td><td>Orbe</td></tr><tr><td>Throne</td><td>Trône</td></tr>
-                            <tr><td>Strange</td><td>Étrange</td></tr><tr><td>Placed</td><td>Placé</td></tr>
-                            <tr><td>Knight</td><td>Chevalier</td></tr><tr><td>Sword</td><td>Épée</td></tr>
-                            <tr><td>Castle</td><td>Château</td></tr><tr><td>King</td><td>Roi</td></tr>
-                            <tr><td>Queen</td><td>Reine</td></tr><tr><td>Kingdom</td><td>Royaume</td></tr>
+                        <thead>
+                            <tr>
+                                <th>EN</th>
+                                <th id="glossaryTargetHeader">FR</th>
+                            </tr>
+                        </thead>
+                        <tbody id="glossaryBodyContainer">
+                            <tr><td>Orb</td><td>Orbe</td></tr>
+                            <tr><td>Throne</td><td>Trône</td></tr>
+                            <tr><td>Strange</td><td>Étrange</td></tr>
+                            <tr><td>Placed</td><td>Placé</td></tr>
+                            <tr><td>Knight</td><td>Chevalier</td></tr>
+                            <tr><td>Sword</td><td>Épée</td></tr>
+                            <tr><td>Castle</td><td>Château</td></tr>
+                            <tr><td>King</td><td>Roi</td></tr>
+                            <tr><td>Queen</td><td>Reine</td></tr>
+                            <tr><td>Kingdom</td><td>Royaume</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -372,7 +684,8 @@
                         <label id="lbl_q5">5. Proofread Segment Alpha.</label>
                         <div class="comparison-sheet">
                             <div class="comparison-case case-left">[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]</div>
-                            <div class="comparison-case">[KIT]l'orbe était placée un trones[color:66845]étrange [/color].[KIT]</div>
+                            <!-- Dynamic target placeholder node for localized Alpha text string -->
+                            <div class="comparison-case" id="sheet_q5_right">[KIT]l'orbe était placée un trones[color:66845]étrange [/color].[KIT]</div>
                         </div>
                         <textarea id="q5" rows="4" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
                     </div>
@@ -381,7 +694,8 @@
                         <label id="lbl_q6">6. Proofread Segment Beta.</label>
                         <div class="comparison-sheet">
                             <div class="comparison-case case-left">[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]</div>
-                            <div class="comparison-case">[KIT]l'orbe était placée un trones[color:66845]étrange [/color].[KIT]</div>
+                            <!-- Dynamic target placeholder node for localized Beta text string -->
+                            <div class="comparison-case" id="sheet_q6_right">[KIT]l'orbe était placée un trones[color:66845]étrange [/color].[KIT]</div>
                         </div>
                         <textarea id="q6" rows="4" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
                     </div>
@@ -390,7 +704,8 @@
                         <label id="lbl_q7">7. Proofread Segment Gamma.</label>
                         <div class="comparison-sheet">
                             <div class="comparison-case case-left">[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]</div>
-                            <div class="comparison-case">[KIT]l'orbe était placée un trones[color:66845]étrange [/color].[KIT]</div>
+                            <!-- Dynamic target placeholder node for localized Gamma text string -->
+                            <div class="comparison-case" id="sheet_q7_right">[KIT]l'orbe était placée un trones[color:66845]étrange [/color].[KIT]</div>
                         </div>
                         <textarea id="q7" rows="4" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
                     </div>
@@ -426,7 +741,8 @@
             <div class="form-group">
                 <label id="lbl_q10">10. Tant va la cruche à l'eau qu'à la fin elle se pourfasse. Pensez-vous que Maître Yoda aurait apprécié un tel language ? (250 mots)</label>
                 <div class="textarea-container">
-                    <textarea id="q10" rows="4" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
+                    <!-- Dynamic alignment dir property safely accommodates script directions like RTL Arabic without layout corruption -->
+                    <textarea id="q10" rows="4" dir="auto" style="line-height: 1.7;" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
                     <div class="word-counter-badge" id="counter_q10">Word count: 0</div>
                 </div>
             </div>
@@ -485,7 +801,7 @@
     </div>
 </div>
 <!-- END OF BLOCK 6 -->
-<!-- START OF BLOCK 7: GRAPHICAL ENGINE, INTER-TAB BROADCAST AND CONDITIONAL MODAL AUDITOR -->
+<!-- START OF BLOCK 7: GRAPHICAL ENGINE, NAVIGATION FILTERS AND CONDITIONAL MODAL AUDITOR -->
 <script>
     let testEndTime; 
     let timerRunningEngine;
@@ -495,6 +811,24 @@
 
     let lqaBroadcastChannel = new BroadcastChannel('lqa_session_channel');
     let sessionKeepAliveInterval;
+
+    // Handles the selection mechanics and active state styling for the language cards grid
+    function selectGridLanguage(cardElement) {
+        if (!cardElement) return;
+        
+        // Remove the active class state from all sibling language cards
+        document.querySelectorAll('.language-card').forEach(card => card.classList.remove('active'));
+        
+        // Apply active class style to the clicked card element
+        cardElement.classList.add('active');
+        
+        // Synchronize the hidden native element parameter
+        const chosenLangCode = cardElement.getAttribute('data-lang');
+        const hiddenInput = document.getElementById('candidateLanguage');
+        if (hiddenInput) {
+            hiddenInput.value = chosenLangCode;
+        }
+    }
 
     function toggleDarkMode() {
         const body = document.body;
@@ -569,13 +903,34 @@
         document.getElementById('securityHardlockReason').innerText = reasonText;
         document.getElementById('securityHardlockScreen').style.display = 'flex';
     }
+
+    // Wipes out all local active assessment data stores and reloads the current window cleanly
+    function resetQASession() {
+        if (confirm("Are you sure you want to reset the QA Session? This will erase all state data.")) {
+            clearInterval(timerRunningEngine);
+            if (sessionKeepAliveInterval) clearInterval(sessionKeepAliveInterval);
+            localStorage.clear();
+            sessionStorage.clear();
+            window.location.reload();
+        }
+    }
 </script>
 <!-- END OF BLOCK 7 -->
-<!-- START OF BLOCK 8: HARDWARE SHIELDS, WORD COUNTS AND CHRONO ACCELERATOR -->
+<!-- START OF BLOCK 8: MULTILINGUAL WORD COUNT CONVERSION ENGINE -->
 <script>
     const shield = document.getElementById('greyShield');
-    const triggerProtection = () => { if (isTestActive) shield.classList.add('active'); };
-    const removeProtection = () => shield.classList.remove('active');
+    
+    // Explicitly add/remove structural lock states on the root body element
+    const triggerProtection = () => { 
+        if (isTestActive) {
+            shield.classList.add('active');
+            document.body.classList.add('shield-activated');
+        } 
+    };
+    const removeProtection = () => {
+        shield.classList.remove('active');
+        document.body.classList.remove('shield-activated');
+    };
 
     document.addEventListener('mouseleave', triggerProtection);
     document.addEventListener('mouseenter', removeProtection);
@@ -592,39 +947,71 @@
         }
     });
 
-    function getWordCount(textValue) {
+    // Adaptive word count algorithm honoring CJK character density and non-spaced languages
+    function getWordCount(textValue, langCode) {
         const cleanText = textValue.trim();
-        return cleanText === "" ? 0 : cleanText.split(/\s+/).length;
+        if (cleanText === "") return 0;
+        const fallbackLang = langCode || localStorage.getItem('lqa_candidate_lang') || "en-US";
+        
+        // Character-based languages (Chinese, Japanese) -> strip tags then apply international density ratio
+        if (/^(zh|ja)/i.test(fallbackLang)) {
+            const strippedText = cleanText.replace(/\[.*?\]/g, "");
+            return Math.ceil(strippedText.length / 1.6);
+        }
+        
+        // Korean linguistic check -> Eoajeol count spacing with a 1.2 multiplier adaptation for particles
+        if (/^ko/i.test(fallbackLang)) {
+            const spaceSplitCount = cleanText.split(/\s+/).length;
+            return Math.ceil(spaceSplitCount * 1.2);
+        }
+        
+        // Non-spaced scripts (Thai) -> apply the browser native word segmentation parser engine
+        if (/^th/i.test(fallbackLang) && typeof Intl.Segmenter === "function") {
+            const segmenter = new Intl.Segmenter('th', { granularity: 'word' });
+            const segments = segmenter.segment(cleanText);
+            return Array.from(segments).filter(s => s.isWordLike).length;
+        }
+        
+        // Standard split metric for Western languages, Cyrillic, Arabic, and Hindi scripts
+        return cleanText.split(/\s+/).length;
     }
 
     function refreshWordCounterMetric(elementId) {
         const textarea = document.getElementById(elementId);
         const badge = document.getElementById(`counter_${elementId}`);
         if (textarea && badge) {
-            badge.innerHTML = `Word count: ${getWordCount(textarea.value)}`;
+            const activeLang = localStorage.getItem('lqa_candidate_lang') || "en-US";
+            badge.innerHTML = `Word count: ${getWordCount(textarea.value, activeLang)}`;
         }
     }
 
-    async function startTestTimer() {
+    async function startTestTimer(isRestoring) {
         const first = document.getElementById('firstName').value.trim();
         const last = document.getElementById('lastName').value.trim();
         const email = document.getElementById('candidateEmail').value.trim();
         const lang = document.getElementById('candidateLanguage').value;
 
-        if (!first || !last || !email || !lang) {
-            alert("All identification parameters (First Name, Last Name, Email, Language) are mandatory.");
-            return;
-        }
+        // Skip input identity validation checks only if the bootloader rehydrates an active session
+        if (!isRestoring) {
+            if (!first || !last || !email || !lang) {
+                alert("All identification parameters including Language selection are mandatory.");
+                return;
+            }
 
-        localStorage.setItem('lqa_candidate_first', first);
-        localStorage.setItem('lqa_candidate_last', last);
-        localStorage.setItem('lqa_candidate_email', email);
-        localStorage.setItem('lqa_candidate_lang', lang);
+            localStorage.setItem('lqa_candidate_first', first);
+            localStorage.setItem('lqa_candidate_last', last);
+            localStorage.setItem('lqa_candidate_email', email);
+            localStorage.setItem('lqa_candidate_lang', lang);
+            
+            // Execute localized setup engine injection across text fields immediately upon activation
+            if (typeof triggerDynamicLocalContentHydration === "function") {
+                triggerDynamicLocalContentHydration(lang);
+            }
+        }
 
         document.getElementById('firstName').disabled = true;
         document.getElementById('lastName').disabled = true;
         document.getElementById('candidateEmail').disabled = true;
-        document.getElementById('candidateLanguage').disabled = true;
 
         changePageView(2);
         document.getElementById('timerDisplay').style.display = 'block';
@@ -666,21 +1053,10 @@
     }
 </script>
 <!-- END OF BLOCK 8 -->
-<!-- START OF BLOCK 9: CANDIDATE SUMMARY GENERATOR AND TEAMS TRANSFER ENGINE -->
+<!-- START OF BLOCK 9: SUMMARY DASHBOARD GENERATOR AND PAYLOAD SUBMISSION -->
 <script>
     // Trigger the native browser print subsystem to generate a clean, question-less PDF layout
     function triggerCandidatePdfDownload() {
-        // Dynamically append temporary markers to hide question bodies on print viewports
-        for (let i = 1; i <= 10; i++) {
-            const labelNode = document.getElementById(`lbl_q${i}`);
-            if (labelNode) {
-                // Wrap the text prompt inside a span to allow selective CSS print blocking
-                if (!labelNode.querySelector('span')) {
-                    const originalText = labelNode.innerText;
-                    labelNode.innerHTML = `Response ${i} <span style="display:none;">${originalText}</span>`;
-                }
-            }
-        }
         window.print();
     }
 
@@ -690,9 +1066,9 @@
         document.getElementById('timerDisplay').style.display = 'none';
         document.getElementById('assessmentForm').style.display = 'none';
         
-        const first = document.getElementById('firstName').value.trim();
-        const last = document.getElementById('lastName').value.trim();
-        const email = document.getElementById('candidateEmail').value.trim();
+        const first = localStorage.getItem('lqa_candidate_first') || "Candidate";
+        const last = localStorage.getItem('lqa_candidate_last') || "User";
+        const email = localStorage.getItem('lqa_candidate_email') || "unknown@session.com";
         const lang = localStorage.getItem('lqa_candidate_lang') || "Unknown";
 
         const startAnchor = parseInt(localStorage.getItem('lqa_test_start_anchor') || Date.now(), 10);
@@ -708,17 +1084,27 @@
         }
 
         for (let i = 1; i <= 10; i++) {
-            const origLabel = document.getElementById(`lbl_q${i}`).innerText;
-            const targetVal = document.getElementById(`q${i}`).value.trim() || "[Left Blank / No response provided]";
+            const labelNode = document.getElementById(`lbl_q${i}`);
+            let origLabel = "Question " + i;
+            if (labelNode) {
+                const clone = labelNode.cloneNode(true);
+                const embeddedSpan = clone.querySelector('.print-strip');
+                origLabel = embeddedSpan ? embeddedSpan.innerText : clone.innerText;
+            }
+            
+            const field = document.getElementById(`q${i}`);
+            const targetVal = field ? field.value.trim() : "[Left Blank / No response provided]";
 
             const elementBlock = document.createElement('div');
             elementBlock.className = 'summary-item';
-            elementBlock.innerHTML = `<div class="summary-q">${origLabel}</div><div class="summary-a">${targetVal}</div>`;
+            
+            // Refined Output Architecture: Strips the text prompt content completely to show only the response index label
+            elementBlock.innerHTML = `<div class="summary-q">Response ${i}</div><div class="summary-a">${targetVal}</div>`;
             contentContainer.appendChild(elementBlock);
 
             teamsBodyText += `**${origLabel}**\n${targetVal}\n`;
             if (i === 8 || i === 9 || i === 10) {
-                teamsBodyText += `*(Word count: ${getWordCount(targetVal)} words)*\n`;
+                teamsBodyText += `*(Word count: ${getWordCount(targetVal, lang)} units)*\n`;
             }
             teamsBodyText += `\n`;
         }
@@ -727,7 +1113,6 @@
         localStorage.clear();
         if (cachedTheme) localStorage.setItem('lqa_theme', cachedTheme);
 
-        // Dispatch native payload matrix matching Microsoft Teams incoming webhook formatting
         fetch('https://votre-serveur.com', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -741,7 +1126,382 @@
     }
 </script>
 <!-- END OF BLOCK 9 -->
-<!-- START OF BLOCK 10: ANONYMOUS FEEDBACK PIPELINE AND RUNTIME REHYDRATION BOOTLOADER -->
+<!-- START OF BLOCK 10.1: VOLATILE LOCAL TRANSLATION DATA MATRIX - REGIONAL PACK ALPHA -->
+<script>
+    // Universal volatile dictionary holding temporary evaluation text strings for local UI injection
+    const lqaLocalTranslationMatrix = {
+        "fr-FR": {
+            "glossaryHeader": "GLOSSAIRE",
+            "glossary": [
+                ["Orb", "Orbe"], ["Throne", "Trône"], ["Strange", "Étrange"], ["Placed", "Placé"],
+                ["Knight", "Chevalier"], ["Sword", "Épée"], ["Castle", "Château"], ["King", "Roi"],
+                ["Queen", "Reine"], ["Kingdom", "Royaume"]
+            ],
+            "q5": "[KIT]l'orbe était placée un trones[color:66845]étrange [/color].[KIT]",
+            "q6": "[KIT]l'orbe était placée un trones[color:66845]étrange [/color].[KIT]",
+            "q7": "[KIT]l'orbe était placée un trones[color:66845]étrange [/color].[KIT]",
+            "q10": "Tant va la cruche à l'eau qu'à la fin elle se pourfasse. Pensez-vous que Maître Yoda aurait apprécié un tel language ?"
+        },
+        "de-DE": {
+            "glossaryHeader": "GLOSSAR",
+            "glossary": [
+                ["Orb", "Kugel"], ["Throne", "Thron"], ["Strange", "Seltsam"], ["Placed", "Platziert"],
+                ["Knight", "Ritter"], ["Sword", "Schwert"], ["Castle", "Schloss"], ["King", "König"],
+                ["Queen", "Königin"], ["Kingdom", "Königreich"]
+            ],
+            "q5": "[KIT]Die Kugel wurde auf einen seltsamen [color:65845]Thron[/color] platziert.[KIT]",
+            "q6": "[KIT]Die Kugel wurde auf einen seltsamen [color:65845]Thron[/color] platziert.[KIT]",
+            "q7": "[KIT]Die Kugel wurde auf einen seltsamen [color:65845]Thron[/color] platziert.[KIT]",
+            "q10": "Was ist dein Lieblingsvideospiel und warum?"
+        },
+        "it-IT": {
+            "glossaryHeader": "GLOSSARIO",
+            "glossary": [
+                ["Orb", "Trono"], ["Throne", "Trono"], ["Strange", "Strano"], ["Placed", "Piazzato"],
+                ["Knight", "Cavaliere"], ["Sword", "Spada"], ["Castle", "Castello"], ["King", "Re"],
+                ["Queen", "Regina"], ["Kingdom", "Regno"]
+            ],
+            "q5": "[KIT]L'orbe è stata piazzata su uno strano [color:65845]trono[/color].[KIT]",
+            "q6": "[KIT]L'orbe è stata piazzata su uno strano [color:65845]trono[/color].[KIT]",
+            "q7": "[KIT]L'orbe è stata piazzata su uno strano [color:65845]trono[/color].[KIT]",
+            "q10": "Qual è il tuo videogioco preferito, dicci perché?"
+        },
+        "es-ES": {
+            "glossaryHeader": "GLOSARIO",
+            "glossary": [
+                ["Orb", "Orbe"], ["Throne", "Trono"], ["Strange", "Extraño"], ["Placed", "Colocado"],
+                ["Knight", "Caballero"], ["Sword", "Espada"], ["Castle", "Castillo"], ["King", "Rey"],
+                ["Queen", "Reina"], ["Kingdom", "Reino"]
+            ],
+            "q5": "[KIT]El orbe fue colocado en un extraño [color:65845]trono[/color].[KIT]",
+            "q6": "[KIT]El orbe fue colocado en un extraño [color:65845]trono[/color].[KIT]",
+            "q7": "[KIT]El orbe fue colocado en un extraño [color:65845]trono[/color].[KIT]",
+            "q10": "¿Cuál es tu videojuego favorito, cuéntanos por qué?"
+        },
+        "es-419": {
+            "glossaryHeader": "GLOSARIO",
+            "glossary": [
+                ["Orb", "Orbe"], ["Throne", "Trono"], ["Strange", "Extraño"], ["Placed", "Colocado"],
+                ["Knight", "Caballero"], ["Sword", "Espada"], ["Castle", "Castillo"], ["King", "Rey"],
+                ["Queen", "Reina"], ["Kingdom", "Reino"]
+            ],
+            "q5": "[KIT]El orbe fue colocado en un extraño [color:65845]trono[/color].[KIT]",
+            "q6": "[KIT]El orbe fue colocado en un extraño [color:65845]trono[/color].[KIT]",
+            "q7": "[KIT]El orbe fue colocado en un extraño [color:65845]trono[/color].[KIT]",
+            "q10": "¿Cuál es tu videojuego favorito, cuéntanos por qué?"
+        },
+        "pt-PT": {
+            "glossaryHeader": "GLOSSÁRIO",
+            "glossary": [
+                ["Orb", "Orbe"], ["Throne", "Trono"], ["Strange", "Estranho"], ["Placed", "Colocado"],
+                ["Knight", "Cavaleiro"], ["Sword", "Espada"], ["Castle", "Castelo"], ["King", "Rei"],
+                ["Queen", "Rainha"], ["Kingdom", "Reino"]
+            ],
+            "q5": "[KIT]O orbe foi colocado num estranho [color:65845]trono[/color].[KIT]",
+            "q6": "[KIT]O orbe foi colocado num estranho [color:65845]trono[/color].[KIT]",
+            "pt-PT": "[KIT]O orbe foi colocado num estranho [color:65845]trono[/color].[KIT]",
+            "q10": "Qual é o teu jogo de videojogos favorito, diz-nos porquê?"
+        },
+        "pt-BR": {
+            "glossaryHeader": "GLOSSÁRIO",
+            "glossary": [
+                ["Orb", "Orbe"], ["Throne", "Trono"], ["Strange", "Estranho"], ["Placed", "Colocado"],
+                ["Knight", "Cavaleiro"], ["Sword", "Espada"], ["Castle", "Castelo"], ["King", "Rei"],
+                ["Queen", "Rainha"], ["Kingdom", "Reino"]
+            ],
+            "q5": "[KIT]O orbe foi colocado em um estranho [color:65845]trono[/color].[KIT]",
+            "q6": "[KIT]O orbe foi colocado em um estranho [color:65845]trono[/color].[KIT]",
+            "q7": "[KIT]O orbe foi colocado em um estranho [color:65845]trono[/color].[KIT]",
+            "q10": "Qual é o seu videogame favorito, conte-nos porquê?"
+        },
+        "ru-RU": {
+            "glossaryHeader": "ГЛОССАРИЙ",
+            "glossary": [
+                ["Orb", "Сфера"], ["Throne", "Трон"], ["Strange", "Странный"], ["Placed", "Помещен"],
+                ["Knight", "Рыцарь"], ["Sword", "Меч"], ["Castle", "Замок"], ["King", "Король"],
+                ["Queen", "Королева"], ["Kingdom", "Королевство"]
+            ],
+            "q5": "[KIT]Сфера была помещена на странный [color:65845]трон[/color].[KIT]",
+            "q6": "[KIT]Сфера была помещена на странный [color:65845]трон[/color].[KIT]",
+            "q7": "[KIT]Сфера была помещена на странный [color:65845]трон[/color].[KIT]",
+            "q10": "Какая ваша любимая видеоигра, расскажите почему?"
+        }
+    };
+
+    // Hot-swaps the text components dynamically across the view layers based on selected isolation constraints
+    function triggerDynamicLocalContentHydration(langCode) {
+        const targetCode = langCode || "fr-FR";
+        
+        // Fix: Force immediate saving to guarantee that Page 5 displays the exact chosen code instead of locking on "FR"
+        localStorage.setItem('lqa_candidate_lang', targetCode);
+        
+        const dataPack = lqaLocalTranslationMatrix[targetCode];
+        if (!dataPack) return;
+
+        // Synchronize Section B Glossary panel translations
+        const targetHeader = document.getElementById('glossaryTargetHeader');
+        if (targetHeader && dataPack.glossaryHeader) targetHeader.innerText = dataPack.glossaryHeader;
+        
+        const glossaryBody = document.getElementById('glossaryBodyContainer');
+        if (glossaryBody && dataPack.glossary) {
+            glossaryBody.innerHTML = "";
+            dataPack.glossary.forEach(pair => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${pair[0]}</td><td>${pair[1]}</td>`;
+                glossaryBody.appendChild(row);
+            });
+        }
+
+        // Hot-swap comparative sheet text contents across alpha, beta, and gamma prompts
+        const sheet5 = document.getElementById('sheet_q5_right');
+        const sheet6 = document.getElementById('sheet_q6_right');
+        const sheet7 = document.getElementById('sheet_q7_right');
+        if (sheet5 && dataPack.q5) sheet5.innerText = dataPack.q5;
+        if (sheet6 && dataPack.q6) sheet6.innerText = dataPack.q6;
+        if (sheet7 && dataPack.q7) sheet7.innerText = dataPack.q7;
+
+        // Hot-swap prompt context for writing skill question 10 with adaptive secure encapsulation wrappers
+        const lbl10 = document.getElementById('lbl_q10');
+        if (lbl10 && dataPack.q10) {
+            if (targetCode === "fr-FR") {
+                lbl10.innerHTML = `10. <span class="print-strip">Tant va la cruche à l'eau qu'à la fin elle se pourfasse. Pensez-vous que Maître Yoda aurait apprécié un tel language ?</span> (250 mots)`;
+            } else {
+                lbl10.innerHTML = `10. <span class="print-strip">${dataPack.q10}</span> (250 mots)`;
+            }
+        }
+    }
+</script>
+<!-- END OF BLOCK 10.1 -->
+<!-- START OF BLOCK 10.2: VOLATILE LOCAL TRANSLATION DATA MATRIX - REGIONAL PACK BETA -->
+<script>
+    // Complementary localized data points mapped directly into the core matrix reference framework
+    Object.assign(lqaLocalTranslationMatrix, {
+        "ar-AA": {
+            "glossaryHeader": "قاموس المصطلحات",
+            "glossary": [
+                ["Orb", "جرم سماوي"], ["Throne", "عرش"], ["Strange", "غريب"], ["Placed", "وضع"],
+                ["Knight", "فارس"], ["Sword", "سيف"], ["Castle", "قلعة"], ["King", "ملك"],
+                ["Queen", "ملكة"], ["Kingdom", "مملكة"]
+            ],
+            "q5": "[KIT]تم وضع الجرم السماوي على [color:65845]عرش[/color] غريب.[KIT]",
+            "q6": "[KIT]تم وضع الجرم السماوي على [color:65845]عرش[/color] غريب.[KIT]",
+            "q7": "[KIT]تم وضع الجرم السماوي على [color:65845]عرش[/color] غريب.[KIT]",
+            "q10": "ما هي لعبتك الإلكترونية المفضلة، وأخبرنا لماذا؟"
+        },
+        "hi-IN": {
+            "glossaryHeader": "शब्दकोष",
+            "glossary": [
+                ["Orb", "गोला"], ["Throne", "सिंहासन"], ["Strange", "अजीब"], ["Placed", "रखा गया"],
+                ["Knight", "योद्धा"], ["Sword", "तलवार"], ["Castle", "महल"], ["King", "राजा"],
+                ["Queen", "रानी"], ["Kingdom", "साम्राज्य"]
+            ],
+            "q5": "[KIT]गोले को एक अजीब [color:65845]सिंहासन[/color] पर रखा गया था।[KIT]",
+            "q6": "[KIT]गोले को एक अजीब [color:65845]सिंहासन[/color] पर रखा गया था।[KIT]",
+            "q7": "[KIT]गोले को एक अजीब [color:65845]सिंहासन[/color] पर रखा गया था।[KIT]",
+            "q10": "आपका पसंदीदा वीडियो गेम कौन सा है, हमें बताएं क्यों?"
+        },
+        "tr-TR": {
+            "glossaryHeader": "SÖZLÜK",
+            "glossary": [
+                ["Orb", "Küre"], ["Throne", "Taht"], ["Strange", "Garip"], ["Placed", "Yerleştirildi"],
+                ["Knight", "Şövalye"], ["Sword", "Kılıç"], ["Castle", "Kale"], ["King", "Kral"],
+                ["Queen", "Kraliçe"], ["Kingdom", "Krallık"]
+            ],
+            "q5": "[KIT]Küre garip bir [color:65845]taht[/color] üzerine yerleştirildi.[KIT]",
+            "q6": "[KIT]Küre garip bir [color:65845]taht[/color] üzerine yerleştirildi.[KIT]",
+            "q7": "[KIT]Küre garip bir [color:65845]taht[/color] üzerine yerleştirildi.[KIT]",
+            "q10": "En sevdiğiniz video oyunu hangisi, nedenini bize söyleyin?"
+        },
+        "sv-SE": {
+            "glossaryHeader": "ORDLISTA",
+            "glossary": [
+                ["Orb", "Klot"], ["Throne", "Tron"], ["Strange", "Sällsam"], ["Placed", "Placerad"],
+                ["Knight", "Riddare"], ["Sword", "Svärd"], ["Castle", "Slott"], ["King", "Kung"],
+                ["Queen", "Drottning"], ["Kingdom", "Kungarike"]
+            ],
+            "q5": "[KIT]Klotet placerades på en sällsam [color:65845]tron[/color].[KIT]",
+            "q6": "[KIT]Klotet placerades på en sällsam [color:65845]tron[/color].[KIT]",
+            "q7": "[KIT]Klotet placerades på en sällsam [color:65845]tron[/color].[KIT]",
+            "q10": "Vilket är ditt favoritvideospel, berätta varför?"
+        },
+        "pl-PL": {
+            "glossaryHeader": "SŁOWNICZEK",
+            "glossary": [
+                ["Orb", "Sfera"], ["Throne", "Tron"], ["Strange", "Dziwny"], ["Placed", "Umieszczony"],
+                ["Knight", "Rycerz"], ["Sword", "Miecz"], ["Castle", "Zamczysko"], ["King", "Król"],
+                ["Queen", "Królowa"], ["Kingdom", "Królestwo"]
+            ],
+            "q5": "[KIT]Sfera została umieszczona na dziwnym [color:65845]tronie[/color].[KIT]",
+            "q6": "[KIT]Sfera została umieszczona na dziwnym [color:65845]tronie[/color].[KIT]",
+            "q7": "[KIT]Sfera została umieszczona na dziwnym [color:65845]tronie[/color].[KIT]",
+            "q10": "Jaka jest Twoja ulubiona gra wideo i dlaczego?"
+        },
+        "cs-CZ": {
+            "glossaryHeader": "SLOVNÍK",
+            "glossary": [
+                ["Orb", "Sféra"], ["Throne", "Trůn"], ["Strange", "Podivný"], ["Placed", "Umístěn"],
+                ["Knight", "Rytíř"], ["Sword", "Meč"], ["Castle", "Hrad"], ["King", "Král"],
+                ["Queen", "Královna"], ["Kingdom", "Království"]
+            ],
+            "q5": "[KIT]Sféra byla umístěna na podivný [color:65845]trůn[/color].[KIT]",
+            "q6": "[KIT]Sféra byla umístěna na podivný [color:65845]trůn[/color].[KIT]",
+            "q7": "[KIT]Sféra byla umístěna na podivný [color:65845]trůn[/color].[KIT]",
+            "q10": "Jaká je vaše oblíbená videohra a proč?"
+        },
+        "hu-HU": {
+            "glossaryHeader": "SZÓJEGYZÉK",
+            "glossary": [
+                ["Orb", "Gömb"], ["Throne", "Trón"], ["Strange", "Különös"], ["Placed", "Elhelyezve"],
+                ["Knight", "Lovag"], ["Sword", "Kard"], ["Castle", "Kastély"], ["King", "Király"],
+                ["Queen", "Királynő"], ["Kingdom", "Királyság"]
+            ],
+            "q5": "[KIT]A gömb egy különös [color:65845]trónra[/color] lett elhelyezve.[KIT]",
+            "q6": "[KIT]A gömb egy különös [color:65845]trónra[/color] lett elhelyezve.[KIT]",
+            "q7": "[KIT]A gömb egy különös [color:65845]trónra[/color] lett elhelyezve.[KIT]",
+            "q10": "Mi a kedvenc videojátékod, és miért?"
+        },
+        "el-GR": {
+            "glossaryHeader": "ΓΛΩΣΣΑΡΙ",
+            "glossary": [
+                ["Orb", "Σφαίρα"], ["Throne", "Θρόνος"], ["Strange", "Παράξενος"], ["Placed", "Τοποθετήθηκε"],
+                ["Knight", "Ιππότης"], ["Sword", "Σπαθί"], ["Castle", "Κάστρο"], ["King", "Βασιλιάς"],
+                ["Queen", "Βασίλισσα"], ["Kingdom", "Βασίλειο"]
+            ],
+            "q5": "[KIT]Η σφαίρα τοποθετήθηκε σε έναν παράξενο [color:65845]θρόνο[/color].[KIT]",
+            "q6": "[KIT]Η σφαίρα τοποθετήθηκε σε έναν παράξενο [color:65845]θρόνο[/color].[KIT]",
+            "q7": "[KIT]Η σφαίρα τοποθετήθηκε σε έναν παράξενο [color:65845]θρόνο[/color].[KIT]",
+            "q10": "Ποιο είναι το αγαπημένο σας βιντεοπαιχνίδι, πείτε μας γιατί;"
+        },
+        "uk-UA": {
+            "glossaryHeader": "СЛОВНИК",
+            "glossary": [
+                ["Orb", "Сфера"], ["Throne", "Трон"], ["Strange", "Дивний"], ["Placed", "Розміщений"],
+                ["Knight", "Лицар"], ["Sword", "Меч"], ["Castle", "Замок"], ["King", "Король"],
+                ["Queen", "Королева"], ["Kingdom", "Королівство"]
+            ],
+            "q5": "[KIT]Сфера була розміщена на дивному [color:65845]троні[/color].[KIT]",
+            "q6": "[KIT]Сфера была розміщена на дивному [color:65845]троні[/color].[KIT]",
+            "q7": "[KIT]Сфера была розміщена на дивному [color:65845]троні[/color].[KIT]",
+            "q10": "Яка ваша улюблена відеогра, розкажіть чому?"
+        },
+        "ro-RO": {
+            "glossaryHeader": "GLOSAR",
+            "glossary": [
+                ["Orb", "Orb"], ["Throne", "Tron"], ["Strange", "Staniu"], ["Placed", "Plasat"],
+                ["Knight", "Cavaler"], ["Sword", "Sabie"], ["Castle", "Castel"], ["King", "Rege"],
+                ["Queen", "Regină"], ["Kingdom", "Regat"]
+            ],
+            "q5": "[KIT]Orbul a fost plasat pe un tron [color:65845]straniu[/color].[KIT]",
+            "q6": "[KIT]Orbul a fost plasat pe un tron [color:65845]straniu[/color].[KIT]",
+            "q7": "[KIT]Orbul a fost plasat pe un tron [color:65845]straniu[/color].[KIT]",
+            "q10": "Care este jocul tău video preferat, spune-ne de ce?"
+        },
+        "bg-BG": {
+            "glossaryHeader": "РЕЧНИК",
+            "glossary": [
+                ["Orb", "Сфера"], ["Throne", "Трон"], ["Strange", "Странен"], ["Placed", "Поставен"],
+                ["Knight", "Рицар"], ["Sword", "Меч"], ["Castle", "Замък"], ["King", "Краля"],
+                ["Queen", "Кралица"], ["Kingdom", "Кралство"]
+            ],
+            "q5": "[KIT]Сферата беше поставена на странен [color:65845]трон[/color].[KIT]",
+            "q6": "[KIT]Сферата беше поставена на странен [color:65845]трон[/color].[KIT]",
+            "q7": "[KIT]Сферата беше поставена на странен [color:65845]трон[/color].[KIT]",
+            "q10": "Коя е любимата ви видеоигра, разкажете ни защо?"
+        }
+    });
+<!-- END OF BLOCK 10.2 -->
+<!-- START OF BLOCK 10.3: VOLATILE LOCAL TRANSLATION DATA MATRIX - REGIONAL PACK GAMMA -->
+<script>
+    // Complementary localized data points mapped directly into the core matrix reference framework
+    Object.assign(lqaLocalTranslationMatrix, {
+        "nl-NL": {
+            "glossaryHeader": "WOORDENLIJST",
+            "glossary": [
+                ["Orb", "Bol"], ["Throne", "Troon"], ["Strange", "Vreemd"], ["Placed", "Geplaatst"],
+                ["Knight", "Ridder"], ["Sword", "Zwaard"], ["Castle", "Kasteel"], ["King", "Koning"],
+                ["Queen", "Koningin"], ["Kingdom", "Koninkrijk"]
+            ],
+            "q5": "[KIT]De bol werd op een vreemde [color:65845]troon[/color] geplaatst.[KIT]",
+            "q6": "[KIT]De bol werd op een vreemde [color:65845]troon[/color] geplaatst.[KIT]",
+            "q7": "[KIT]De bol werd op een vreemde [color:65845]troon[/color] geplaatst.[KIT]",
+            "q10": "Wat is je favoriete videogame, vertel ons waarom?"
+        },
+        "no-NO": {
+            "glossaryHeader": "ORDLISTE",
+            "glossary": [
+                ["Orb", "Kule"], ["Throne", "Trone"], ["Strange", "Sær"], ["Placed", "Plassert"],
+                ["Knight", "Ridder"], ["Sword", "Sverd"], ["Castle", "Slott"], ["King", "Konge"],
+                ["Queen", "Dronning"], ["Kingdom", "Kongerike"]
+            ],
+            "q5": "[KIT]Kulen ble plassert på en sær [color:65845]trone[/color].[KIT]",
+            "q6": "[KIT]Kulen ble plassert på en sær [color:65845]trone[/color].[KIT]",
+            "q7": "[KIT]Kulen ble plassert på en sær [color:65845]trone[/color].[KIT]",
+            "q10": "Hva er favorittvideospillet ditt, fortell oss hvorfor?"
+        },
+        "da-DK": {
+            "glossaryHeader": "ORDLISTE",
+            "glossary": [
+                ["Orb", "Kugle"], ["Throne", "Trone"], ["Strange", "Særegen"], ["Placed", "Placeret"],
+                ["Knight", "Ridder"], ["Sword", "Sværd"], ["Castle", "Slot"], ["King", "Konge"],
+                ["Queen", "Dronning"], ["Kingdom", "Kongerige"]
+            ],
+            "q5": "[KIT]Kuglen blev placeret på en særegen [color:65845]trone[/color].[KIT]",
+            "q6": "[KIT]Kuglen blev placeret på en særegen [color:65845]trone[/color].[KIT]",
+            "q7": "[KIT]Kuglen blev placeret på en særegen [color:65845]trone[/color].[KIT]",
+            "q10": "Hvad er dit yndlingsvideospil, og fortæl os hvorfor?"
+        },
+        "fi-FI": {
+            "glossaryHeader": "SANASTO",
+            "glossary": [
+                ["Orb", "Orb"], ["Throne", "Valtaistuin"], ["Strange", "Outo"], ["Placed", "Asetettu"],
+                ["Knight", "Ritari"], ["Sword", "Miekka"], ["Castle", "Linna"], ["King", "Kuningas"],
+                ["Queen", "Kuningatar"], ["Kingdom", "Valtakunta"]
+            ],
+            "q5": "[KIT]Orb asetettiin oudolle [color:65845]valtaistuimelle[/color].[KIT]",
+            "q6": "[KIT]Orb asetettiin oudolle [color:65845]valtaistuimelle[/color].[KIT]",
+            "q7": "[KIT]Orb asetettiin oudolle [color:65845]valtaistuimelle[/color].[KIT]",
+            "q10": "Mikä on suosikkivideopelisi, kerro meille miksi?"
+        },
+        "vi-VN": {
+            "glossaryHeader": "TỪ VỰNG",
+            "glossary": [
+                ["Orb", "Quả cầu"], ["Throne", "Ngai vàng"], ["Strange", "Kỳ lạ"], ["Placed", "Đặt"],
+                ["Knight", "Hiệp sĩ"], ["Sword", "Kiếm"], ["Castle", "Lâu đài"], ["King", "Vua"],
+                ["Queen", "Nữ hoàng"], ["Kingdom", "Vương quốc"]
+            ],
+            "q5": "[KIT]Quả cầu được đặt trên một ngai vàng [color:65845]kỳ lạ[/color].[KIT]",
+            "q6": "[KIT]Quả cầu được đặt trên một ngai vàng [color:65845]kỳ lạ[/color].[KIT]",
+            "q7": "[KIT]Quả cầu được đặt trên một ngai vàng [color:65845]kỳ lạ[/color].[KIT]",
+            "q10": "Trò chơi điện tử yêu thích của bạn là gì, hãy cho chúng tôi biết tại sao?"
+        },
+        "ms-MY": {
+            "glossaryHeader": "GLOSARI",
+            "glossary": [
+                ["Orb", "Sfera"], ["Throne", "Takhta"], ["Strange", "Aneh"], ["Placed", "Diletakkan"],
+                ["Knight", "Satria"], ["Sword", "Pedang"], ["Castle", "Istana"], ["King", "Raja"],
+                ["Queen", "Permaisuri"], ["Kingdom", "Kerajaan"]
+            ],
+            "q5": "[KIT]Sfera itu diletakkan di atas takhta yang [color:65845]aneh[/color].[KIT]",
+            "q6": "[KIT]Sfera itu diletakkan di atas takhta yang [color:65845]aneh[/color].[KIT]",
+            "q7": "[KIT]Sfera itu diletakkan di atas takhta yang [color:65845]aneh[/color].[KIT]",
+            "q10": "Apakah permainan video kegemaran anda, beritahu kami mengapa?"
+        },
+        "id-ID": {
+            "glossaryHeader": "GLOSARIUM",
+            "glossary": [
+                ["Orb", "Orb"], ["Throne", "Takhta"], ["Strange", "Aneh"], ["Placed", "Ditempatkan"],
+                ["Knight", "Ksatria"], ["Sword", "Pedang"], ["Castle", "Kastil"], ["King", "Raja"],
+                ["Queen", "Ratu"], ["Kingdom", "Kerajaan"]
+            ],
+            "q5": "[KIT]Orb ditempatkan di atas takhta yang [color:65845]aneh[/color].[KIT]",
+            "q6": "[KIT]Orb ditempatkan di atas takhta yang [color:65845]aneh[/color].[KIT]",
+            "q7": "[KIT]Orb ditempatkan di atas takhta yang [color:65845]aneh[/color].[KIT]",
+            "q10": "Apakah permainan video favorit Anda, beritahu kami mengapa?"
+        }
+    });
+</script>
+<!-- END OF BLOCK 10.3 -->
+<!-- START OF BLOCK 11: EXTREME TOUCH AND KEYBOARD ANTI-CHEAT INTERCEPTORS -->
 <script>
     // Dispatch selected choices and text to a secondary independent Microsoft Teams webhook channel
     function submitAnonymousFeedbackForm() {
@@ -755,17 +1515,14 @@
             return;
         }
 
-        // Lock form elements immediately to prevent concurrent duplicate delivery requests
         document.getElementById('feedbackSubmitBtn').disabled = true;
 
         let feedbackBodyString = `**Identified Categories:** ${selectedOptions.length > 0 ? selectedOptions.join(', ') : 'None selected'}\n\n`;
         feedbackBodyString += `**Detailed Candidate Commentary:**\n${feedbackNotes || '[No detailed comments provided]'}`;
 
-        // Hide input workspace smoothly and unmask the localized success confirmation container
         document.getElementById('feedbackFormBlock').style.display = 'none';
         document.getElementById('feedbackSuccessMessage').style.display = 'block';
 
-        // Securely transmit to secondary dedicated webhook endpoint without reading identity storage metrics
         fetch('https://votre-deuxieme-serveur-teams.com', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -776,7 +1533,7 @@
         }).catch(err => console.error("Anonymized survey tracking routing exception handled gracefully:", err));
     }
 
-    // 6. Clipboard Interception Mechanics
+    // 1. Clipboard Mutation Defenses (Standard Desktops)
     document.addEventListener('copy', (e) => { e.preventDefault(); e.clipboardData.setData('text/plain', '[Copy restricted]'); });
     document.addEventListener('cut', (e) => { e.preventDefault(); e.clipboardData.setData('text/plain', '[Copy restricted]'); });
     document.addEventListener('paste', (e) => {
@@ -785,57 +1542,103 @@
         if (activeElement && (activeElement.tagName === 'TEXTAREA' || activeElement.tagName === 'INPUT')) {
             const start = activeElement.selectionStart;
             activeElement.value = activeElement.value.substring(0, start) + "[Paste restricted for security compliance]" + activeElement.value.substring(activeElement.selectionEnd);
-            if (activeElement.id === 'q8' || activeElement.id === 'q9' || activeElement.id === 'q10') refreshWordCounterMetric(activeElement.id);
         }
     });
+
+    // 2. High-Frequency Input Mutation Engine (Extreme Hybrid Touch Defenses)
+    let previousTextLengthsStore = {};
 
     document.addEventListener('input', (e) => {
-        if (isTestActive && e.target.tagName === 'TEXTAREA') {
-            localStorage.setItem(`lqa_ans_${e.target.id}`, e.target.value);
-            if (e.target.id === 'q8' || e.target.id === 'q9' || e.target.id === 'q10') refreshWordCounterMetric(e.target.id);
-        }
-    });
+        if (!isTestActive) return;
+        
+        const targetField = e.target;
+        if (targetField.tagName === 'TEXTAREA' || targetField.tagName === 'INPUT') {
+            const currentFieldId = targetField.id;
+            const currentStringValue = targetField.value;
+            const absolutePreviousLength = previousTextLengthsStore[currentFieldId] || 0;
+            const lengthDelta = currentStringValue.length - absolutePreviousLength;
 
-    // Integrated recovery bootloader executing unified initialization setups upon window load
-    window.addEventListener('load', () => {
-        if (localStorage.getItem('lqa_theme') === 'dark') {
-            document.body.classList.add('dark-mode');
-            const btn = document.getElementById('themeToggle');
-            if (btn) btn.innerHTML = "☀️ Light Mode";
-        }
+            if (e.inputType === 'insertFromPaste' || lengthDelta > 4) {
+                e.preventDefault();
+                targetField.value = "[Paste restricted for security compliance]";
+                previousTextLengthsStore[currentFieldId] = targetField.value.length;
+                if (currentFieldId === 'q8' || currentFieldId === 'q9' || currentFieldId === 'q10') refreshWordCounterMetric(currentFieldId);
+                return;
+            }
 
-        for (let i = 1; i <= 10; i++) {
-            const savedAnswer = localStorage.getItem(`lqa_ans_q${i}`);
-            if (savedAnswer) {
-                const realField = document.getElementById(`q${i}`);
-                if (realField) {
-                    realField.value = savedAnswer;
-                    if (i === 8 || i === 9 || i === 10) refreshWordCounterMetric(`q${i}`);
-                }
+            previousTextLengthsStore[currentFieldId] = currentStringValue.length;
+            if (targetField.tagName === 'TEXTAREA') {
+                localStorage.setItem(`lqa_ans_${currentFieldId}`, currentStringValue);
+                if (currentFieldId === 'q8' || currentFieldId === 'q9' || currentFieldId === 'q10') refreshWordCounterMetric(currentFieldId);
             }
         }
+    });
 
-        const recoveryTimestampCheck = localStorage.getItem('lqa_test_end_time');
-        if (recoveryTimestampCheck) {
-            document.getElementById('firstName').value = localStorage.getItem('lqa_candidate_first') || "Restored";
-            document.getElementById('lastName').value = localStorage.getItem('lqa_candidate_last') || "Candidate";
-            document.getElementById('candidateEmail').value = localStorage.getItem('lqa_candidate_email') || "restored@session.com";
-            
-            const savedLang = localStorage.getItem('lqa_candidate_lang') || "";
-            const selectField = document.getElementById('candidateLanguage');
-            if (selectField && savedLang) selectField.value = savedLang;
-
-            startTestTimer();
+    // 3. Document Selection Change Monitoring
+    document.addEventListener('selectionchange', () => {
+        if (!isTestActive) return;
+        const activeNode = document.activeElement;
+        if (activeNode && (activeNode.tagName === 'TEXTAREA' || activeNode.tagName === 'INPUT')) {
+            if (activeNode.selectionStart !== activeNode.selectionEnd) {
+                activeNode.selectionEnd = activeNode.selectionStart;
+            }
         }
     });
 
+    // 4. Low-Level Core Hardware Input Restrictions
     document.addEventListener('contextmenu', (event) => event.preventDefault());
     document.addEventListener('mousedown', (e) => { if (e.button === 1) e.preventDefault(); });
     document.addEventListener('keydown', (e) => {
         const key = e.key.toLowerCase();
         if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(key)) || (e.ctrlKey && ['u','p','s'].includes(key))) e.preventDefault();
     });
+
+    // --- LIGHTBOX INTERACTIVE RUNTIME LOGIC ---
+    // Deploys the fullscreen fixed curtain overlay displaying the target screenshot asset image
+    function openFullscreenLightbox(imageSourcePath) {
+        const portal = document.getElementById('globalLightboxPortal');
+        const imgTarget = document.getElementById('lightboxFullscreenImage');
+        if (portal && imgTarget) {
+            imgTarget.src = imageSourcePath;
+            portal.classList.add('active');
+        }
+    }
+
+    // Instantly drops the overlay view container and clears source pointers in one click anywhere
+    function closeFullscreenLightbox() {
+        const portal = document.getElementById('globalLightboxPortal');
+        const imgTarget = document.getElementById('lightboxFullscreenImage');
+        if (portal) {
+            portal.classList.remove('active');
+            if (imgTarget) imgTarget.src = "";
+        }
+    }
 </script>
+<!-- END OF BLOCK 11 -->
+<!-- START OF BLOCK 12: RUNTIME REHYDRATION BOOTLOADER AND HARDWARE DETECTOR -->
+<script>
+    // Integrated recovery bootloader executing unified initialization setups upon window load
+    window.addEventListener('load', () => {
+        // 1. Hard hardware detection matrix blocking smart devices, tablets, and phones immediately
+        const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        if (isMobileDevice) {
+            isTestActive = false;
+            document.getElementById('mainApplicationWrapper').style.display = 'none';
+            document.getElementById('securityHardlockTitle').innerText = "Desktop Environment Required";
+            document.getElementById('securityHardlockReason').innerText = "For security compliance and layout integrity, this LQA assessment can only be completed on a desktop or laptop computer. Mobile viewports are restricted.";
+            document.getElementById('securityHardlockScreen').style.display = 'flex';
+            return;
+        }
+
+        // 2. Theme Restoration Setup
+        if (localStorage.getItem('lqa_theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            const btn = document.getElementById('themeToggle');
+            if (btn) btn.innerHTML = "☀️ Light Mode";
+        }
+
+        // 3. Text Answers State Rehydration Loop
+        for (let i = 1; i 
 </body>
 </html>
-<!-- END OF BLOCK 10 -->
+<!-- END OF BLOCK 12 -->
