@@ -810,19 +810,45 @@
         if (activeElement && (activeElement.tagName === 'TEXTAREA' || activeElement.tagName === 'INPUT')) {
             const start = activeElement.selectionStart;
             activeElement.value = activeElement.value.substring(0, start) + "[Paste restricted for security compliance]" + activeElement.value.substring(activeElement.selectionEnd);
-            // The global 'input' event listener captures this state mutation automatically, removing CPU redundancy here
         }
     });
 
+    // Touch and Desktop Input Mutation Tracker preventing massive multi-character additions (pasting)
     document.addEventListener('input', (e) => {
-        if (isTestActive && e.target.tagName === 'TEXTAREA') {
-            localStorage.setItem(`lqa_ans_${e.target.id}`, e.target.value);
-            if (e.target.id === 'q8' || e.target.id === 'q9' || e.target.id === 'q10') refreshWordCounterMetric(e.target.id);
+        if (!isTestActive) return;
+        
+        if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') {
+            // Check if the input event inserted a large block of text suddenly (touch paste bypass)
+            if (e.inputType === 'insertFromPaste' || (e.detail && e.detail.inputType === 'insertFromPaste') || (e.data && e.data.length > 5)) {
+                e.preventDefault();
+                const targetField = e.target;
+                const currentCursorPos = targetField.selectionStart;
+                targetField.value = "[Paste restricted for security compliance]";
+                if (targetField.id === 'q8' || targetField.id === 'q9' || targetField.id === 'q10') refreshWordCounterMetric(targetField.id);
+                return;
+            }
+
+            // Standard real-time backup save routine
+            if (e.target.tagName === 'TEXTAREA') {
+                localStorage.setItem(`lqa_ans_${e.target.id}`, e.target.value);
+                if (e.target.id === 'q8' || e.target.id === 'q9' || e.target.id === 'q10') refreshWordCounterMetric(e.target.id);
+            }
         }
     });
 
     // Integrated recovery bootloader executing unified initialization setups upon window load
     window.addEventListener('load', () => {
+        // Hard hardware detection matrix blocking smart devices, tablets, and phones immediately
+        const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        if (isMobileDevice) {
+            isTestActive = false;
+            document.getElementById('mainApplicationWrapper').style.display = 'none';
+            document.getElementById('securityHardlockTitle').innerText = "Desktop Environment Required";
+            document.getElementById('securityHardlockReason').innerText = "For security compliance and layout integrity, this LQA assessment can only be completed on a desktop or laptop computer. Mobile viewports are restricted.";
+            document.getElementById('securityHardlockScreen').style.display = 'flex';
+            return;
+        }
+
         if (localStorage.getItem('lqa_theme') === 'dark') {
             document.body.classList.add('dark-mode');
             const btn = document.getElementById('themeToggle');
