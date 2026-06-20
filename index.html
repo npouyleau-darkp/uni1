@@ -282,7 +282,9 @@
         @media print {
             body { background: #ffffff !important; color: #000000 !important; padding: 0 !important; }
             .container { box-shadow: none !important; padding: 0 !important; background: #ffffff !important; }
-            .summary-q span { display: none !important; }
+            
+            /* Enhanced global erasure mapping blocks text prompts on both live forms and summaries */
+            .print-strip, .summary-q span { display: none !important; }
             button, .theme-toggle-btn, .temporary-todo-float, .feedback-container, .feedback-success-msg, #qaResetBtn { display: none !important; }
         }
     </style>
@@ -358,10 +360,10 @@
                 <input type="email" id="candidateEmail" required placeholder="e.g., john.doe@example.com">
             </div>
             
-            <div class="form-group">
+            <div class="form-group" style="position: relative;">
                 <label>Assessment Target Language<span class="required-star">*</span></label>
-                <!-- Hidden native field synchronized dynamically by the selection grid workflow -->
-                <input type="hidden" id="candidateLanguage" value="" required>
+                <!-- HTML5 compliance correction: style wrapper ensures target accessibility during validation checks -->
+                <input type="text" id="candidateLanguage" value="" required style="position: absolute; bottom: 0; left: 50%; width: 1px; height: 1px; padding: 0; margin: 0; opacity: 0; pointer-events: none;">
                 
                 <div class="language-grid" id="langGridContainer">
                     <!-- Western & Northern Europe -->
@@ -971,7 +973,6 @@ Expected behavior</div>
 <script>
     // Trigger the native browser print subsystem to generate a clean, question-less PDF layout
     function triggerCandidatePdfDownload() {
-        // Force the rendering loop across the generated summary viewports before triggering print
         window.print();
     }
 
@@ -1000,7 +1001,13 @@ Expected behavior</div>
 
         for (let i = 1; i <= 10; i++) {
             const labelNode = document.getElementById(`lbl_q${i}`);
-            let origLabel = labelNode ? labelNode.innerText : `Question ${i}`;
+            let origLabel = "Question " + i;
+            if (labelNode) {
+                // Read original localized text while stripping runtime HTML indicators cleanly
+                const clone = labelNode.cloneNode(true);
+                const embeddedSpan = clone.querySelector('.print-strip');
+                origLabel = embeddedSpan ? embeddedSpan.innerText : clone.innerText;
+            }
             
             const field = document.getElementById(`q${i}`);
             const targetVal = field ? field.value.trim() : "[Left Blank / No response provided]";
@@ -1008,7 +1015,7 @@ Expected behavior</div>
             const elementBlock = document.createElement('div');
             elementBlock.className = 'summary-item';
             
-            // Fix: Wrap the prompt text in a span to allow the print CSS rule (.summary-q span) to block it correctly
+            // Explicit encapsulation matching style block masking rules (.summary-q span)
             elementBlock.innerHTML = `<div class="summary-q">Response ${i} <span>(${origLabel})</span></div><div class="summary-a">${targetVal}</div>`;
             contentContainer.appendChild(elementBlock);
 
@@ -1023,7 +1030,6 @@ Expected behavior</div>
         localStorage.clear();
         if (cachedTheme) localStorage.setItem('lqa_theme', cachedTheme);
 
-        // Dispatch native payload matrix matching Microsoft Teams incoming webhook formatting
         fetch('https://votre-serveur.com', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -1041,6 +1047,18 @@ Expected behavior</div>
 <script>
     // Universal volatile dictionary holding temporary evaluation text strings for local UI injection
     const lqaLocalTranslationMatrix = {
+        "fr-FR": {
+            "glossaryHeader": "GLOSSAIRE",
+            "glossary": [
+                ["Orb", "Orbe"], ["Throne", "Trône"], ["Strange", "Étrange"], ["Placed", "Placé"],
+                ["Knight", "Chevalier"], ["Sword", "Épée"], ["Castle", "Château"], ["King", "Roi"],
+                ["Queen", "Reine"], ["Kingdom", "Royaume"]
+            ],
+            "q5": "[KIT]l'orbe était placée un trones[color:66845]étrange [/color].[KIT]",
+            "q6": "[KIT]l'orbe était placée un trones[color:66845]étrange [/color].[KIT]",
+            "q7": "[KIT]l'orbe était placée un trones[color:66845]étrange [/color].[KIT]",
+            "q10": "Tant va la cruche à l'eau qu'à la fin elle se pourfasse. Pensez-vous que Maître Yoda aurait apprécié un tel language ?"
+        },
         "de-DE": {
             "glossaryHeader": "GLOSSAR",
             "glossary": [
@@ -1129,9 +1147,8 @@ Expected behavior</div>
 
     // Hot-swaps the text components dynamically across the view layers based on selected isolation constraints
     function triggerDynamicLocalContentHydration(langCode) {
-        if (!langCode || /^fr/i.test(langCode)) return; // Keep French layout fully intact as default baseline reference
-        
-        const dataPack = lqaLocalTranslationMatrix[langCode];
+        const targetCode = langCode || "fr-FR";
+        const dataPack = lqaLocalTranslationMatrix[targetCode];
         if (!dataPack) return;
 
         // Synchronize Section B Glossary panel translations
@@ -1152,14 +1169,18 @@ Expected behavior</div>
         const sheet5 = document.getElementById('sheet_q5_right');
         const sheet6 = document.getElementById('sheet_q6_right');
         const sheet7 = document.getElementById('sheet_q7_right');
-        if (sheet5 && dataPack.q5) sheet5.innerText = dataPack.q5;
-        if (sheet6 && dataPack.q6) sheet6.innerText = dataPack.q6;
-        if (sheet7 && dataPack.q7) sheet7.innerText = dataPack.q7;
+        if (sheet5 && dataPack.q5) sheet5.innerHTML = dataPack.q5;
+        if (sheet6 && dataPack.q6) sheet6.innerHTML = dataPack.q6;
+        if (sheet7 && dataPack.q7) sheet7.innerHTML = dataPack.q7;
 
-        // Hot-swap prompt context for writing skill question 10
+        // Hot-swap prompt context for writing skill question 10 with adaptive secure encapsulation wrappers
         const lbl10 = document.getElementById('lbl_q10');
         if (lbl10 && dataPack.q10) {
-            lbl10.innerText = `10. ${dataPack.q10} (250 mots)`;
+            if (targetCode === "fr-FR") {
+                lbl10.innerHTML = `10. <span class="print-strip">Tant va la cruche à l'eau qu'à la fin elle se pourfasse. Pensez-vous que Maître Yoda aurait apprécié un tel language ?</span> (250 mots)`;
+            } else {
+                lbl10.innerHTML = `10. <span class="print-strip">${dataPack.q10}</span> (250 mots)`;
+            }
         }
     }
 </script>
