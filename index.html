@@ -569,6 +569,17 @@
         document.getElementById('securityHardlockReason').innerText = reasonText;
         document.getElementById('securityHardlockScreen').style.display = 'flex';
     }
+
+    // Wipes out all local active assessment data stores and reloads the current window cleanly
+    function resetQASession() {
+        if (confirm("Are you sure you want to reset the QA Session? This will erase all state data.")) {
+            clearInterval(timerRunningEngine);
+            if (sessionKeepAliveInterval) clearInterval(sessionKeepAliveInterval);
+            localStorage.clear();
+            sessionStorage.clear();
+            window.location.reload();
+        }
+    }
 </script>
 <!-- END OF BLOCK 7 -->
 <!-- START OF BLOCK 8: HARDWARE SHIELDS, WORD COUNTS AND CHRONO ACCELERATOR -->
@@ -605,21 +616,24 @@
         }
     }
 
-    async function startTestTimer() {
+    async function startTestTimer(isRestoring) {
         const first = document.getElementById('firstName').value.trim();
         const last = document.getElementById('lastName').value.trim();
         const email = document.getElementById('candidateEmail').value.trim();
         const lang = document.getElementById('candidateLanguage').value;
 
-        if (!first || !last || !email || !lang) {
-            alert("All identification parameters (First Name, Last Name, Email, Language) are mandatory.");
-            return;
-        }
+        // Skip input identity validation checks only if the bootloader rehydrates an active session
+        if (!isRestoring) {
+            if (!first || !last || !email || !lang) {
+                alert("All identification parameters (First Name, Last Name, Email, Language) are mandatory.");
+                return;
+            }
 
-        localStorage.setItem('lqa_candidate_first', first);
-        localStorage.setItem('lqa_candidate_last', last);
-        localStorage.setItem('lqa_candidate_email', email);
-        localStorage.setItem('lqa_candidate_lang', lang);
+            localStorage.setItem('lqa_candidate_first', first);
+            localStorage.setItem('lqa_candidate_last', last);
+            localStorage.setItem('lqa_candidate_email', email);
+            localStorage.setItem('lqa_candidate_lang', lang);
+        }
 
         document.getElementById('firstName').disabled = true;
         document.getElementById('lastName').disabled = true;
@@ -776,7 +790,7 @@
         }).catch(err => console.error("Anonymized survey tracking routing exception handled gracefully:", err));
     }
 
-    // 6. Clipboard Interception Mechanics
+    // Clipboard Interception Mechanics
     document.addEventListener('copy', (e) => { e.preventDefault(); e.clipboardData.setData('text/plain', '[Copy restricted]'); });
     document.addEventListener('cut', (e) => { e.preventDefault(); e.clipboardData.setData('text/plain', '[Copy restricted]'); });
     document.addEventListener('paste', (e) => {
@@ -825,7 +839,8 @@
             const selectField = document.getElementById('candidateLanguage');
             if (selectField && savedLang) selectField.value = savedLang;
 
-            startTestTimer();
+            // Pass true parameter to bypass validation constraints during emergency runtime hot reboots
+            startTestTimer(true);
         }
     });
 
