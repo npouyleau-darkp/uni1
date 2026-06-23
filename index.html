@@ -347,8 +347,11 @@
             body { background: #ffffff !important; color: #000000 !important; padding: 0 !important; }
             .container { box-shadow: none !important; padding: 0 !important; background: #ffffff !important; }
             
-            /* Enhanced global erasure mapping blocks text prompts on both live forms and summaries */
-            .print-strip, .summary-q span { display: none !important; }
+            /* Enhanced global erasure mapping blocks text prompts on both live forms and summaries.
+               Note: ".summary-q span" was removed — the dynamically generated .summary-q div now only
+               ever contains plain text ("Response N"), never a nested <span>, so that selector matched
+               nothing and was dead weight. */
+            .print-strip { display: none !important; }
             button, .theme-toggle-btn, .temporary-todo-float, .feedback-container, .feedback-success-msg, #qaResetBtn { display: none !important; }
         }
     </style>
@@ -732,18 +735,11 @@ Expected behavior</div>
                 </div>
             </div>
             <div class="form-group">
-                <label id="lbl_q9">9. Do you think Nicolas is nice? And could you tell us why you said yes? (over 9k words)</label>
-                <div class="textarea-container">
-                    <textarea id="q9" rows="4" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
-                    <div class="word-counter-badge" id="counter_q9">Word count: 0</div>
-                </div>
-            </div>
-            <div class="form-group">
-                <label id="lbl_q10">10. Tant va la cruche à l'eau qu'à la fin elle se pourfasse. Pensez-vous que Maître Yoda aurait apprécié un tel language ? (250 mots)</label>
+                <label id="lbl_q9">9. Tant va la cruche à l'eau qu'à la fin elle se pourfasse. Pensez-vous que Maître Yoda aurait apprécié un tel language ? (250 mots)</label>
                 <div class="textarea-container">
                     <!-- Dynamic alignment dir property safely accommodates script directions like RTL Arabic without layout corruption -->
-                    <textarea id="q10" rows="4" dir="auto" style="line-height: 1.7;" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
-                    <div class="word-counter-badge" id="counter_q10">Word count: 0</div>
+                    <textarea id="q9" rows="4" dir="auto" style="line-height: 1.7;" spellcheck="false" autocomplete="off" placeholder="Your response..."></textarea>
+                    <div class="word-counter-badge" id="counter_q9">Word count: 0</div>
                 </div>
             </div>
 
@@ -848,7 +844,7 @@ Expected behavior</div>
     // Dynamic verification engine reviewing form entries before prompting completion alerts
     function openConfirmationModal() {
         const missingQuestions = [];
-        for (let i = 1; i <= 10; i++) {
+        for (let i = 1; i <= 9; i++) {
             const field = document.getElementById(`q${i}`);
             if (!field || !field.value.trim()) {
                 missingQuestions.push(`Q${i}`);
@@ -950,12 +946,33 @@ Expected behavior</div>
         const cleanText = textValue.trim();
         if (cleanText === "") return 0;
         const fallbackLang = langCode || localStorage.getItem('lqa_candidate_lang') || "en-US";
-        
-        if (/^(zh|ja)/i.test(fallbackLang)) {
+
+        // Chinese & Japanese: use Intl.Segmenter for real word-like segmentation, the same approach
+        // already used for Thai below — instead of the old rough "character count / 1.6" approximation.
+        // That approximation is kept only as a fallback for browsers without Intl.Segmenter support.
+        if (/^zh/i.test(fallbackLang)) {
             const strippedText = cleanText.replace(/\[.*?\]/g, "");
+            if (typeof Intl.Segmenter === "function") {
+                const segmenter = new Intl.Segmenter('zh', { granularity: 'word' });
+                return Array.from(segmenter.segment(strippedText)).filter(s => s.isWordLike).length;
+            }
             return Math.ceil(strippedText.length / 1.6);
         }
-        
+
+        if (/^ja/i.test(fallbackLang)) {
+            const strippedText = cleanText.replace(/\[.*?\]/g, "");
+            if (typeof Intl.Segmenter === "function") {
+                const segmenter = new Intl.Segmenter('ja', { granularity: 'word' });
+                return Array.from(segmenter.segment(strippedText)).filter(s => s.isWordLike).length;
+            }
+            return Math.ceil(strippedText.length / 1.6);
+        }
+
+        // Korean intentionally keeps the space-based heuristic rather than Intl.Segmenter: unlike
+        // Chinese/Japanese/Thai (no spaces between words at all), Korean text is already segmented at
+        // the eojeol (word-ish unit) level by whitespace, so splitting on spaces is already a reasonable
+        // proxy. The ×1.2 factor compensates for eojeols often bundling a stem + grammatical particles,
+        // which a space-delimited language like English would usually count as more than one word.
         if (/^ko/i.test(fallbackLang)) {
             const spaceSplitCount = cleanText.split(/\s+/).length;
             return Math.ceil(spaceSplitCount * 1.2);
@@ -1053,11 +1070,94 @@ Expected behavior</div>
         window.print();
     }
 
+    // --- Submission error UI helpers (point 3 & 4: no silent data loss, visible error + retry/download) ---
+
+    function clearSubmissionErrorBanner() {
+        const existing = document.getElementById('submissionErrorBanner');
+        if (existing) existing.remove();
+    }
+
+    // Lets the candidate keep a copy of their answers locally if the network submission fails,
+    // so nothing is lost even if they close the tab before a retry succeeds.
+    function downloadAnswersLocally(snapshot) {
+        const blobContent = `Candidate: ${snapshot.last} ${snapshot.first}\nEmail: ${snapshot.email}\nLanguage: ${snapshot.lang}\nDuration: ${snapshot.elapsedMinutes} minutes\n\n${snapshot.teamsBodyText}`;
+        const blob = new Blob([blobContent], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `lqa-responses-${(snapshot.last || 'candidate').replace(/\s+/g, '_')}.txt`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
+
+    // Renders a visible, non-blocking error banner above the response summary with a retry
+    // button and a local-download fallback, instead of failing silently in the console.
+    function showSubmissionErrorBanner(snapshot, retryFn) {
+        clearSubmissionErrorBanner();
+
+        const banner = document.createElement('div');
+        banner.id = 'submissionErrorBanner';
+        banner.style.background = '#fef2f2';
+        banner.style.border = '2px solid #fca5a5';
+        banner.style.borderRadius = '10px';
+        banner.style.padding = '20px';
+        banner.style.marginBottom = '30px';
+        banner.style.color = '#7f1d1d';
+
+        const message = document.createElement('p');
+        message.style.margin = '0 0 15px 0';
+        message.style.fontWeight = '700';
+        message.textContent = "Submission failed (network or server issue). Your responses are still shown below — please retry, or download them locally in the meantime.";
+        banner.appendChild(message);
+
+        const retryBtn = document.createElement('button');
+        retryBtn.type = 'button';
+        retryBtn.textContent = 'Retry submission';
+        retryBtn.className = 'btn-nav';
+        retryBtn.style.marginRight = '10px';
+        retryBtn.addEventListener('click', retryFn);
+        banner.appendChild(retryBtn);
+
+        const downloadBtn = document.createElement('button');
+        downloadBtn.type = 'button';
+        downloadBtn.textContent = 'Download my responses';
+        downloadBtn.className = 'btn-download';
+        downloadBtn.style.marginTop = '0';
+        downloadBtn.addEventListener('click', () => downloadAnswersLocally(snapshot));
+        banner.appendChild(downloadBtn);
+
+        const summaryHeader = document.querySelector('#page5 .summary-header');
+        if (summaryHeader) summaryHeader.insertAdjacentElement('afterend', banner);
+    }
+
+    // Centralizes the results POST so it can be retried without re-running displaySummaryDashboard.
+    // Adds a static client-side token header (point 5): this is NOT real security — anyone can read it
+    // from the page source — it only filters out the most casual accidental/automated POSTs. Genuine
+    // authentication (e.g. a per-session signed token issued by a real backend) must happen server-side.
+    function postResultsPayload(payload) {
+        return fetch('https://votre-serveur.com', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-LQA-Client-Token': 'lqa-static-client-token-2026'
+            },
+            body: JSON.stringify(payload)
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error(`Server responded with HTTP ${response.status}`);
+            }
+            return response;
+        });
+    }
+
     // Build Microsoft Teams compliant Adaptive Card payload framework
     function displaySummaryDashboard(isTriggeredByTimeout) {
         isTestActive = false; 
         document.getElementById('timerDisplay').style.display = 'none';
         document.getElementById('assessmentForm').style.display = 'none';
+        clearSubmissionErrorBanner();
         
         const first = localStorage.getItem('lqa_candidate_first') || "Candidate";
         const last = localStorage.getItem('lqa_candidate_last') || "User";
@@ -1076,7 +1176,7 @@ Expected behavior</div>
             teamsBodyText += `⚠️ **AUTOMATIC SUBMISSION - TIME EXPIRED** ⚠️\n\n`;
         }
 
-        for (let i = 1; i <= 10; i++) {
+        for (let i = 1; i <= 9; i++) {
             const labelNode = document.getElementById(`lbl_q${i}`);
             let origLabel = "Question " + i;
             if (labelNode) {
@@ -1090,31 +1190,53 @@ Expected behavior</div>
 
             const elementBlock = document.createElement('div');
             elementBlock.className = 'summary-item';
-            
-            // Refined Output Architecture: Strips the text prompt content completely to show only the response index label
-            elementBlock.innerHTML = `<div class="summary-q">Response ${i}</div><div class="summary-a">${targetVal}</div>`;
+
+            // Refined Output Architecture: shows only the response index label, never the question text.
+            // Built with createElement + textContent (not innerHTML) so candidate-supplied answer text is
+            // always treated as plain text and can never be interpreted/executed as HTML (fixes stored XSS).
+            const qLine = document.createElement('div');
+            qLine.className = 'summary-q';
+            qLine.textContent = `Response ${i}`;
+
+            const aLine = document.createElement('div');
+            aLine.className = 'summary-a';
+            aLine.textContent = targetVal;
+
+            elementBlock.appendChild(qLine);
+            elementBlock.appendChild(aLine);
             contentContainer.appendChild(elementBlock);
 
             teamsBodyText += `**${origLabel}**\n${targetVal}\n`;
-            if (i === 8 || i === 9 || i === 10) {
+            if (i === 8 || i === 9) {
                 teamsBodyText += `*(Word count: ${getWordCount(targetVal, lang)} units)*\n`;
             }
             teamsBodyText += `\n`;
         }
 
-        const cachedTheme = localStorage.getItem('lqa_theme');
-        localStorage.clear();
-        if (cachedTheme) localStorage.setItem('lqa_theme', cachedTheme);
+        // Snapshot kept in memory (not just localStorage) so a retry or local download still works
+        // even if localStorage was already cleared by something else in the meantime.
+        const answersSnapshot = { first, last, email, lang, elapsedMinutes, teamsBodyText };
+        const submissionPayload = {
+            title: `${last} ${first} - Language: ${lang}`,
+            text: teamsBodyText
+        };
 
-        fetch('https://votre-serveur.com', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                title: `${last} ${first} - Language: ${lang}`,
-                text: teamsBodyText
-            })
-        }).catch(error => console.error("Network payload delivery exception handled gracefully:", error));
+        const attemptSubmission = () => {
+            clearSubmissionErrorBanner();
+            postResultsPayload(submissionPayload)
+                .then(() => {
+                    // Only erase local data once the server has actually confirmed receipt (HTTP 2xx).
+                    const cachedTheme = localStorage.getItem('lqa_theme');
+                    localStorage.clear();
+                    if (cachedTheme) localStorage.setItem('lqa_theme', cachedTheme);
+                })
+                .catch(error => {
+                    console.error("Results submission failed, candidate data preserved:", error);
+                    showSubmissionErrorBanner(answersSnapshot, attemptSubmission);
+                });
+        };
 
+        attemptSubmission();
         changePageView(5);
     }
 </script>
@@ -1133,7 +1255,7 @@ Expected behavior</div>
             "q5": "[KIT]l'orbe était placée un trones[color:66845]étrange [/color].[KIT]",
             "q6": "[KIT]l'orbe était placée un trones[color:66845]étrange [/color].[KIT]",
             "q7": "[KIT]l'orbe était placée un trones[color:66845]étrange [/color].[KIT]",
-            "q10": "Tant va la cruche à l'eau qu'à la fin elle se pourfasse. Pensez-vous que Maître Yoda aurait apprécié un tel language ?",
+            "q9": "Tant va la cruche à l'eau qu'à la fin elle se pourfasse. Pensez-vous que Maître Yoda aurait apprécié un tel language ?",
             "volumeLabel": "250 mots"
         },
         "de-DE": {
@@ -1146,7 +1268,7 @@ Expected behavior</div>
             "q5": "[KIT]Die Kugel wurde auf einen seltsamen [color:65845]Thron[/color] platziert.[KIT]",
             "q6": "[KIT]Die Kugel wurde auf einen seltsamen [color:65845]Thron[/color] platziert.[KIT]",
             "q7": "[KIT]Die Kugel wurde auf einen seltsamen [color:65845]Thron[/color] platziert.[KIT]",
-            "q10": "Was ist dein Lieblingsvideospiel und warum?",
+            "q9": "Was ist dein Lieblingsvideospiel und warum?",
             "volumeLabel": "250 Wörter"
         },
         "it-IT": {
@@ -1159,7 +1281,7 @@ Expected behavior</div>
             "q5": "[KIT]L'orba è stata piazzata su uno strano [color:65845]trono[/color].[KIT]",
             "q6": "[KIT]L'orba è stata piazzata su uno strano [color:65845]trono[/color].[KIT]",
             "q7": "[KIT]L'orba è stata piazzata su uno strano [color:65845]trono[/color].[KIT]",
-            "q10": "Qual è il tuo videogioco preferito, dicci perché?",
+            "q9": "Qual è il tuo videogioco preferito, dicci perché?",
             "volumeLabel": "250 parole"
         },
         "es-ES": {
@@ -1172,7 +1294,7 @@ Expected behavior</div>
             "q5": "[KIT]El orbe fue colocado en un extraño [color:65845]trono[/color].[KIT]",
             "q6": "[KIT]El orbe fue colocado en un extraño [color:65845]trono[/color].[KIT]",
             "q7": "[KIT]El orbe fue colocado en un extraño [color:65845]trono[/color].[KIT]",
-            "q10": "¿Cuál es tu videojuego favorito, cuéntanos por qué?",
+            "q9": "¿Cuál es tu videojuego favorito, cuéntanos por qué?",
             "volumeLabel": "250 palabras"
         },
         "es-419": {
@@ -1185,7 +1307,7 @@ Expected behavior</div>
             "q5": "[KIT]El orbe fue colocado en un extraño [color:65845]trono[/color].[KIT]",
             "q6": "[KIT]El orbe fue colocado en un extraño [color:65845]trono[/color].[KIT]",
             "q7": "[KIT]El orbe fue colocado en un extraño [color:65845]trono[/color].[KIT]",
-            "q10": "¿Cuál es tu videojuego favorito, cuéntanos por qué?",
+            "q9": "¿Cuál es tu videojuego favorito, cuéntanos por qué?",
             "volumeLabel": "250 palabras"
         },
         "pt-PT": {
@@ -1198,7 +1320,7 @@ Expected behavior</div>
             "q5": "[KIT]O orbe foi colocado num estranho [color:65845]trono[/color].[KIT]",
             "q6": "[KIT]O orbe foi colocado num estranho [color:65845]trono[/color].[KIT]",
             "q7": "[KIT]O orbe foi colocado num estranho [color:65845]trono[/color].[KIT]",
-            "q10": "Qual é o teu jogo de videojogos favorito, diz-nos porquê?",
+            "q9": "Qual é o teu jogo de videojogos favorito, diz-nos porquê?",
             "volumeLabel": "250 palavras"
         },
         "pt-BR": {
@@ -1211,7 +1333,7 @@ Expected behavior</div>
             "q5": "[KIT]O orbe foi colocado em um estranho [color:65845]trono[/color].[KIT]",
             "q6": "[KIT]O orbe foi colocado em um estranho [color:65845]trono[/color].[KIT]",
             "q7": "[KIT]O orbe foi colocado em um estranho [color:65845]trono[/color].[KIT]",
-            "q10": "Qual é o seu videogame favorito, conte-nos porquê?",
+            "q9": "Qual é o seu videogame favorito, conte-nos porquê?",
             "volumeLabel": "250 palavras"
         },
         "ru-RU": {
@@ -1224,7 +1346,7 @@ Expected behavior</div>
             "q5": "[KIT]Сфера была помещена на странный [color:65845]трон[/color].[KIT]",
             "q6": "[KIT]Сфера была помещена на странный [color:65845]трон[/color].[KIT]",
             "q7": "[KIT]Сфера была помещена на странный [color:65845]трон[/color].[KIT]",
-            "q10": "Какая ваша любимая видеоигра, расскажите почему?",
+            "q9": "Какая ваша любимая видеоигра, расскажите почему?",
             "volumeLabel": "250 слов"
         }
     };
@@ -1259,22 +1381,51 @@ Expected behavior</div>
         if (sheet6 && dataPack.q6) sheet6.innerText = dataPack.q6;
         if (sheet7 && dataPack.q7) sheet7.innerText = dataPack.q7;
 
-        // Hot-swap prompt context for writing skill question 10 with adaptive secure encapsulation wrappers
-        const lbl10 = document.getElementById('lbl_q10');
-        if (lbl10 && dataPack.q10) {
+        // Hot-swap prompt context for writing skill question 9 (Yoda) with adaptive secure encapsulation wrappers
+        const lbl9 = document.getElementById('lbl_q9');
+        if (lbl9 && dataPack.q9) {
             // Check for character-density based languages (Chinese, Japanese, Korean, Thai)
             if (/^(zh|ja|ko|th)/i.test(targetCode)) {
-                lbl10.innerHTML = `10. <span class="print-strip">${dataPack.q10}</span> (Equivalent of 250 English words (dynamically calculated based on character density))`;
+                lbl9.innerHTML = `9. <span class="print-strip">${dataPack.q9}</span> (Equivalent of 250 English words (dynamically calculated based on character density))`;
             } else {
                 // Apply pure local translated volume constraints for spaced scripts (French, Spanish, Turkish, etc.)
                 const localizedSuffix = dataPack.volumeLabel || "250 words";
                 if (targetCode === "fr-FR") {
-                    lbl10.innerHTML = `10. <span class="print-strip">Tant va la cruche à l'eau qu'à la fin elle se pourfasse. Pensez-vous que Maître Yoda aurait apprécié un tel language ?</span> (${localizedSuffix})`;
+                    lbl9.innerHTML = `9. <span class="print-strip">Tant va la cruche à l'eau qu'à la fin elle se pourfasse. Pensez-vous que Maître Yoda aurait apprécié un tel language ?</span> (${localizedSuffix})`;
                 } else {
-                    lbl10.innerHTML = `10. <span class="print-strip">${dataPack.q10}</span> (${localizedSuffix})`;
+                    lbl9.innerHTML = `9. <span class="print-strip">${dataPack.q9}</span> (${localizedSuffix})`;
                 }
             }
         }
+
+        // Apply RTL layout support immediately for the panels that just got new content
+        applyRtlSupport(targetCode);
+    }
+
+    // Applies right-to-left text direction where it matters for Arabic (ar-AA), without touching
+    // the static HTML. Scope, as requested: the glossary panel, both side-windows (Section A bug-report
+    // tips and Section B glossary), the *target-language* column of the comparison sheets for Q5/Q6/Q7
+    // (the English reference column on the left intentionally stays LTR), and the candidate's own
+    // free-text answer fields for Q5, Q6, Q7 and Q9 (the former Q10, now renumbered after Q9 "Nicolas"
+    // was removed). For any non-Arabic language, direction is reset to ltr/auto.
+    function applyRtlSupport(langCode) {
+        const isRtl = /^ar/i.test(langCode || "");
+        const dirValue = isRtl ? "rtl" : "ltr";
+
+        const glossaryTable = document.querySelector('.glossary-table');
+        if (glossaryTable) glossaryTable.setAttribute('dir', dirValue);
+
+        document.querySelectorAll('.side-window').forEach(panel => panel.setAttribute('dir', dirValue));
+
+        ['sheet_q5_right', 'sheet_q6_right', 'sheet_q7_right'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.setAttribute('dir', dirValue);
+        });
+
+        ['q5', 'q6', 'q7', 'q9'].forEach(id => {
+            const field = document.getElementById(id);
+            if (field) field.setAttribute('dir', isRtl ? 'rtl' : 'auto');
+        });
     }
 </script>
 <!-- END OF BLOCK 10.1 -->
@@ -1292,7 +1443,7 @@ Expected behavior</div>
             "q5": "[KIT]تم وضع الجرم السماوي على [color:65845]عرش[/color] غريب.[KIT]",
             "q6": "[KIT]تم وضع الجرم السماوي على [color:65845]عرش[/color] غريب.[KIT]",
             "q7": "[KIT]تم وضع الجرم السماوي على [color:65845]عرش[/color] غريب.[KIT]",
-            "q10": "ما هي لعبتك الإلكترونية المفضلة، وأخبرنا لماذا؟"
+            "q9": "ما هي لعبتك الإلكترونية المفضلة، وأخبرنا لماذا؟"
         },
         "hi-IN": {
             "glossaryHeader": "शब्दकोष",
@@ -1304,7 +1455,7 @@ Expected behavior</div>
             "q5": "[KIT]गोले को एक अजीब [color:65845]सिंहासन[/color] पर रखा गया था।[KIT]",
             "q6": "[KIT]गोले को एक अजीब [color:65845]सिंहासन[/color] पर रखा गया था।[KIT]",
             "q7": "[KIT]गोले को एक अजीब [color:65845]सिंहासन[/color] पर रखा गया था।[KIT]",
-            "q10": "आपका पसंदीदा वीडियो गेम कौन सा है, हमें बताएं क्यों?",
+            "q9": "आपका पसंदीदा वीडियो गेम कौन सा है, हमें बताएं क्यों?",
             "volumeLabel": "250 शब्द"
         },
         "zh-CN": {
@@ -1317,7 +1468,7 @@ Expected behavior</div>
             "q5": "[KIT]宝珠被放置在一个奇妙的[color:65845]王座[/color]上。[KIT]",
             "q6": "[KIT]宝珠被放置在一个奇妙的[color:65845]王座[/color]上。[KIT]",
             "q7": "[KIT]宝珠被放置在一个奇妙的[color:65845]王座[/color]上。[KIT]",
-            "q10": "你最喜欢的电子游戏是什么，告诉我们为什么？"
+            "q9": "你最喜欢的电子游戏是什么，告诉我们为什么？"
         },
         "zh-TW": {
             "glossaryHeader": "詞彙表",
@@ -1329,7 +1480,7 @@ Expected behavior</div>
             "q5": "[KIT]寶珠被放置在一個奇妙的[color:65845]王座[/color]上。[KIT]",
             "q6": "[KIT]寶珠被放置在一個奇妙的[color:65845]王座[/color]上。[KIT]",
             "q7": "[KIT]寶珠被放置在一個奇妙的[color:65845]王座[/color]上。[KIT]",
-            "q10": "你最喜歡的電子遊戲是什麼，告訴我們為什麼？"
+            "q9": "你最喜歡的電子遊戲是什麼，告訴我們為什麼？"
         },
         "zh-HK": {
             "glossaryHeader": "詞彙表",
@@ -1341,7 +1492,7 @@ Expected behavior</div>
             "q5": "[KIT]寶珠被放置喺一個奇妙嘅[color:65845]王座[/color]上面。[KIT]",
             "q6": "[KIT]寶珠被放置喺一個奇妙嘅[color:65845]王座[/color]上面。[KIT]",
             "q7": "[KIT]寶珠被放置喺一個奇妙嘅[color:65845]王座[/color]上面。[KIT]",
-            "q10": "你最鍾意邊款電子遊戲，話畀我哋知點解？"
+            "q9": "你最鍾意邊款電子遊戲，話畀我哋知點解？"
         },
         "ja-JP": {
             "glossaryHeader": "用語集",
@@ -1353,7 +1504,7 @@ Expected behavior</div>
             "q5": "[KIT]宝珠は奇妙な[color:65845]玉座[/color]に置かれた。[KIT]",
             "q6": "[KIT]宝珠は奇妙な[color:65845]玉座[/color]に置かれた。[KIT]",
             "q7": "[KIT]宝珠は奇妙な[color:65845]玉座[/color]に置かれた。[KIT]",
-            "q10": "あなたの好きなビデオゲームは何ですか、その理由を教えてください。"
+            "q9": "あなたの好きなビデオゲームは何ですか、その理由を教えてください。"
         },
         "ko-KR": {
             "glossaryHeader": "용어집",
@@ -1365,19 +1516,19 @@ Expected behavior</div>
             "q5": "[KIT]오브가 기묘한[color:65845]왕좌[/color]에 놓였다.[KIT]",
             "q6": "[KIT]오브가 기묘한[color:65845]왕좌[/color]에 놓였다.[KIT]",
             "q7": "[KIT]오브가 기묘한[color:65845]왕좌[/color]에 놓였다.[KIT]",
-            "q10": "가장 좋아하는 비디오 게임은 무엇인가요, 그 이유를 말해주세요."
+            "q9": "가장 좋아하는 비디오 게임은 무엇인가요, 그 이유를 말해주세요."
         },
         "th-TH": {
             "glossaryHeader": "พจนานุกรมคำศัพท์",
             "glossary": [
-                ["Orb", "ลูกแก้ว"], ["Throne", "บัลลังก์"], ["Strange", "แปลк"], ["Placed", "วาง"],
+                ["Orb", "ลูกแก้ว"], ["Throne", "บัลลังก์"], ["Strange", "แปลก"], ["Placed", "วาง"],
                 ["Knight", "อัศวิน"], ["Sword", "ดาบ"], ["Castle", "ปราสาท"], ["King", "ราชา"],
                 ["Queen", "ราชินี"], ["Kingdom", "อาณาจักร"]
             ],
             "q5": "[KIT]ลูกแก้วถูกวางไว้บนบัลลังก์[color:65845]ที่แปลกประหลาด[/color].[KIT]",
             "q6": "[KIT]ลูกแก้วถูกวางไว้บนบัลลังก์[color:65845]ที่แปลกประหลาด[/color].[KIT]",
             "q7": "[KIT]ลูกแก้วถูกวางไว้บนบัลลังก์[color:65845]ที่แปลกประหลาด[/color].[KIT]",
-            "q10": "เกมโปรดของคุณคือเกมอะไร และบอกเหตุผลให้เราฟังหน่อย?"
+            "q9": "เกมโปรดของคุณคือเกมอะไร และบอกเหตุผลให้เราฟังหน่อย?"
         },
         "vi-VN": {
             "glossaryHeader": "TỪ VỰNG",
@@ -1389,7 +1540,7 @@ Expected behavior</div>
             "q5": "[KIT]Quả cầu được đặt trên một ngai vàng [color:65845]kỳ lạ[/color].[KIT]",
             "q6": "[KIT]Quả cầu được đặt trên một ngai vàng [color:65845]kỳ lạ[/color].[KIT]",
             "q7": "[KIT]Quả cầu được đặt trên một ngai vàng [color:65845]kỳ lạ[/color].[KIT]",
-            "q10": "Trò chơi điện tử yêu thích của bạn là gì, hãy cho chúng tôi biết tại sao?",
+            "q9": "Trò chơi điện tử yêu thích của bạn là gì, hãy cho chúng tôi biết tại sao?",
             "volumeLabel": "250 từ"
         }
     });
@@ -1408,7 +1559,7 @@ Expected behavior</div>
             "q5": "[KIT]Küre garip bir [color:65845]taht[/color] üzerine yerleştirildi.[KIT]",
             "q6": "[KIT]Küre garip bir [color:65845]taht[/color] üzerine yerleştirildi.[KIT]",
             "q7": "[KIT]Küre garip bir [color:65845]taht[/color] üzerine yerleştirildi.[KIT]",
-            "q10": "En sevdiğiniz video oyunu hangisi, nedenini bize söyleyin?",
+            "q9": "En sevdiğiniz video oyunu hangisi, nedenini bize söyleyin?",
             "volumeLabel": "250 kelime"
         },
         "sv-SE": {
@@ -1421,7 +1572,7 @@ Expected behavior</div>
             "q5": "[KIT]Klotet placerades på en sällsam [color:65845]tron[/color].[KIT]",
             "q6": "[KIT]Klotet placerades på en sällsam [color:65845]tron[/color].[KIT]",
             "q7": "[KIT]Klotet placerades på en sällsam [color:65845]tron[/color].[KIT]",
-            "q10": "Vilket är ditt favoritvideospel, berätta varför?",
+            "q9": "Vilket är ditt favoritvideospel, berätta varför?",
             "volumeLabel": "250 ord"
         },
         "el-GR": {
@@ -1434,7 +1585,7 @@ Expected behavior</div>
             "q5": "[KIT]Η σφαίρα τοποθετήθηκε σε έναν παράξενο [color:65845]θρόνο[/color].[KIT]",
             "q6": "[KIT]Η σφαίρα τοποθετήθηκε σε έναν παράξενο [color:65845]θρόνο[/color].[KIT]",
             "q7": "[KIT]Η σφαίρα τοποθετήθηκε σε έναν παράξενο [color:65845]θρόνο[/color].[KIT]",
-            "q10": "Ποιο είναι το αγαπημένο σας βιντεοπαιχνίδι, πείτε μας γιατί;",
+            "q9": "Ποιο είναι το αγαπημένο σας βιντεοπαιχνίδι, πείτε μας γιατί;",
             "volumeLabel": "250 λέξεις"
         },
         "pl-PL": {
@@ -1447,7 +1598,7 @@ Expected behavior</div>
             "q5": "[KIT]Sfera została umieszczona na dziwnym [color:65845]tronie[/color].[KIT]",
             "q6": "[KIT]Sfera została umieszczona na dziwnym [color:65845]tronie[/color].[KIT]",
             "q7": "[KIT]Sfera została umieszczona na dziwnym [color:65845]tronie[/color].[KIT]",
-            "q10": "Jaka jest Twoja ulubiona gra wideo i dlaczego?",
+            "q9": "Jaka jest Twoja ulubiona gra wideo i dlaczego?",
             "volumeLabel": "250 słów"
         },
         "cs-CZ": {
@@ -1460,7 +1611,7 @@ Expected behavior</div>
             "q5": "[KIT]Sféra byla umístěna na podivný [color:65845]trůn[/color].[KIT]",
             "q6": "[KIT]Sféra byla umístěna na podivný [color:65845]trůn[/color].[KIT]",
             "q7": "[KIT]Sféra byla umístěna na podivný [color:65845]trůn[/color].[KIT]",
-            "q10": "Jaká je vaše oblíbená videohra a proč?",
+            "q9": "Jaká je vaše oblíbená videohra a proč?",
             "volumeLabel": "250 slov"
         },
         "hu-HU": {
@@ -1473,7 +1624,7 @@ Expected behavior</div>
             "q5": "[KIT]A gömb egy különös [color:65845]trónra[/color] lett elhelyezve.[KIT]",
             "q6": "[KIT]A gömb egy különös [color:65845]trónra[/color] lett elhelyezve.[KIT]",
             "q7": "[KIT]A gömb egy különös [color:65845]trónra[/color] lett elhelyezve.[KIT]",
-            "q10": "Mi a kedvenc videojátékod, és miért?",
+            "q9": "Mi a kedvenc videojátékod, és miért?",
             "volumeLabel": "250 szó"
         },
         "uk-UA": {
@@ -1484,9 +1635,9 @@ Expected behavior</div>
                 ["Queen", "Королева"], ["Kingdom", "Королівство"]
             ],
             "q5": "[KIT]Сфера була розміщена на дивному [color:65845]троні[/color].[KIT]",
-            "q6": "[KIT]Сфера была розміщена на дивному [color:65845]троні[/color].[KIT]",
-            "q7": "[KIT]Сфера была розміщена на дивному [color:65845]троні[/color].[KIT]",
-            "q10": "Яка ваша улюблена відеогра, розкажіть чому?",
+            "q6": "[KIT]Сфера була розміщена на дивному [color:65845]троні[/color].[KIT]",
+            "q7": "[KIT]Сфера була розміщена на дивному [color:65845]троні[/color].[KIT]",
+            "q9": "Яка ваша улюблена відеогра, розкажіть чому?",
             "volumeLabel": "250 слів"
         },
         "ro-RO": {
@@ -1499,7 +1650,7 @@ Expected behavior</div>
             "q5": "[KIT]Orbul a fost plasat pe un tron [color:65845]straniu[/color].[KIT]",
             "q6": "[KIT]Orbul a fost plasat pe un tron [color:65845]straniu[/color].[KIT]",
             "q7": "[KIT]Orbul a fost plasat pe un tron [color:65845]straniu[/color].[KIT]",
-            "q10": "Care este jocul tău video preferat, spune-ne de ce?",
+            "q9": "Care este jocul tău video preferat, spune-ne de ce?",
             "volumeLabel": "250 de cuvinte"
         },
         "bg-BG": {
@@ -1512,7 +1663,7 @@ Expected behavior</div>
             "q5": "[KIT]Сферата беше поставена на странен [color:65845]трон[/color].[KIT]",
             "q6": "[KIT]Сферата беше поставена на странен [color:65845]трон[/color].[KIT]",
             "q7": "[KIT]Сферата беше поставена на странен [color:65845]трон[/color].[KIT]",
-            "q10": "Коя е любимата ви видеоигра, разкажете ни защо?",
+            "q9": "Коя е любимата ви видеоигра, разкажете ни защо?",
             "volumeLabel": "250 думи"
         }
     });
@@ -1531,7 +1682,7 @@ Expected behavior</div>
             "q5": "[KIT]De bol werd op een vreemde [color:65845]troon[/color] geplaatst.[KIT]",
             "q6": "[KIT]De bol werd op een vreemde [color:65845]troon[/color] geplaatst.[KIT]",
             "q7": "[KIT]De bol werd op een vreemde [color:65845]troon[/color] geplaatst.[KIT]",
-            "q10": "Wat is je favoriete videogame, vertel ons waarom?",
+            "q9": "Wat is je favoriete videogame, vertel ons waarom?",
             "volumeLabel": "250 woorden"
         },
         "no-NO": {
@@ -1544,7 +1695,7 @@ Expected behavior</div>
             "q5": "[KIT]Kulen ble plassert på en sær [color:65845]trone[/color].[KIT]",
             "q6": "[KIT]Kulen ble plassert på en sær [color:65845]trone[/color].[KIT]",
             "q7": "[KIT]Kulen ble plassert på en sær [color:65845]trone[/color].[KIT]",
-            "q10": "Hva er favorittvideospillet ditt, fortell oss hvorfor?",
+            "q9": "Hva er favorittvideospillet ditt, fortell oss hvorfor?",
             "volumeLabel": "250 ord"
         },
         "da-DK": {
@@ -1557,7 +1708,7 @@ Expected behavior</div>
             "q5": "[KIT]Kuglen blev placeret på en særegen [color:65845]trone[/color].[KIT]",
             "q6": "[KIT]Kuglen blev placeret på en særegen [color:65845]trone[/color].[KIT]",
             "q7": "[KIT]Kuglen blev placeret på en særegen [color:65845]trone[/color].[KIT]",
-            "q10": "Hvad er dit yndlingsvideospil, og fortæl os hvorfor?",
+            "q9": "Hvad er dit yndlingsvideospil, og fortæl os hvorfor?",
             "volumeLabel": "250 ord"
         },
         "fi-FI": {
@@ -1570,7 +1721,7 @@ Expected behavior</div>
             "q5": "[KIT]Orb asetettiin oudolle [color:65845]valtaistuimelle[/color].[KIT]",
             "q6": "[KIT]Orb asetettiin oudolle [color:65845]valtaistuimelle[/color].[KIT]",
             "q7": "[KIT]Orb asetettiin oudolle [color:65845]valtaistuimelle[/color].[KIT]",
-            "q10": "Mikä on suosikkivideopelisi, kerro meille miksi?",
+            "q9": "Mikä on suosikkivideopelisi, kerro meille miksi?",
             "volumeLabel": "250 sanaa"
         },
         "ms-MY": {
@@ -1583,7 +1734,7 @@ Expected behavior</div>
             "q5": "[KIT]Sfera itu diletakkan di atas takhta yang [color:65845]aneh[/color].[KIT]",
             "q6": "[KIT]Sfera itu diletakkan di atas takhta yang [color:65845]aneh[/color].[KIT]",
             "q7": "[KIT]Sfera itu diletakkan di atas takhta yang [color:65845]aneh[/color].[KIT]",
-            "q10": "Apakah permainan video kegemaran anda, beritahu kami mengapa?",
+            "q9": "Apakah permainan video kegemaran anda, beritahu kami mengapa?",
             "volumeLabel": "250 patah perkataan"
         },
         "id-ID": {
@@ -1596,7 +1747,7 @@ Expected behavior</div>
             "q5": "[KIT]Orb ditempatkan di atas takhta yang [color:65845]aneh[/color].[KIT]",
             "q6": "[KIT]Orb ditempatkan di atas takhta yang [color:65845]aneh[/color].[KIT]",
             "q7": "[KIT]Orb ditempatkan di atas takhta yang [color:65845]aneh[/color].[KIT]",
-            "q10": "Apakah permainan video favorit Anda, beritahu kami mengapa?",
+            "q9": "Apakah permainan video favorit Anda, beritahu kami mengapa?",
             "volumeLabel": "250 kata"
         }
     });
@@ -1604,6 +1755,25 @@ Expected behavior</div>
 <!-- END OF BLOCK 10.4 -->
 <!-- START OF BLOCK 11: EXTREME TOUCH AND KEYBOARD ANTI-CHEAT INTERCEPTORS -->
 <script>
+    // ⚠️ SECURITY NOTE (point 7 of the audit): everything in this block — and the copy/paste blocking,
+    // the single-tab BroadcastChannel check in BLOCK 7, and the client-side timer in BLOCK 8 — runs
+    // entirely in the candidate's browser. A candidate with basic DevTools knowledge can disable any of
+    // it: override `navigator.clipboard`, delete these event listeners, edit `isTestActive`/`testEndTime`
+    // in the console, spoof `sessionStorage`/`BroadcastChannel` messages, or simply open the page's source
+    // and resubmit a forged payload directly to the webhook endpoint. None of this is real proctoring.
+    //
+    // If test integrity genuinely matters, the fix has to move server-side, e.g.:
+    //   - Issue a short-lived, signed session token server-side at test start; require it on every
+    //     results/feedback POST, and validate it server-side (this also closes part of point 5).
+    //   - Log timestamped answer snapshots server-side as the candidate types (not just at submission),
+    //     so a late forged submission can be cross-checked against the real typing timeline.
+    //   - Enforce the 2-hour time limit server-side (reject submissions past the deadline) instead of
+    //     trusting the browser's own clock/timer.
+    //   - Use a dedicated proctoring SDK/service if true lockdown (clipboard, dev tools, tab focus) is
+    //     a hard requirement — browsers fundamentally can't guarantee this on their own.
+    //
+    // The interceptors below are kept as a deterrent for casual attempts, not as a security control.
+
     // Dispatch selected choices and text to a secondary independent Microsoft Teams webhook channel
     function submitAnonymousFeedbackForm() {
         const selectedOptions = [];
@@ -1616,22 +1786,36 @@ Expected behavior</div>
             return;
         }
 
-        document.getElementById('feedbackSubmitBtn').disabled = true;
+        const submitBtn = document.getElementById('feedbackSubmitBtn');
+        submitBtn.disabled = true;
 
         let feedbackBodyString = `**Identified Categories:** ${selectedOptions.length > 0 ? selectedOptions.join(', ') : 'None selected'}\n\n`;
         feedbackBodyString += `**Detailed Candidate Commentary:**\n${feedbackNotes || '[No detailed comments provided]'}`;
 
-        document.getElementById('feedbackFormBlock').style.display = 'none';
-        document.getElementById('feedbackSuccessMessage').style.display = 'block';
-
+        // Same static client-side token caveat as the results submission (point 5): this only
+        // filters casual/accidental POSTs, it is not a real authentication boundary.
         fetch('https://votre-deuxieme-serveur-teams.com', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'X-LQA-Client-Token': 'lqa-static-client-token-2026'
+            },
             body: JSON.stringify({
                 title: `Anonymous Assessment Feedback Log`,
                 text: feedbackBodyString
             })
-        }).catch(err => console.error("Anonymized survey tracking routing exception handled gracefully:", err));
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error(`Server responded with HTTP ${response.status}`);
+            }
+            // Only confirm success to the candidate once the server actually accepted the payload.
+            document.getElementById('feedbackFormBlock').style.display = 'none';
+            document.getElementById('feedbackSuccessMessage').style.display = 'block';
+        }).catch(err => {
+            console.error("Anonymized survey tracking routing exception handled gracefully:", err);
+            submitBtn.disabled = false;
+            alert("Your feedback could not be sent (network or server issue). Please try submitting again.");
+        });
     }
 
     // 1. Clipboard Mutation Defenses (Standard Desktops)
@@ -1663,14 +1847,14 @@ Expected behavior</div>
                 e.preventDefault();
                 targetField.value = "[Paste restricted for security compliance]";
                 previousTextLengthsStore[currentFieldId] = targetField.value.length;
-                if (currentFieldId === 'q8' || currentFieldId === 'q9' || currentFieldId === 'q10') refreshWordCounterMetric(currentFieldId);
+                if (currentFieldId === 'q8' || currentFieldId === 'q9') refreshWordCounterMetric(currentFieldId);
                 return;
             }
 
             previousTextLengthsStore[currentFieldId] = currentStringValue.length;
             if (targetField.tagName === 'TEXTAREA') {
                 localStorage.setItem(`lqa_ans_${currentFieldId}`, currentStringValue);
-                if (currentFieldId === 'q8' || currentFieldId === 'q9' || currentFieldId === 'q10') refreshWordCounterMetric(currentFieldId);
+                if (currentFieldId === 'q8' || currentFieldId === 'q9') refreshWordCounterMetric(currentFieldId);
             }
         }
     });
@@ -1720,8 +1904,16 @@ Expected behavior</div>
 <script>
     // Integrated recovery bootloader executing unified initialization setups upon window load
     window.addEventListener('load', () => {
-        // 1. Hard hardware detection matrix blocking smart devices, tablets, and phones immediately
-        const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        // 1. Hardware detection matrix blocking smart devices, tablets, and phones.
+        // Combines three independent signals (User-Agent sniffing, viewport width, touch capability)
+        // instead of relying on UA alone: a touch-enabled laptop with a wide screen won't trigger a
+        // false positive, and a phone with an unusual/spoofed UA but a narrow touch viewport still will.
+        // We require at least 2 of the 3 signals to agree before blocking access.
+        const uaLooksMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const viewportLooksMobile = window.matchMedia('(max-width: 768px)').matches;
+        const touchCapable = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+        const mobileSignalCount = [uaLooksMobile, viewportLooksMobile, touchCapable].filter(Boolean).length;
+        const isMobileDevice = mobileSignalCount >= 2;
         if (isMobileDevice) {
             isTestActive = false;
             document.getElementById('mainApplicationWrapper').style.display = 'none';
@@ -1739,7 +1931,32 @@ Expected behavior</div>
         }
 
         // 3. Text Answers State Rehydration Loop
-        for (let i = 1; i 
+        // Restores any answers already typed before a reload (q1 to q9, since q9 is now the
+        // last question after the removal of the former "Nicolas" question and renumbering).
+        // Refreshes the word-count badges for the two free-text fields that have one (q8, q9).
+        for (let i = 1; i <= 9; i++) {
+            const storedAnswer = localStorage.getItem(`lqa_ans_q${i}`);
+            const field = document.getElementById(`q${i}`);
+            if (storedAnswer !== null && field) {
+                field.value = storedAnswer;
+                if (i === 8 || i === 9) refreshWordCounterMetric(`q${i}`);
+            }
+        }
+
+        // 4. Accessibility hardening for the hidden language input: it must stay out of the
+        // keyboard tab order and be invisible to assistive technologies, since the visible
+        // language picker is the language-card grid, not this input.
+        const hiddenLangInput = document.getElementById('candidateLanguage');
+        if (hiddenLangInput) {
+            hiddenLangInput.setAttribute('tabindex', '-1');
+            hiddenLangInput.setAttribute('aria-hidden', 'true');
+        }
+
+        // 5. Reapply RTL layout support on reload, based on the previously stored candidate language
+        const storedLangForRtl = localStorage.getItem('lqa_candidate_lang');
+        if (storedLangForRtl) applyRtlSupport(storedLangForRtl);
+    });
+</script>
+<!-- END OF BLOCK 12 -->
 </body>
 </html>
-<!-- END OF BLOCK 12 -->
