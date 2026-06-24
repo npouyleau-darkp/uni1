@@ -1,4 +1,3 @@
-<!-- START OF BLOCK 1: GRADIENT BACKGROUND MATRIX AND SECURITY OVERLAYS CSS -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,17 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LQA Tester Assessment</title>
     
-    <!-- Unified structural stylesheet optimizing critical interface properties -->
     <style>
         :root {
-            /* Authoritative hardware component block colors preserved for clear contrast styling */
             --container-bg: #ffffff;
             --text-color: #1e293b;
             --title-color: #0f172a;
             --border-color: #cbd5e1;
             --input-bg: #f8fafc;
             --panel-bg: #f8fafc;
-            /* High-definition linear gradient background extrapolated from user layout reference image */
             --bg-gradient: linear-gradient(135deg, #0284c7 0%, #1e40af 50%, #7c3aed 100%);
         }
 
@@ -27,7 +23,6 @@
             --border-color: #475569;
             --input-bg: #334155;
             --panel-bg: #1e293b;
-            /* Specialized low-luminosity overlay mapping preserves color hues while preventing screen glare */
             --bg-gradient: linear-gradient(135deg, #0c4a6e 0%, #1e3a8a 50%, #4c1d95 100%);
         }
 
@@ -43,7 +38,7 @@
         
         #mainApplicationWrapper { display: block; }
         
-        /* Rigid layout wipe layer if JavaScript execution is disabled */
+        /* Shown only when JavaScript is disabled (injectEnCommonTexts never runs) */
         .noscript-hardlock {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: #0f172a; color: #ef4444; z-index: 999999;
@@ -51,7 +46,7 @@
             justify-content: center; text-align: center; padding: 20px;
         }
 
-        /* Fullscreen block screen shielding against duplicate window views */
+        /* Shown when a duplicate tab/session is detected for the same candidate */
         .multitab-hardlock {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: #090d16; color: #f43f5e; z-index: 1000000;
@@ -67,14 +62,11 @@
             position: relative; transition: filter 0.05s linear, background-color 0.3s ease; 
         }
         
-        /* Optimized structural class selector on body context preventing expensive browser style reflow lags */
         body.shield-activated .container {
             filter: blur(50px) grayscale(100%) brightness(0.2);
             pointer-events: none; user-select: none;
         }
     </style>
-<!-- END OF BLOCK 1 -->
-<!-- START OF BLOCK 2.1: LAYOUT COMPONENTS AND FLOATING TO DO CSS -->
     <style>
         .header-meta { 
             display: flex; justify-content: space-between; align-items: center; 
@@ -120,11 +112,25 @@
         @media (max-width: 1750px) {
             .temporary-todo-float { display: none !important; }
         }
+
+        /* Desktop/laptop range only: ~1024px (small laptop / high browser zoom) up to
+           4K/ultra-wide. 1280–1919px is the current default and stays unchanged below. */
+        @media (min-width: 1920px) and (max-width: 2559px) {
+            .container { max-width: 1300px; }
+        }
+        @media (min-width: 2560px) {
+            .container { max-width: 1550px; }
+        }
+        @media (max-width: 1279px) {
+            body { padding: 20px 12px; }
+            .container { padding: 25px; }
+            .side-window { flex: 0 0 240px; padding: 15px; }
+            .comparison-sheet { width: 100%; }
+            .header-meta { flex-wrap: wrap; }
+        }
         
         .main-content { flex: 1; position: relative; overflow: hidden; }
     </style>
-<!-- END OF BLOCK 2.1 -->
-<!-- START OF BLOCK 2.2: INPUT FIELDS, TABLES, SHEET OBJECTS AND LIGHTBOX IMAGE CSS -->
     <style>
         .textarea-container { position: relative; width: 100%; display: flex; flex-direction: column; }
         .word-counter-badge {
@@ -160,14 +166,13 @@
         .comparison-case { flex: 1; padding: 15px; font-size: 14px; line-height: 1.5; word-break: break-word; white-space: pre-wrap; color: var(--title-color); }
         .case-left { border-right: 1px solid var(--border-color); background-color: var(--container-bg); }
 
-        /* --- LIGHTBOX MINIATURE ARCHITECTURE --- */
         .image-interactive-wrapper {
             display: inline-block;
             margin: 15px 0;
             cursor: zoom-in;
         }
         
-        /* Enforces Option A 16:9 Aspect Ratio dimensions layout safely */
+        /* 16:9 thumbnail */
         .q-image-thumb {
             width: 320px;
             height: 180px;
@@ -198,7 +203,6 @@
             color: #2563eb;
         }
 
-        /* Fullscreen hardware-accelerated overlay curtain shielding the test page views */
         .lightbox-overlay-curtain {
             display: none;
             position: fixed;
@@ -225,8 +229,6 @@
             -webkit-user-drag: none;
         }
     </style>
-<!-- END OF BLOCK 2.2 -->
-<!-- START OF BLOCK 2.3: ELEGANT MULTILINGUAL SELECTOR GRID CSS -->
     <style>
         .language-grid {
             display: grid;
@@ -294,13 +296,11 @@
             text-overflow: ellipsis;
         }
 
-        /* Enforce system typography safety if standard flag emojis encounter environment rendering limitations */
+        /* Force emoji font for consistent flag rendering across platforms */
         @media screen and (-webkit-min-device-pixel-ratio:0) {
             .language-flag { font-family: 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif; }
         }
     </style>
-<!-- END OF BLOCK 2.3 -->
-<!-- START OF BLOCK 2.4: BUTTONS, MODALS, FEEDBACK OVERLAYS AND PRINT STYLES CSS -->
     <style>
         .nav-buttons { display: flex; justify-content: space-between; margin-top: 35px; border-top: 1px solid var(--border-color); padding-top: 20px; }
         button { padding: 14px 30px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.2s ease; }
@@ -342,15 +342,12 @@
         .feedback-label input { width: auto; margin: 0; cursor: pointer; }
         .feedback-success-msg { display: none; color: #16a34a; font-size: 16px; font-weight: 700; text-align: center; padding: 20px; border: 2px solid #bbf7d0; background: #f0fdf4; border-radius: 8px; margin-top: 20px; }
 
-        /* Print Layout Rules: Purges question text prompts dynamically on hardware printer export triggers */
         @media print {
             body { background: #ffffff !important; color: #000000 !important; padding: 0 !important; }
             .container { box-shadow: none !important; padding: 0 !important; background: #ffffff !important; }
             
-            /* Enhanced global erasure mapping blocks text prompts on both live forms and summaries.
-               Note: ".summary-q span" was removed — the dynamically generated .summary-q div now only
-               ever contains plain text ("Response N"), never a nested <span>, so that selector matched
-               nothing and was dead weight. */
+            /* Hides question prompts on print/PDF export. ".summary-q span" was removed:
+               .summary-q only ever contains plain text now, never a nested <span>. */
             .print-strip { display: none !important; }
             button, .theme-toggle-btn, .temporary-todo-float, .feedback-container, .feedback-success-msg, #qaResetBtn { display: none !important; }
         }
@@ -367,30 +364,23 @@
          injectEnCommonTexts() never runs, so the noscript block must carry its own literal text. -->
 
     <div class="multitab-hardlock" id="securityHardlockScreen">
-        <h1 id="securityHardlockTitle" data-i18n="security.defaultTitle">Access Restriction Engaged</h1>
-        <p id="securityHardlockReason" data-i18n="security.defaultReason">Active session tracking policy restricts this assessment to a single authorized tab view concurrently.</p>
+        <h1 id="securityHardlockTitle" data-i18n="security.defaultTitle"></h1>
+        <p id="securityHardlockReason" data-i18n="security.defaultReason"></p>
     </div>
 
     <div id="mainApplicationWrapper">
-<!-- END OF BLOCK 2.4 -->
-<!-- START OF BLOCK 3.1: CORE PROTECTION WRAPPERS AND REGISTRATION STRUCTURAL INITIALIZATION -->
 <div style="position: fixed; bottom: 20px; left: 20px; z-index: 99999; display: flex; flex-direction: column; gap: 10px;">
-    <button type="button" id="qaResetBtn" onclick="resetQASession()" style="background-color: #dc2626; color: white; padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: background 0.2s;" onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'" data-i18n="buttons.resetQA">
-        🛠️ Reset QA Session
-    </button>
-    <button type="button" class="theme-toggle-btn" id="themeToggle" onclick="toggleDarkMode()" data-i18n="buttons.darkMode">
-        🌙 Dark Mode
-    </button>
+    <button type="button" id="qaResetBtn" onclick="resetQASession()" style="background-color: #dc2626; color: white; padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: background 0.2s;" onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'" data-i18n="buttons.resetQA"></button>
+    <button type="button" class="theme-toggle-btn" id="themeToggle" onclick="toggleDarkMode()" data-i18n="buttons.darkMode"></button>
 </div>
 
 <div class="screen-shield" id="greyShield">
-    <p style="background: #0f172a; padding: 20px 40px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);" data-i18n="shield.protectedLabel">Content Protected</p>
-    <span style="font-size: 16px; font-weight: normal; margin-top: 10px; color: #0f172a; background: white; padding: 5px 15px; border-radius: 20px; font-weight: 600;" data-i18n="shield.instructionLabel">Bring your cursor back inside the window to reveal the test.</span>
+    <p style="background: #0f172a; padding: 20px 40px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);" data-i18n="shield.protectedLabel"></p>
+    <span style="font-size: 16px; font-weight: normal; margin-top: 10px; color: #0f172a; background: white; padding: 5px 15px; border-radius: 20px; font-weight: 600;" data-i18n="shield.instructionLabel"></span>
 </div>
 
 <div class="container">
     
-    <!-- Isolated standalone floating project tracking element -->
     <div class="temporary-todo-float">
         <div class="todo-title">🚧 TO DO 🚧</div>
         <ul class="todo-list">
@@ -402,7 +392,7 @@
     </div>
 
     <div class="header-meta" id="headerMeta">
-        <h1 class="test-title" id="mainHeadingTitle" data-i18n="global.mainHeading">LQA Tester Assessment</h1>
+        <h1 class="test-title" id="mainHeadingTitle" data-i18n="global.mainHeading"></h1>
         <div class="timer-bar" id="timerDisplay">Time Left: 2:00:00</div>
     </div>
     
@@ -410,28 +400,28 @@
         
         <!-- ==================== PAGE 1: REGISTRATION ==================== -->
         <div class="page-view active" id="page1">
-            <div class="section-title" data-i18n="page1.sectionTitle">Candidate Identity Registration</div>
+            <div class="section-title" data-i18n="page1.sectionTitle"></div>
             <p class="info-text">
-                <span data-i18n="page1.intro">Please provide your identification credentials below. All fields are mandatory.</span>
-                <span class="tip-alert" data-i18n="page1.tipAlert">TIP: You have two hours to complete the test. It will submit automatically after that delay. Read carefully and consult the provided documentation layout.</span>
+                <span data-i18n="page1.intro"></span>
+                <span class="tip-alert" data-i18n="page1.tipAlert"></span>
             </p>
             
             <div class="form-group">
-                <label for="firstName"><span data-i18n="page1.label.firstName">First Name</span><span class="required-star">*</span></label>
-                <input type="text" id="firstName" required placeholder="e.g., John" data-i18n-placeholder="page1.placeholder.firstName">
+                <label for="firstName"><span data-i18n="page1.label.firstName"></span><span class="required-star">*</span></label>
+                <input type="text" id="firstName" required placeholder="" data-i18n-placeholder="page1.placeholder.firstName">
             </div>
             <div class="form-group">
-                <label for="lastName"><span data-i18n="page1.label.lastName">Last Name</span><span class="required-star">*</span></label>
-                <input type="text" id="lastName" required placeholder="e.g., Doe" data-i18n-placeholder="page1.placeholder.lastName">
+                <label for="lastName"><span data-i18n="page1.label.lastName"></span><span class="required-star">*</span></label>
+                <input type="text" id="lastName" required placeholder="" data-i18n-placeholder="page1.placeholder.lastName">
             </div>
             <div class="form-group">
-                <label for="candidateEmail"><span data-i18n="page1.label.email">E-mail Address</span><span class="required-star">*</span></label>
-                <input type="email" id="candidateEmail" required placeholder="e.g., john.doe@example.com" data-i18n-placeholder="page1.placeholder.email">
+                <label for="candidateEmail"><span data-i18n="page1.label.email"></span><span class="required-star">*</span></label>
+                <input type="email" id="candidateEmail" required placeholder="" data-i18n-placeholder="page1.placeholder.email">
             </div>
             
             <div class="form-group" style="position: relative;">
-                <label><span data-i18n="page1.label.targetLanguage">Assessment Target Language</span><span class="required-star">*</span></label>
-                <!-- HTML5 compliance correction: style wrapper ensures target accessibility during validation checks -->
+                <label><span data-i18n="page1.label.targetLanguage"></span><span class="required-star">*</span></label>
+                <!-- Kept 1px (not display:none) so native required-field validation can still focus it -->
                 <input type="text" id="candidateLanguage" value="" required style="position: absolute; bottom: 0; left: 50%; width: 1px; height: 1px; padding: 0; margin: 0; opacity: 0; pointer-events: none;">
                 
                 <!-- Language cards are no longer hardcoded here: renderLanguageGrid() builds them from
@@ -442,82 +432,79 @@
             
             <div class="nav-buttons">
                 <div></div>
-                <button type="button" class="btn-start" id="unlockBtn" onclick="startTestTimer(false)" data-i18n="page1.button.start">Start Test &amp; Proceed</button>
+                <button type="button" class="btn-start" id="unlockBtn" onclick="startTestTimer(false)" data-i18n="page1.button.start"></button>
             </div>
         </div>
-<!-- START OF BLOCK 4: ASSESSMENT PAGE 2 (SECTION A LQA QUESTIONS) -->
         <!-- ==================== PAGE 2: SECTION A ==================== -->
         <div class="page-view" id="page2">
             <div class="split-layout">
                 <div class="side-window">
-                    <div class="side-title" data-i18n="page2.sidebar.bugTypesTitle">BUG TYPES:</div>
+                    <div class="side-title" data-i18n="page2.sidebar.bugTypesTitle"></div>
                     <!-- Rendered from BUG_TYPES (BugType_Entry_01..N) by renderBugTypesList() — expandable:
                          add/remove/reorder entries in the i18n data layer, no markup change needed. -->
                     <div class="side-text" id="bugTypesBody"></div>
-                    <div class="side-title" data-i18n="page2.sidebar.reportTitle">How to report a Bug:</div>
+                    <div class="side-title" data-i18n="page2.sidebar.reportTitle"></div>
                     <!-- Rendered from EN_COMMON['page2.sidebar.reportTemplate'] by renderReportTemplate():
                          literal "\n" markers in that string are expanded into real line breaks. -->
                     <div class="side-text" id="reportTemplate"></div>
                 </div>
 
                 <div class="main-content">
-                    <div class="section-title" data-i18n="page2.sectionTitle">Section A: LQA Bugs</div>
-                    <p class="info-text" data-i18n="page2.intro">Identify structural or translation bugs from the provided gaming screenshots.</p>
+                    <div class="section-title" data-i18n="page2.sectionTitle"></div>
+                    <p class="info-text" data-i18n="page2.intro"></p>
                     
                     <div class="form-group">
-                        <label id="lbl_q1" data-i18n="page2.q1">1. Context: The game is Cat-Fu, the devs are from Japan and you are testing in English. Find the issue.</label>
+                        <label id="lbl_q1" data-i18n="page2.q1"></label>
                         <div class="image-interactive-wrapper" onclick="openFullscreenLightbox('screenshots/Cat_fu.jpeg')">
-                            <img src="screenshots/Cat_fu.jpeg" alt="Bug Cat-Fu" class="q-image-thumb" data-i18n-alt="page2.altText.q1">
-                            <span class="click-enlarge-indicator" data-i18n="common.enlargeHint">🔍 Click to enlarge</span>
+                            <img src="screenshots/Cat_fu.jpeg" alt="" class="q-image-thumb" data-i18n-alt="page2.altText.q1">
+                            <span class="click-enlarge-indicator" data-i18n="common.enlargeHint"></span>
                         </div>
-                        <textarea id="q1" rows="3" spellcheck="false" autocomplete="off" placeholder="Your response..." data-i18n-placeholder="common.textareaPlaceholder"></textarea>
+                        <textarea id="q1" rows="3" spellcheck="false" autocomplete="off" placeholder="" data-i18n-placeholder="common.textareaPlaceholder"></textarea>
                     </div>
 
                     <div class="form-group">
-                        <label id="lbl_q2" data-i18n="page2.q2">2. Context: The game is LQA Tycoon, the devs are from the United States of America and you are testing in Latin.</label>
+                        <label id="lbl_q2" data-i18n="page2.q2"></label>
                         <div class="image-interactive-wrapper" onclick="openFullscreenLightbox('screenshots/LQA_T.jpeg')">
-                            <img src="screenshots/LQA_T.jpeg" alt="Bug LQA Tycoon" class="q-image-thumb" data-i18n-alt="page2.altText.q2">
-                            <span class="click-enlarge-indicator" data-i18n="common.enlargeHint">🔍 Click to enlarge</span>
+                            <img src="screenshots/LQA_T.jpeg" alt="" class="q-image-thumb" data-i18n-alt="page2.altText.q2">
+                            <span class="click-enlarge-indicator" data-i18n="common.enlargeHint"></span>
                         </div>
-                        <textarea id="q2" rows="3" spellcheck="false" autocomplete="off" placeholder="Your response..." data-i18n-placeholder="common.textareaPlaceholder"></textarea>
+                        <textarea id="q2" rows="3" spellcheck="false" autocomplete="off" placeholder="" data-i18n-placeholder="common.textareaPlaceholder"></textarea>
                     </div>
 
                     <div class="form-group">
                         <!-- ⚠ Placeholder content (Priority 0, #7): "Diagnostic Node 3" is not a real
                              question prompt yet. Externalized as page2.q3 so the real statement can be
                              filled in directly in the i18n source, without another code change. -->
-                        <label id="lbl_q3" data-i18n="page2.q3">3. Diagnostic Node 3.</label>
+                        <label id="lbl_q3" data-i18n="page2.q3"></label>
                         <div class="image-interactive-wrapper" onclick="openFullscreenLightbox('screenshots/screenshot3.jpg')">
-                            <img src="screenshots/screenshot3.jpg" alt="Chart" class="q-image-thumb" data-i18n-alt="page2.altText.q3">
-                            <span class="click-enlarge-indicator" data-i18n="common.enlargeHint">🔍 Click to enlarge</span>
+                            <img src="screenshots/screenshot3.jpg" alt="" class="q-image-thumb" data-i18n-alt="page2.altText.q3">
+                            <span class="click-enlarge-indicator" data-i18n="common.enlargeHint"></span>
                         </div>
-                        <textarea id="q3" rows="3" spellcheck="false" autocomplete="off" placeholder="Your response..." data-i18n-placeholder="common.textareaPlaceholder"></textarea>
+                        <textarea id="q3" rows="3" spellcheck="false" autocomplete="off" placeholder="" data-i18n-placeholder="common.textareaPlaceholder"></textarea>
                     </div>
 
                     <div class="form-group">
                         <!-- ⚠ Same placeholder situation as Q3 above. -->
-                        <label id="lbl_q4" data-i18n="page2.q4">4. Diagnostic Node 4.</label>
+                        <label id="lbl_q4" data-i18n="page2.q4"></label>
                         <div class="image-interactive-wrapper" onclick="openFullscreenLightbox('screenshots/screenshot4.jpg')">
-                            <img src="screenshots/screenshot4.jpg" alt="Chart" class="q-image-thumb" data-i18n-alt="page2.altText.q4">
-                            <span class="click-enlarge-indicator" data-i18n="common.enlargeHint">🔍 Click to enlarge</span>
+                            <img src="screenshots/screenshot4.jpg" alt="" class="q-image-thumb" data-i18n-alt="page2.altText.q4">
+                            <span class="click-enlarge-indicator" data-i18n="common.enlargeHint"></span>
                         </div>
-                        <textarea id="q4" rows="3" spellcheck="false" autocomplete="off" placeholder="Your response..." data-i18n-placeholder="common.textareaPlaceholder"></textarea>
+                        <textarea id="q4" rows="3" spellcheck="false" autocomplete="off" placeholder="" data-i18n-placeholder="common.textareaPlaceholder"></textarea>
                     </div>
 
                     <div class="nav-buttons">
                         <div></div>
-                        <button type="button" class="btn-nav" onclick="changePageView(3)" data-i18n="page2.button.next">Next Section &rarr;</button>
+                        <button type="button" class="btn-nav" onclick="changePageView(3)" data-i18n="page2.button.next"></button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Standalone isolated Lightbox markup portal appended natively onto the lower body boundary -->
+        <!-- Single global lightbox, shared across pages — not tied to one page-view -->
         <div class="lightbox-overlay-curtain" id="globalLightboxPortal" onclick="closeFullscreenLightbox()">
-            <img src="" id="lightboxFullscreenImage" class="lightbox-full-image" alt="Fullscreen Asset View" data-i18n-alt="lightbox.altText">
+            <img src="" id="lightboxFullscreenImage" class="lightbox-full-image" alt="" data-i18n-alt="lightbox.altText">
         </div>
-<!-- END OF BLOCK 4 -->
-<!-- START OF BLOCK 5: ASSESSMENT PAGE 3 (SECTION B TRANSLATION MATRIX) -->
         <!-- ==================== PAGE 3: SECTION B ==================== -->
         <div class="page-view" id="page3">
             <div class="split-layout">
@@ -529,12 +516,12 @@
                          is not a language code at all. The column header is now derived directly from
                          the selected language code (see buildGlossaryColumnCode() below), so there is
                          no separate per-language field to keep in sync for this. -->
-                    <div class="side-title" id="glossaryTitle" data-i18n="page3.sidebar.glossaryTitle">GLOSSARY</div>
+                    <div class="side-title" id="glossaryTitle" data-i18n="page3.sidebar.glossaryTitle"></div>
                     <table class="glossary-table">
                         <thead>
                             <tr>
-                                <th id="glossarySourceHeader" data-i18n="page3.glossary.sourceColumnHeader">EN</th>
-                                <th id="glossaryTargetHeader">FR</th>
+                                <th id="glossarySourceHeader" data-i18n="page3.glossary.sourceColumnHeader"></th>
+                                <th id="glossaryTargetHeader"></th>
                             </tr>
                         </thead>
                         <!-- Rows rendered by triggerDynamicLocalContentHydration() from each language's
@@ -545,11 +532,11 @@
                 </div>
 
                 <div class="main-content">
-                    <div class="section-title" data-i18n="page3.sectionTitle">Section B: Proofreading/Translation</div>
-                    <p class="info-text" data-i18n="page3.intro">Review and track translation accuracy with the help of the local documentation matrix.</p>
+                    <div class="section-title" data-i18n="page3.sectionTitle"></div>
+                    <p class="info-text" data-i18n="page3.intro"></p>
                     
                     <div class="form-group">
-                        <label id="lbl_q5" data-i18n="page3.q5">5. Proofread Segment Alpha.</label>
+                        <label id="lbl_q5" data-i18n="page3.q5"></label>
                         <div class="comparison-sheet">
                             <!-- Reference (EN) and target text below come from each language's
                                  referenceEN.q5 / target.q5 — kept per-language (not a shared global
@@ -557,48 +544,46 @@
                                  future. The bracketed [KIT]/[color:xxxxx] tokens and the deliberate
                                  spelling/grammar flaws in the target text are intentional test
                                  variables: never corrected, never interpreted as real markup. -->
-                            <div class="comparison-case case-left" id="sheet_q5_left">[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]</div>
-                            <div class="comparison-case" id="sheet_q5_right">[KIT]l'orbe était placée un trones[color:66845]étrange [/color].[KIT]</div>
+                            <div class="comparison-case case-left" id="sheet_q5_left"></div>
+                            <div class="comparison-case" id="sheet_q5_right"></div>
                         </div>
-                        <textarea id="q5" rows="4" spellcheck="false" autocomplete="off" placeholder="Your response..." data-i18n-placeholder="common.textareaPlaceholder"></textarea>
+                        <textarea id="q5" rows="4" spellcheck="false" autocomplete="off" placeholder="" data-i18n-placeholder="common.textareaPlaceholder"></textarea>
                     </div>
 
                     <div class="form-group">
-                        <label id="lbl_q6" data-i18n="page3.q6">6. Proofread Segment Beta.</label>
+                        <label id="lbl_q6" data-i18n="page3.q6"></label>
                         <div class="comparison-sheet">
-                            <div class="comparison-case case-left" id="sheet_q6_left">[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]</div>
-                            <div class="comparison-case" id="sheet_q6_right">[KIT]l'orbe était placée un trones[color:66845]étrange [/color].[KIT]</div>
+                            <div class="comparison-case case-left" id="sheet_q6_left"></div>
+                            <div class="comparison-case" id="sheet_q6_right"></div>
                         </div>
-                        <textarea id="q6" rows="4" spellcheck="false" autocomplete="off" placeholder="Your response..." data-i18n-placeholder="common.textareaPlaceholder"></textarea>
+                        <textarea id="q6" rows="4" spellcheck="false" autocomplete="off" placeholder="" data-i18n-placeholder="common.textareaPlaceholder"></textarea>
                     </div>
 
                     <div class="form-group">
-                        <label id="lbl_q7" data-i18n="page3.q7">7. Proofread Segment Gamma.</label>
+                        <label id="lbl_q7" data-i18n="page3.q7"></label>
                         <div class="comparison-sheet">
-                            <div class="comparison-case case-left" id="sheet_q7_left">[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]</div>
-                            <div class="comparison-case" id="sheet_q7_right">[KIT]l'orbe était placée un trones[color:66845]étrange [/color].[KIT]</div>
+                            <div class="comparison-case case-left" id="sheet_q7_left"></div>
+                            <div class="comparison-case" id="sheet_q7_right"></div>
                         </div>
-                        <textarea id="q7" rows="4" spellcheck="false" autocomplete="off" placeholder="Your response..." data-i18n-placeholder="common.textareaPlaceholder"></textarea>
+                        <textarea id="q7" rows="4" spellcheck="false" autocomplete="off" placeholder="" data-i18n-placeholder="common.textareaPlaceholder"></textarea>
                     </div>
 
                     <div class="nav-buttons">
-                        <button type="button" class="btn-nav" onclick="changePageView(2)" data-i18n="page3.button.prev">&larr; Previous Section</button>
-                        <button type="button" class="btn-nav" onclick="changePageView(4)" data-i18n="page3.button.next">Next Section &rarr;</button>
+                        <button type="button" class="btn-nav" onclick="changePageView(2)" data-i18n="page3.button.prev"></button>
+                        <button type="button" class="btn-nav" onclick="changePageView(4)" data-i18n="page3.button.next"></button>
                     </div>
                 </div>
             </div>
         </div>
-<!-- END OF BLOCK 5 -->
-<!-- START OF BLOCK 6: WRITING SKILL MATRIX, RESULTS DISPLAY AND ANONYMOUS FEEDBACK INTERFACE -->
         <!-- ==================== PAGE 4: SECTION C ==================== -->
         <div class="page-view" id="page4">
-            <div class="section-title" data-i18n="page4.sectionTitle">Section C: Writing Skill</div>
-            <p class="info-text" data-i18n="page4.intro">Assess and record writing patterns. Answer utilizing the language specified in the question prompts.</p>
+            <div class="section-title" data-i18n="page4.sectionTitle"></div>
+            <p class="info-text" data-i18n="page4.intro"></p>
             
             <div class="form-group">
-                <label id="lbl_q8" data-i18n="page4.q8">8. What was the last game you enjoyed the most recently? Try to tell us why (150 words).</label>
+                <label id="lbl_q8" data-i18n="page4.q8"></label>
                 <div class="textarea-container">
-                    <textarea id="q8" rows="4" spellcheck="false" autocomplete="off" placeholder="Your response..." data-i18n-placeholder="common.textareaPlaceholder"></textarea>
+                    <textarea id="q8" rows="4" spellcheck="false" autocomplete="off" placeholder="" data-i18n-placeholder="common.textareaPlaceholder"></textarea>
                     <div class="word-counter-badge" id="counter_q8">Word count: 0</div>
                 </div>
             </div>
@@ -609,15 +594,15 @@
                      any other per-language string (see triggerDynamicLocalContentHydration()). -->
                 <label id="lbl_q9">9. Loading…</label>
                 <div class="textarea-container">
-                    <!-- Dynamic alignment dir property safely accommodates script directions like RTL Arabic without layout corruption -->
-                    <textarea id="q9" rows="4" dir="auto" style="line-height: 1.7;" spellcheck="false" autocomplete="off" placeholder="Your response..." data-i18n-placeholder="common.textareaPlaceholder"></textarea>
+                    <!-- dir=auto as sane default before applyRtlSupport() sets it explicitly for Arabic -->
+                    <textarea id="q9" rows="4" dir="auto" style="line-height: 1.7;" spellcheck="false" autocomplete="off" placeholder="" data-i18n-placeholder="common.textareaPlaceholder"></textarea>
                     <div class="word-counter-badge" id="counter_q9">Word count: 0</div>
                 </div>
             </div>
 
             <div class="nav-buttons">
-                <button type="button" class="btn-nav" onclick="changePageView(3)" data-i18n="page4.button.prev">&larr; Previous Section</button>
-                <button type="button" class="btn-submit" id="submitBtn" onclick="openConfirmationModal()" data-i18n="page4.button.submit">Finish &amp; Submit Test</button>
+                <button type="button" class="btn-nav" onclick="changePageView(3)" data-i18n="page4.button.prev"></button>
+                <button type="button" class="btn-submit" id="submitBtn" onclick="openConfirmationModal()" data-i18n="page4.button.submit"></button>
             </div>
         </div>
     </form>
@@ -625,54 +610,51 @@
     <!-- ==================== PAGE 5: POST-SUBMISSION RESULTS SUMMARY ==================== -->
     <div class="page-view" id="page5">
         <div class="summary-header">
-            <h2 data-i18n="page5.thankYouTitle">Thank you for taking part in our test.</h2>
-            <p data-i18n="page5.thankYouBody">We will contact you shortly. Your compiled assessment logs are rendered below.</p>
-            <div class="summary-meta-box" id="summaryMetaLanguageBox">Language: Selected</div>
+            <h2 data-i18n="page5.thankYouTitle"></h2>
+            <p data-i18n="page5.thankYouBody"></p>
+            <div class="summary-meta-box" id="summaryMetaLanguageBox"></div>
             <div>
-                <button type="button" class="btn-download" onclick="triggerCandidatePdfDownload()" data-i18n="page5.button.downloadPdf">Download My Responses (PDF)</button>
+                <button type="button" class="btn-download" onclick="triggerCandidatePdfDownload()" data-i18n="page5.button.downloadPdf"></button>
             </div>
         </div>
         
-        <div class="section-title" data-i18n="page5.sectionTitle">Your Submitted Responses</div>
+        <div class="section-title" data-i18n="page5.sectionTitle"></div>
         <div id="summaryContent"></div>
 
-        <!-- Independent secure anonymous feedback workspace container -->
         <div class="feedback-container" id="feedbackFormBlock">
-            <h3 style="margin-top:0; color:var(--title-color);" data-i18n="page5.feedback.heading">Help us improve this assessment</h3>
-            <p class="info-text" style="margin-bottom:15px;" data-i18n="page5.feedback.intro">Please share your experience. This form is completely anonymous and detached from your candidate files.</p>
+            <h3 style="margin-top:0; color:var(--title-color);" data-i18n="page5.feedback.heading"></h3>
+            <p class="info-text" style="margin-bottom:15px;" data-i18n="page5.feedback.intro"></p>
             
             <div class="feedback-options">
-                <label class="feedback-label"><input type="checkbox" name="fb_opt" value="Not enough time"> <span data-i18n="page5.feedback.option.timeIssue">Not enough time</span></label>
-                <label class="feedback-label"><input type="checkbox" name="fb_opt" value="Functional issue"> <span data-i18n="page5.feedback.option.functionalIssue">Functional issue</span></label>
-                <label class="feedback-label"><input type="checkbox" name="fb_opt" value="Unclear instructions"> <span data-i18n="page5.feedback.option.unclearInstructions">Unclear instructions</span></label>
-                <label class="feedback-label"><input type="checkbox" name="fb_opt" value="Other problem"> <span data-i18n="page5.feedback.option.other">Other problem</span></label>
+                <label class="feedback-label"><input type="checkbox" name="fb_opt" value="Not enough time"> <span data-i18n="page5.feedback.option.timeIssue"></span></label>
+                <label class="feedback-label"><input type="checkbox" name="fb_opt" value="Functional issue"> <span data-i18n="page5.feedback.option.functionalIssue"></span></label>
+                <label class="feedback-label"><input type="checkbox" name="fb_opt" value="Unclear instructions"> <span data-i18n="page5.feedback.option.unclearInstructions"></span></label>
+                <label class="feedback-label"><input type="checkbox" name="fb_opt" value="Other problem"> <span data-i18n="page5.feedback.option.other"></span></label>
             </div>
             
             <div class="form-group" style="margin-bottom:15px;">
-                <textarea id="feedbackText" rows="3" placeholder="Share your detailed thoughts (optional)..." data-i18n-placeholder="page5.feedback.textareaPlaceholder"></textarea>
+                <textarea id="feedbackText" rows="3" placeholder="" data-i18n-placeholder="page5.feedback.textareaPlaceholder"></textarea>
             </div>
             
-            <button type="button" class="btn-feedback" id="feedbackSubmitBtn" onclick="submitAnonymousFeedbackForm()" data-i18n="page5.feedback.submitButton">Submit Feedback</button>
+            <button type="button" class="btn-feedback" id="feedbackSubmitBtn" onclick="submitAnonymousFeedbackForm()" data-i18n="page5.feedback.submitButton"></button>
         </div>
-        <div class="feedback-success-msg" id="feedbackSuccessMessage" data-i18n="page5.feedback.successMessage">Thank you so much for your feedback!</div>
+        <div class="feedback-success-msg" id="feedbackSuccessMessage" data-i18n="page5.feedback.successMessage"></div>
     </div>
 </div>
 
-    <!-- Closes #mainApplicationWrapper (previously left implicitly auto-closed by the browser at
-         </body> — harmless in practice, but invalid markup; closed explicitly here). -->
+    <!-- Closes #mainApplicationWrapper explicitly (was implicitly auto-closed by the browser) -->
     </div>
 
 <div class="modal-overlay" id="confirmationModal">
     <div class="modal-box">
-        <h3 data-i18n="modal.title">Submit Assessment</h3>
-        <p id="modalConfirmationText">You are about to transmit your completed test file. Continue?</p>
+        <h3 data-i18n="modal.title"></h3>
+        <p id="modalConfirmationText"></p>
         <div class="modal-buttons">
-            <button type="button" class="btn-yes" id="confirmYesBtn" onclick="confirmSubmission(true)" data-i18n="modal.button.yes">Yes, Send</button>
-            <button type="button" class="btn-no" onclick="confirmSubmission(false)" data-i18n="modal.button.no">No, Back</button>
+            <button type="button" class="btn-yes" id="confirmYesBtn" onclick="confirmSubmission(true)" data-i18n="modal.button.yes"></button>
+            <button type="button" class="btn-no" onclick="confirmSubmission(false)" data-i18n="modal.button.no"></button>
         </div>
     </div>
 </div>
-<!-- END OF BLOCK 6 -->
 <script>
 const EN_COMMON = {
     "global.pageTitle": "LQA Tester Assessment",
@@ -3173,12 +3155,8 @@ function renderLanguageGrid() {
     }).join('');
 }
 
-// FIX (Priority 0, #4/#5): the glossary panel title is always English (see
-// page3.sidebar.glossaryTitle in EN_COMMON). The target-language COLUMN
-// header is a separate concept and is derived straight from the language
-// code itself — no per-language "translated title" field needed, which also
-// removes the old bug where the column header was silently overwritten with
-// the localized word for "Glossary" instead of a language code.
+// Column header = language code itself, not a translated "Glossary" title
+// (see the glossary panel comment in the HTML above for the full fix history).
 function buildGlossaryColumnCode(langCode) {
     return (langCode || '').toUpperCase();
 }
@@ -3217,7 +3195,7 @@ function changePageView(targetPageId) {
     window.scrollTo(0, 0);
 }
 
-// Dynamic verification engine reviewing form entries before prompting completion alerts
+// Lists unanswered questions and adapts the confirmation modal text accordingly
 function openConfirmationModal() {
     const missingQuestions = [];
     for (let i = 1; i <= 9; i++) {
@@ -3741,7 +3719,7 @@ function submitAnonymousFeedbackForm() {
     });
 }
 
-// 1. Clipboard Mutation Defenses (Standard Desktops)
+// 1. Clipboard restrictions (copy/cut/paste)
 document.addEventListener('copy', (e) => { e.preventDefault(); e.clipboardData.setData('text/plain', EN_COMMON['security.copyRestrictedMsg']); });
 document.addEventListener('cut', (e) => { e.preventDefault(); e.clipboardData.setData('text/plain', EN_COMMON['security.copyRestrictedMsg']); });
 document.addEventListener('paste', (e) => {
@@ -3753,7 +3731,7 @@ document.addEventListener('paste', (e) => {
     }
 });
 
-// 2. High-Frequency Input Mutation Engine (Extreme Hybrid Touch Defenses)
+// 2. Paste/rapid-input flood guard (blocks paste and large sudden insertions)
 let previousTextLengthsStore = {};
 
 document.addEventListener('input', (e) => {
@@ -3782,7 +3760,7 @@ document.addEventListener('input', (e) => {
     }
 });
 
-// 3. Document Selection Change Monitoring
+// 3. Collapses text selection (prevents multi-select copy workaround)
 document.addEventListener('selectionchange', () => {
     if (!isTestActive) return;
     const activeNode = document.activeElement;
@@ -3793,7 +3771,7 @@ document.addEventListener('selectionchange', () => {
     }
 });
 
-// 4. Low-Level Core Hardware Input Restrictions
+// 4. Blocks right-click, middle-click, F12 and common DevTools/print/save shortcuts
 document.addEventListener('contextmenu', (event) => event.preventDefault());
 document.addEventListener('mousedown', (e) => { if (e.button === 1) e.preventDefault(); });
 document.addEventListener('keydown', (e) => {
@@ -3801,7 +3779,6 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['i', 'j', 'c'].includes(key)) || (e.ctrlKey && ['u', 'p', 's'].includes(key))) e.preventDefault();
 });
 
-// --- LIGHTBOX INTERACTIVE RUNTIME LOGIC ---
 function openFullscreenLightbox(imageSourcePath) {
     const portal = document.getElementById('globalLightboxPortal');
     const imgTarget = document.getElementById('lightboxFullscreenImage');
