@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LQA Tester Assessment</title>
+    <title></title>
     
     <style>
         :root {
@@ -38,7 +38,6 @@
         
         #mainApplicationWrapper { display: block; }
         
-        /* Shown only when JavaScript is disabled (injectEnCommonTexts never runs) */
         .noscript-hardlock {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: #0f172a; color: #ef4444; z-index: 999999;
@@ -113,8 +112,6 @@
             .temporary-todo-float { display: none !important; }
         }
 
-        /* Desktop/laptop range only: ~1024px (small laptop / high browser zoom) up to
-           4K/ultra-wide. 1280–1919px is the current default and stays unchanged below. */
         @media (min-width: 1920px) and (max-width: 2559px) {
             .container { max-width: 1300px; }
         }
@@ -172,7 +169,6 @@
             cursor: zoom-in;
         }
         
-        /* 16:9 thumbnail */
         .q-image-thumb {
             width: 320px;
             height: 180px;
@@ -346,8 +342,6 @@
             body { background: #ffffff !important; color: #000000 !important; padding: 0 !important; }
             .container { box-shadow: none !important; padding: 0 !important; background: #ffffff !important; }
             
-            /* Hides question prompts on print/PDF export. ".summary-q span" was removed:
-               .summary-q only ever contains plain text now, never a nested <span>. */
             .print-strip { display: none !important; }
             button, .theme-toggle-btn, .temporary-todo-float, .feedback-container, .feedback-success-msg, #qaResetBtn { display: none !important; }
         }
@@ -360,8 +354,7 @@
             <p>Security compliance protocols require JavaScript execution to be active to view and complete this assessment.</p>
         </div>
     </noscript>
-    <!-- NOTE: text duplicated as static fallback above is intentional — if JS is disabled,
-         injectEnCommonTexts() never runs, so the noscript block must carry its own literal text. -->
+    <!-- noscript text stays hardcoded by necessity: injectEnCommonTexts() never runs here. -->
 
     <div class="multitab-hardlock" id="securityHardlockScreen">
         <h1 id="securityHardlockTitle" data-i18n="security.defaultTitle"></h1>
@@ -398,7 +391,6 @@
     
     <form id="assessmentForm" onsubmit="return false;">
         
-        <!-- ==================== PAGE 1: REGISTRATION ==================== -->
         <div class="page-view active" id="page1">
             <div class="section-title" data-i18n="page1.sectionTitle"></div>
             <p class="info-text">
@@ -424,9 +416,6 @@
                 <!-- Kept 1px (not display:none) so native required-field validation can still focus it -->
                 <input type="text" id="candidateLanguage" value="" required style="position: absolute; bottom: 0; left: 50%; width: 1px; height: 1px; padding: 0; margin: 0; opacity: 0; pointer-events: none;">
                 
-                <!-- Language cards are no longer hardcoded here: renderLanguageGrid() builds them from
-                     LQA_LANGUAGES + LANG_GRID_ORDER (see the i18n data layer script below), so adding,
-                     removing, or reordering a test language no longer requires touching this markup. -->
                 <div class="language-grid" id="langGridContainer"></div>
             </div>
             
@@ -435,17 +424,12 @@
                 <button type="button" class="btn-start" id="unlockBtn" onclick="startTestTimer(false)" data-i18n="page1.button.start"></button>
             </div>
         </div>
-        <!-- ==================== PAGE 2: SECTION A ==================== -->
         <div class="page-view" id="page2">
             <div class="split-layout">
                 <div class="side-window">
                     <div class="side-title" data-i18n="page2.sidebar.bugTypesTitle"></div>
-                    <!-- Rendered from BUG_TYPES (BugType_Entry_01..N) by renderBugTypesList() — expandable:
-                         add/remove/reorder entries in the i18n data layer, no markup change needed. -->
                     <div class="side-text" id="bugTypesBody"></div>
                     <div class="side-title" data-i18n="page2.sidebar.reportTitle"></div>
-                    <!-- Rendered from EN_COMMON['page2.sidebar.reportTemplate'] by renderReportTemplate():
-                         literal "\n" markers in that string are expanded into real line breaks. -->
                     <div class="side-text" id="reportTemplate"></div>
                 </div>
 
@@ -472,9 +456,6 @@
                     </div>
 
                     <div class="form-group">
-                        <!-- ⚠ Placeholder content (Priority 0, #7): "Diagnostic Node 3" is not a real
-                             question prompt yet. Externalized as page2.q3 so the real statement can be
-                             filled in directly in the i18n source, without another code change. -->
                         <label id="lbl_q3" data-i18n="page2.q3"></label>
                         <div class="image-interactive-wrapper" onclick="openFullscreenLightbox('screenshots/screenshot3.jpg')">
                             <img src="screenshots/screenshot3.jpg" alt="" class="q-image-thumb" data-i18n-alt="page2.altText.q3">
@@ -484,7 +465,6 @@
                     </div>
 
                     <div class="form-group">
-                        <!-- ⚠ Same placeholder situation as Q3 above. -->
                         <label id="lbl_q4" data-i18n="page2.q4"></label>
                         <div class="image-interactive-wrapper" onclick="openFullscreenLightbox('screenshots/screenshot4.jpg')">
                             <img src="screenshots/screenshot4.jpg" alt="" class="q-image-thumb" data-i18n-alt="page2.altText.q4">
@@ -501,21 +481,12 @@
             </div>
         </div>
 
-        <!-- Single global lightbox, shared across pages — not tied to one page-view -->
         <div class="lightbox-overlay-curtain" id="globalLightboxPortal" onclick="closeFullscreenLightbox()">
             <img src="" id="lightboxFullscreenImage" class="lightbox-full-image" alt="" data-i18n-alt="lightbox.altText">
         </div>
-        <!-- ==================== PAGE 3: SECTION B ==================== -->
         <div class="page-view" id="page3">
             <div class="split-layout">
                 <div class="side-window">
-                    <!-- FIX (Priority 0, #4/#5): the panel title "GLOSSARY" always stays in English —
-                         it is NOT the same thing as the target-language column header next to it.
-                         The previous code actually confused the two: it overwrote this column header
-                         with each language's translated word for "Glossary" (e.g. "GLOSSAIRE"), which
-                         is not a language code at all. The column header is now derived directly from
-                         the selected language code (see buildGlossaryColumnCode() below), so there is
-                         no separate per-language field to keep in sync for this. -->
                     <div class="side-title" id="glossaryTitle" data-i18n="page3.sidebar.glossaryTitle"></div>
                     <table class="glossary-table">
                         <thead>
@@ -524,9 +495,6 @@
                                 <th id="glossaryTargetHeader"></th>
                             </tr>
                         </thead>
-                        <!-- Rows rendered by triggerDynamicLocalContentHydration() from each language's
-                             glossary array (Glossary_Entry_01, 02, ... — independently
-                             addable/removable/editable per language). -->
                         <tbody id="glossaryBodyContainer"></tbody>
                     </table>
                 </div>
@@ -538,12 +506,8 @@
                     <div class="form-group">
                         <label id="lbl_q5" data-i18n="page3.q5"></label>
                         <div class="comparison-sheet">
-                            <!-- Reference (EN) and target text below come from each language's
-                                 referenceEN.q5 / target.q5 — kept per-language (not a shared global
-                                 string) so each language can run a distinct proofreading scenario in
-                                 future. The bracketed [KIT]/[color:xxxxx] tokens and the deliberate
-                                 spelling/grammar flaws in the target text are intentional test
-                                 variables: never corrected, never interpreted as real markup. -->
+                            <!-- [KIT]/[color:xxxxx] tokens and the deliberate spelling/grammar flaws below
+                                 are intentional test variables: never corrected, never interpreted as real markup. -->
                             <div class="comparison-case case-left" id="sheet_q5_left"></div>
                             <div class="comparison-case" id="sheet_q5_right"></div>
                         </div>
@@ -575,7 +539,6 @@
                 </div>
             </div>
         </div>
-        <!-- ==================== PAGE 4: SECTION C ==================== -->
         <div class="page-view" id="page4">
             <div class="section-title" data-i18n="page4.sectionTitle"></div>
             <p class="info-text" data-i18n="page4.intro"></p>
@@ -584,19 +547,15 @@
                 <label id="lbl_q8" data-i18n="page4.q8"></label>
                 <div class="textarea-container">
                     <textarea id="q8" rows="4" spellcheck="false" autocomplete="off" placeholder="" data-i18n-placeholder="common.textareaPlaceholder"></textarea>
-                    <div class="word-counter-badge" id="counter_q8">Word count: 0</div>
+                    <div class="word-counter-badge" id="counter_q8"></div>
                 </div>
             </div>
             <div class="form-group">
-                <!-- Q9 is harmonized (Priority 0, #5): every language now asks the same generic
-                     "favorite video game" question — the French proverb/Yoda variant that used to be
-                     a special case has been retired in favor of one consistent prompt, translated like
-                     any other per-language string (see triggerDynamicLocalContentHydration()). -->
                 <label id="lbl_q9">9. Loading…</label>
                 <div class="textarea-container">
                     <!-- dir=auto as sane default before applyRtlSupport() sets it explicitly for Arabic -->
                     <textarea id="q9" rows="4" dir="auto" style="line-height: 1.7;" spellcheck="false" autocomplete="off" placeholder="" data-i18n-placeholder="common.textareaPlaceholder"></textarea>
-                    <div class="word-counter-badge" id="counter_q9">Word count: 0</div>
+                    <div class="word-counter-badge" id="counter_q9"></div>
                 </div>
             </div>
 
@@ -607,7 +566,6 @@
         </div>
     </form>
 
-    <!-- ==================== PAGE 5: POST-SUBMISSION RESULTS SUMMARY ==================== -->
     <div class="page-view" id="page5">
         <div class="summary-header">
             <h2 data-i18n="page5.thankYouTitle"></h2>
@@ -642,7 +600,6 @@
     </div>
 </div>
 
-    <!-- Closes #mainApplicationWrapper explicitly (was implicitly auto-closed by the browser) -->
     </div>
 
 <div class="modal-overlay" id="confirmationModal">
@@ -664,8 +621,6 @@ const EN_COMMON = {
     "common.enlargeHint": "🔍 Click to enlarge",
     "timer.label": "Time Left: ",
     "timer.expiredAlert": "Time has expired! Generating your results screen.",
-    "noscript.title": "JavaScript Required",
-    "noscript.body": "Security compliance protocols require JavaScript execution to be active to view and complete this assessment.",
     "security.defaultTitle": "Access Restriction Engaged",
     "security.defaultReason": "Active session tracking policy restricts this assessment to a single authorized tab view concurrently.",
     "security.duplicateTitle": "Duplicate Session Detected",
@@ -767,2330 +722,627 @@ const EN_COMMON = {
 };
 
 const BUG_TYPES = [
-    {
-        "id": "BugType_Entry_01",
-        "text": "Overlap — Text or UI elements visually overlapping."
-    },
-    {
-        "id": "BugType_Entry_02",
-        "text": "Truncation — Text cut off or clipped due to insufficient space."
-    },
-    {
-        "id": "BugType_Entry_03",
-        "text": "Wrong Language — Text displayed in a language other than the target language."
-    },
-    {
-        "id": "BugType_Entry_04",
-        "text": "Untranslated Text — Source (English) text left untranslated."
-    },
-    {
-        "id": "BugType_Entry_05",
-        "text": "Mistranslation — Translated text does not match the intended meaning of the source."
-    },
-    {
-        "id": "BugType_Entry_06",
-        "text": "Inconsistent Terminology — The same source term translated differently across the build."
-    },
-    {
-        "id": "BugType_Entry_07",
-        "text": "Grammar / Spelling Error — Grammatical or orthographic mistakes in the target text."
-    },
-    {
-        "id": "BugType_Entry_08",
-        "text": "Placeholder / Variable Error — Broken, missing, or mismatched placeholders/variables (e.g. {0}, [KIT], %s)."
-    },
-    {
-        "id": "BugType_Entry_09",
-        "text": "Formatting / Line Break Issue — Incorrect line breaks, spacing, or text formatting."
-    },
-    {
-        "id": "BugType_Entry_10",
-        "text": "Context Mismatch — Translation is technically correct but inappropriate for the in-game context."
-    }
+    {"id": "BugType_Entry_01", "text": "Overlap — Text or UI elements visually overlapping."},
+    {"id": "BugType_Entry_02", "text": "Truncation — Text cut off or clipped due to insufficient space."},
+    {"id": "BugType_Entry_03", "text": "Wrong Language — Text displayed in a language other than the target language."},
+    {"id": "BugType_Entry_04", "text": "Untranslated Text — Source (English) text left untranslated."},
+    {"id": "BugType_Entry_05", "text": "Mistranslation — Translated text does not match the intended meaning of the source."},
+    {"id": "BugType_Entry_06", "text": "Inconsistent Terminology — The same source term translated differently across the build."},
+    {"id": "BugType_Entry_07", "text": "Grammar / Spelling Error — Grammatical or orthographic mistakes in the target text."},
+    {"id": "BugType_Entry_08", "text": "Placeholder / Variable Error — Broken, missing, or mismatched placeholders/variables (e.g. {0}, [KIT], %s)."},
+    {"id": "BugType_Entry_09", "text": "Formatting / Line Break Issue — Incorrect line breaks, spacing, or text formatting."},
+    {"id": "BugType_Entry_10", "text": "Context Mismatch — Translation is technically correct but inappropriate for the in-game context."}
 ];
 
 const GLOSSARY_TERMS_EN = ["Orb", "Throne", "Strange", "Placed", "Knight", "Sword", "Castle", "King", "Queen", "Kingdom"];
 
-const LANG_GRID_ORDER = [
-    "fr-FR",
-    "de-DE",
-    "it-IT",
-    "nl-NL",
-    "sv-SE",
-    "no-NO",
-    "da-DK",
-    "fi-FI",
-    "es-ES",
-    "es-419",
-    "pt-PT",
-    "pt-BR",
-    "ru-RU",
-    "pl-PL",
-    "cs-CZ",
-    "hu-HU",
-    "el-GR",
-    "tr-TR",
-    "uk-UA",
-    "ro-RO",
-    "bg-BG",
-    "ar-AA",
-    "hi-IN",
-    "zh-CN",
-    "zh-TW",
-    "zh-HK",
-    "ja-JP",
-    "ko-KR",
-    "vi-VN",
-    "th-TH",
-    "ms-MY",
-    "id-ID"
-];
+const LANG_GRID_ORDER = ["fr-FR", "de-DE", "it-IT", "nl-NL", "sv-SE", "no-NO", "da-DK", "fi-FI", "es-ES", "es-419", "pt-PT", "pt-BR", "ru-RU", "pl-PL", "cs-CZ", "hu-HU", "el-GR", "tr-TR", "uk-UA", "ro-RO", "bg-BG", "ar-AA", "hi-IN", "zh-CN", "zh-TW", "zh-HK", "ja-JP", "ko-KR", "vi-VN", "th-TH", "ms-MY", "id-ID"];
 
 const LQA_LANGUAGES = {
     "fr-FR": {
-        "flag": "🇫🇷",
-        "nativeName": "Français",
-        "region": "French (FR)",
-        "demonym": "French",
+        "flag": "🇫🇷", "nativeName": "Français", "region": "French (FR)", "demonym": "French",
         "glossary": [
-            {
-                "id": "Glossary_Entry_01",
-                "en": "Orb",
-                "target": "Orbe"
-            },
-            {
-                "id": "Glossary_Entry_02",
-                "en": "Throne",
-                "target": "Trône"
-            },
-            {
-                "id": "Glossary_Entry_03",
-                "en": "Strange",
-                "target": "Étrange"
-            },
-            {
-                "id": "Glossary_Entry_04",
-                "en": "Placed",
-                "target": "Placé"
-            },
-            {
-                "id": "Glossary_Entry_05",
-                "en": "Knight",
-                "target": "Chevalier"
-            },
-            {
-                "id": "Glossary_Entry_06",
-                "en": "Sword",
-                "target": "Épée"
-            },
-            {
-                "id": "Glossary_Entry_07",
-                "en": "Castle",
-                "target": "Château"
-            },
-            {
-                "id": "Glossary_Entry_08",
-                "en": "King",
-                "target": "Roi"
-            },
-            {
-                "id": "Glossary_Entry_09",
-                "en": "Queen",
-                "target": "Reine"
-            },
-            {
-                "id": "Glossary_Entry_10",
-                "en": "Kingdom",
-                "target": "Royaume"
-            }
+            {"id": "Glossary_Entry_01", "en": "Orb", "target": "Orbe"},
+            {"id": "Glossary_Entry_02", "en": "Throne", "target": "Trône"},
+            {"id": "Glossary_Entry_03", "en": "Strange", "target": "Étrange"},
+            {"id": "Glossary_Entry_04", "en": "Placed", "target": "Placé"},
+            {"id": "Glossary_Entry_05", "en": "Knight", "target": "Chevalier"},
+            {"id": "Glossary_Entry_06", "en": "Sword", "target": "Épée"},
+            {"id": "Glossary_Entry_07", "en": "Castle", "target": "Château"},
+            {"id": "Glossary_Entry_08", "en": "King", "target": "Roi"},
+            {"id": "Glossary_Entry_09", "en": "Queen", "target": "Reine"},
+            {"id": "Glossary_Entry_10", "en": "Kingdom", "target": "Royaume"}
         ],
-        "referenceEN": {
-            "q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"
-        },
-        "target": {
-            "q5": "[KIT]l'orbe était placée un trones[color:66845]étrange [/color].[KIT]",
-            "q6": "[KIT]l'orbe était placée un trones[color:66845]étrange [/color].[KIT]",
-            "q7": "[KIT]l'orbe était placée un trones[color:66845]étrange [/color].[KIT]"
-        },
+        "referenceEN": {"q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"},
+        "target": {"q5": "[KIT]l'orbe était placée un trones[color:66845]étrange [/color].[KIT]", "q6": "[KIT]l'orbe était placée un trones[color:66845]étrange [/color].[KIT]", "q7": "[KIT]l'orbe était placée un trones[color:66845]étrange [/color].[KIT]"},
         "q9": "Quel est ton jeu vidéo préféré ? Dis-nous pourquoi.",
         "volumeLabel": "250 mots"
     },
     "de-DE": {
-        "flag": "🇩🇪",
-        "nativeName": "Deutsch",
-        "region": "German (DE)",
-        "demonym": "German",
+        "flag": "🇩🇪", "nativeName": "Deutsch", "region": "German (DE)", "demonym": "German",
         "glossary": [
-            {
-                "id": "Glossary_Entry_01",
-                "en": "Orb",
-                "target": "Kugel"
-            },
-            {
-                "id": "Glossary_Entry_02",
-                "en": "Throne",
-                "target": "Thron"
-            },
-            {
-                "id": "Glossary_Entry_03",
-                "en": "Strange",
-                "target": "Seltsam"
-            },
-            {
-                "id": "Glossary_Entry_04",
-                "en": "Placed",
-                "target": "Platziert"
-            },
-            {
-                "id": "Glossary_Entry_05",
-                "en": "Knight",
-                "target": "Ritter"
-            },
-            {
-                "id": "Glossary_Entry_06",
-                "en": "Sword",
-                "target": "Schwert"
-            },
-            {
-                "id": "Glossary_Entry_07",
-                "en": "Castle",
-                "target": "Schloss"
-            },
-            {
-                "id": "Glossary_Entry_08",
-                "en": "King",
-                "target": "König"
-            },
-            {
-                "id": "Glossary_Entry_09",
-                "en": "Queen",
-                "target": "Königin"
-            },
-            {
-                "id": "Glossary_Entry_10",
-                "en": "Kingdom",
-                "target": "Königreich"
-            }
+            {"id": "Glossary_Entry_01", "en": "Orb", "target": "Kugel"},
+            {"id": "Glossary_Entry_02", "en": "Throne", "target": "Thron"},
+            {"id": "Glossary_Entry_03", "en": "Strange", "target": "Seltsam"},
+            {"id": "Glossary_Entry_04", "en": "Placed", "target": "Platziert"},
+            {"id": "Glossary_Entry_05", "en": "Knight", "target": "Ritter"},
+            {"id": "Glossary_Entry_06", "en": "Sword", "target": "Schwert"},
+            {"id": "Glossary_Entry_07", "en": "Castle", "target": "Schloss"},
+            {"id": "Glossary_Entry_08", "en": "King", "target": "König"},
+            {"id": "Glossary_Entry_09", "en": "Queen", "target": "Königin"},
+            {"id": "Glossary_Entry_10", "en": "Kingdom", "target": "Königreich"}
         ],
-        "referenceEN": {
-            "q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"
-        },
-        "target": {
-            "q5": "[KIT]Die Kugel wurde auf einen seltsamen [color:65845]Thron[/color] platziert.[KIT]",
-            "q6": "[KIT]Die Kugel wurde auf einen seltsamen [color:65845]Thron[/color] platziert.[KIT]",
-            "q7": "[KIT]Die Kugel wurde auf einen seltsamen [color:65845]Thron[/color] platziert.[KIT]"
-        },
+        "referenceEN": {"q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"},
+        "target": {"q5": "[KIT]Die Kugel wurde auf einen seltsamen [color:65845]Thron[/color] platziert.[KIT]", "q6": "[KIT]Die Kugel wurde auf einen seltsamen [color:65845]Thron[/color] platziert.[KIT]", "q7": "[KIT]Die Kugel wurde auf einen seltsamen [color:65845]Thron[/color] platziert.[KIT]"},
         "q9": "Was ist dein Lieblingsvideospiel und warum?",
         "volumeLabel": "250 Wörter"
     },
     "it-IT": {
-        "flag": "🇮🇹",
-        "nativeName": "Italiano",
-        "region": "Italian (IT)",
-        "demonym": "Italian",
+        "flag": "🇮🇹", "nativeName": "Italiano", "region": "Italian (IT)", "demonym": "Italian",
         "glossary": [
-            {
-                "id": "Glossary_Entry_01",
-                "en": "Orb",
-                "target": "Sfera"
-            },
-            {
-                "id": "Glossary_Entry_02",
-                "en": "Throne",
-                "target": "Trono"
-            },
-            {
-                "id": "Glossary_Entry_03",
-                "en": "Strange",
-                "target": "Strano"
-            },
-            {
-                "id": "Glossary_Entry_04",
-                "en": "Placed",
-                "target": "Piazzato"
-            },
-            {
-                "id": "Glossary_Entry_05",
-                "en": "Knight",
-                "target": "Cavaliere"
-            },
-            {
-                "id": "Glossary_Entry_06",
-                "en": "Sword",
-                "target": "Spada"
-            },
-            {
-                "id": "Glossary_Entry_07",
-                "en": "Castle",
-                "target": "Castello"
-            },
-            {
-                "id": "Glossary_Entry_08",
-                "en": "King",
-                "target": "Re"
-            },
-            {
-                "id": "Glossary_Entry_09",
-                "en": "Queen",
-                "target": "Regina"
-            },
-            {
-                "id": "Glossary_Entry_10",
-                "en": "Kingdom",
-                "target": "Regno"
-            }
+            {"id": "Glossary_Entry_01", "en": "Orb", "target": "Sfera"},
+            {"id": "Glossary_Entry_02", "en": "Throne", "target": "Trono"},
+            {"id": "Glossary_Entry_03", "en": "Strange", "target": "Strano"},
+            {"id": "Glossary_Entry_04", "en": "Placed", "target": "Piazzato"},
+            {"id": "Glossary_Entry_05", "en": "Knight", "target": "Cavaliere"},
+            {"id": "Glossary_Entry_06", "en": "Sword", "target": "Spada"},
+            {"id": "Glossary_Entry_07", "en": "Castle", "target": "Castello"},
+            {"id": "Glossary_Entry_08", "en": "King", "target": "Re"},
+            {"id": "Glossary_Entry_09", "en": "Queen", "target": "Regina"},
+            {"id": "Glossary_Entry_10", "en": "Kingdom", "target": "Regno"}
         ],
-        "referenceEN": {
-            "q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"
-        },
-        "target": {
-            "q5": "[KIT]L'orba è stata piazzata su uno strano [color:65845]trono[/color].[KIT]",
-            "q6": "[KIT]L'orba è stata piazzata su uno strano [color:65845]trono[/color].[KIT]",
-            "q7": "[KIT]L'orba è stata piazzata su uno strano [color:65845]trono[/color].[KIT]"
-        },
+        "referenceEN": {"q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"},
+        "target": {"q5": "[KIT]L'orba è stata piazzata su uno strano [color:65845]trono[/color].[KIT]", "q6": "[KIT]L'orba è stata piazzata su uno strano [color:65845]trono[/color].[KIT]", "q7": "[KIT]L'orba è stata piazzata su uno strano [color:65845]trono[/color].[KIT]"},
         "q9": "Qual è il tuo videogioco preferito, dicci perché?",
         "volumeLabel": "250 parole"
     },
     "nl-NL": {
-        "flag": "🇳🇱",
-        "nativeName": "Nederlands",
-        "region": "Dutch (NL)",
-        "demonym": "Dutch",
+        "flag": "🇳🇱", "nativeName": "Nederlands", "region": "Dutch (NL)", "demonym": "Dutch",
         "glossary": [
-            {
-                "id": "Glossary_Entry_01",
-                "en": "Orb",
-                "target": "Bol"
-            },
-            {
-                "id": "Glossary_Entry_02",
-                "en": "Throne",
-                "target": "Troon"
-            },
-            {
-                "id": "Glossary_Entry_03",
-                "en": "Strange",
-                "target": "Vreemd"
-            },
-            {
-                "id": "Glossary_Entry_04",
-                "en": "Placed",
-                "target": "Geplaatst"
-            },
-            {
-                "id": "Glossary_Entry_05",
-                "en": "Knight",
-                "target": "Ridder"
-            },
-            {
-                "id": "Glossary_Entry_06",
-                "en": "Sword",
-                "target": "Zwaard"
-            },
-            {
-                "id": "Glossary_Entry_07",
-                "en": "Castle",
-                "target": "Kasteel"
-            },
-            {
-                "id": "Glossary_Entry_08",
-                "en": "King",
-                "target": "Koning"
-            },
-            {
-                "id": "Glossary_Entry_09",
-                "en": "Queen",
-                "target": "Koningin"
-            },
-            {
-                "id": "Glossary_Entry_10",
-                "en": "Kingdom",
-                "target": "Koninkrijk"
-            }
+            {"id": "Glossary_Entry_01", "en": "Orb", "target": "Bol"},
+            {"id": "Glossary_Entry_02", "en": "Throne", "target": "Troon"},
+            {"id": "Glossary_Entry_03", "en": "Strange", "target": "Vreemd"},
+            {"id": "Glossary_Entry_04", "en": "Placed", "target": "Geplaatst"},
+            {"id": "Glossary_Entry_05", "en": "Knight", "target": "Ridder"},
+            {"id": "Glossary_Entry_06", "en": "Sword", "target": "Zwaard"},
+            {"id": "Glossary_Entry_07", "en": "Castle", "target": "Kasteel"},
+            {"id": "Glossary_Entry_08", "en": "King", "target": "Koning"},
+            {"id": "Glossary_Entry_09", "en": "Queen", "target": "Koningin"},
+            {"id": "Glossary_Entry_10", "en": "Kingdom", "target": "Koninkrijk"}
         ],
-        "referenceEN": {
-            "q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"
-        },
-        "target": {
-            "q5": "[KIT]De bol werd op een vreemde [color:65845]troon[/color] geplaatst.[KIT]",
-            "q6": "[KIT]De bol werd op een vreemde [color:65845]troon[/color] geplaatst.[KIT]",
-            "q7": "[KIT]De bol werd op een vreemde [color:65845]troon[/color] geplaatst.[KIT]"
-        },
+        "referenceEN": {"q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"},
+        "target": {"q5": "[KIT]De bol werd op een vreemde [color:65845]troon[/color] geplaatst.[KIT]", "q6": "[KIT]De bol werd op een vreemde [color:65845]troon[/color] geplaatst.[KIT]", "q7": "[KIT]De bol werd op een vreemde [color:65845]troon[/color] geplaatst.[KIT]"},
         "q9": "Wat is je favoriete videogame, vertel ons waarom?",
         "volumeLabel": "250 woorden"
     },
     "sv-SE": {
-        "flag": "🇸🇪",
-        "nativeName": "Svenska",
-        "region": "Swedish (SE)",
-        "demonym": "Swedish",
+        "flag": "🇸🇪", "nativeName": "Svenska", "region": "Swedish (SE)", "demonym": "Swedish",
         "glossary": [
-            {
-                "id": "Glossary_Entry_01",
-                "en": "Orb",
-                "target": "Klot"
-            },
-            {
-                "id": "Glossary_Entry_02",
-                "en": "Throne",
-                "target": "Tron"
-            },
-            {
-                "id": "Glossary_Entry_03",
-                "en": "Strange",
-                "target": "Sällsam"
-            },
-            {
-                "id": "Glossary_Entry_04",
-                "en": "Placed",
-                "target": "Placerad"
-            },
-            {
-                "id": "Glossary_Entry_05",
-                "en": "Knight",
-                "target": "Riddare"
-            },
-            {
-                "id": "Glossary_Entry_06",
-                "en": "Sword",
-                "target": "Svärd"
-            },
-            {
-                "id": "Glossary_Entry_07",
-                "en": "Castle",
-                "target": "Slott"
-            },
-            {
-                "id": "Glossary_Entry_08",
-                "en": "King",
-                "target": "Kung"
-            },
-            {
-                "id": "Glossary_Entry_09",
-                "en": "Queen",
-                "target": "Drottning"
-            },
-            {
-                "id": "Glossary_Entry_10",
-                "en": "Kingdom",
-                "target": "Kungarike"
-            }
+            {"id": "Glossary_Entry_01", "en": "Orb", "target": "Klot"},
+            {"id": "Glossary_Entry_02", "en": "Throne", "target": "Tron"},
+            {"id": "Glossary_Entry_03", "en": "Strange", "target": "Sällsam"},
+            {"id": "Glossary_Entry_04", "en": "Placed", "target": "Placerad"},
+            {"id": "Glossary_Entry_05", "en": "Knight", "target": "Riddare"},
+            {"id": "Glossary_Entry_06", "en": "Sword", "target": "Svärd"},
+            {"id": "Glossary_Entry_07", "en": "Castle", "target": "Slott"},
+            {"id": "Glossary_Entry_08", "en": "King", "target": "Kung"},
+            {"id": "Glossary_Entry_09", "en": "Queen", "target": "Drottning"},
+            {"id": "Glossary_Entry_10", "en": "Kingdom", "target": "Kungarike"}
         ],
-        "referenceEN": {
-            "q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"
-        },
-        "target": {
-            "q5": "[KIT]Klotet placerades på en sällsam [color:65845]tron[/color].[KIT]",
-            "q6": "[KIT]Klotet placerades på en sällsam [color:65845]tron[/color].[KIT]",
-            "q7": "[KIT]Klotet placerades på en sällsam [color:65845]tron[/color].[KIT]"
-        },
+        "referenceEN": {"q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"},
+        "target": {"q5": "[KIT]Klotet placerades på en sällsam [color:65845]tron[/color].[KIT]", "q6": "[KIT]Klotet placerades på en sällsam [color:65845]tron[/color].[KIT]", "q7": "[KIT]Klotet placerades på en sällsam [color:65845]tron[/color].[KIT]"},
         "q9": "Vilket är ditt favoritvideospel, berätta varför?",
         "volumeLabel": "250 ord"
     },
     "no-NO": {
-        "flag": "🇳🇴",
-        "nativeName": "Norsk",
-        "region": "Norwegian (NO)",
-        "demonym": "Norwegian",
+        "flag": "🇳🇴", "nativeName": "Norsk", "region": "Norwegian (NO)", "demonym": "Norwegian",
         "glossary": [
-            {
-                "id": "Glossary_Entry_01",
-                "en": "Orb",
-                "target": "Kule"
-            },
-            {
-                "id": "Glossary_Entry_02",
-                "en": "Throne",
-                "target": "Trone"
-            },
-            {
-                "id": "Glossary_Entry_03",
-                "en": "Strange",
-                "target": "Sær"
-            },
-            {
-                "id": "Glossary_Entry_04",
-                "en": "Placed",
-                "target": "Plassert"
-            },
-            {
-                "id": "Glossary_Entry_05",
-                "en": "Knight",
-                "target": "Ridder"
-            },
-            {
-                "id": "Glossary_Entry_06",
-                "en": "Sword",
-                "target": "Sverd"
-            },
-            {
-                "id": "Glossary_Entry_07",
-                "en": "Castle",
-                "target": "Slott"
-            },
-            {
-                "id": "Glossary_Entry_08",
-                "en": "King",
-                "target": "Konge"
-            },
-            {
-                "id": "Glossary_Entry_09",
-                "en": "Queen",
-                "target": "Dronning"
-            },
-            {
-                "id": "Glossary_Entry_10",
-                "en": "Kingdom",
-                "target": "Kongerike"
-            }
+            {"id": "Glossary_Entry_01", "en": "Orb", "target": "Kule"},
+            {"id": "Glossary_Entry_02", "en": "Throne", "target": "Trone"},
+            {"id": "Glossary_Entry_03", "en": "Strange", "target": "Sær"},
+            {"id": "Glossary_Entry_04", "en": "Placed", "target": "Plassert"},
+            {"id": "Glossary_Entry_05", "en": "Knight", "target": "Ridder"},
+            {"id": "Glossary_Entry_06", "en": "Sword", "target": "Sverd"},
+            {"id": "Glossary_Entry_07", "en": "Castle", "target": "Slott"},
+            {"id": "Glossary_Entry_08", "en": "King", "target": "Konge"},
+            {"id": "Glossary_Entry_09", "en": "Queen", "target": "Dronning"},
+            {"id": "Glossary_Entry_10", "en": "Kingdom", "target": "Kongerike"}
         ],
-        "referenceEN": {
-            "q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"
-        },
-        "target": {
-            "q5": "[KIT]Kulen ble plassert på en sær [color:65845]trone[/color].[KIT]",
-            "q6": "[KIT]Kulen ble plassert på en sær [color:65845]trone[/color].[KIT]",
-            "q7": "[KIT]Kulen ble plassert på en sær [color:65845]trone[/color].[KIT]"
-        },
+        "referenceEN": {"q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"},
+        "target": {"q5": "[KIT]Kulen ble plassert på en sær [color:65845]trone[/color].[KIT]", "q6": "[KIT]Kulen ble plassert på en sær [color:65845]trone[/color].[KIT]", "q7": "[KIT]Kulen ble plassert på en sær [color:65845]trone[/color].[KIT]"},
         "q9": "Hva er favorittvideospillet ditt, fortell oss hvorfor?",
         "volumeLabel": "250 ord"
     },
     "da-DK": {
-        "flag": "🇩🇰",
-        "nativeName": "Dansk",
-        "region": "Danish (DK)",
-        "demonym": "Danish",
+        "flag": "🇩🇰", "nativeName": "Dansk", "region": "Danish (DK)", "demonym": "Danish",
         "glossary": [
-            {
-                "id": "Glossary_Entry_01",
-                "en": "Orb",
-                "target": "Kugle"
-            },
-            {
-                "id": "Glossary_Entry_02",
-                "en": "Throne",
-                "target": "Trone"
-            },
-            {
-                "id": "Glossary_Entry_03",
-                "en": "Strange",
-                "target": "Særegen"
-            },
-            {
-                "id": "Glossary_Entry_04",
-                "en": "Placed",
-                "target": "Placeret"
-            },
-            {
-                "id": "Glossary_Entry_05",
-                "en": "Knight",
-                "target": "Ridder"
-            },
-            {
-                "id": "Glossary_Entry_06",
-                "en": "Sword",
-                "target": "Sværd"
-            },
-            {
-                "id": "Glossary_Entry_07",
-                "en": "Castle",
-                "target": "Slot"
-            },
-            {
-                "id": "Glossary_Entry_08",
-                "en": "King",
-                "target": "Konge"
-            },
-            {
-                "id": "Glossary_Entry_09",
-                "en": "Queen",
-                "target": "Dronning"
-            },
-            {
-                "id": "Glossary_Entry_10",
-                "en": "Kingdom",
-                "target": "Kongerige"
-            }
+            {"id": "Glossary_Entry_01", "en": "Orb", "target": "Kugle"},
+            {"id": "Glossary_Entry_02", "en": "Throne", "target": "Trone"},
+            {"id": "Glossary_Entry_03", "en": "Strange", "target": "Særegen"},
+            {"id": "Glossary_Entry_04", "en": "Placed", "target": "Placeret"},
+            {"id": "Glossary_Entry_05", "en": "Knight", "target": "Ridder"},
+            {"id": "Glossary_Entry_06", "en": "Sword", "target": "Sværd"},
+            {"id": "Glossary_Entry_07", "en": "Castle", "target": "Slot"},
+            {"id": "Glossary_Entry_08", "en": "King", "target": "Konge"},
+            {"id": "Glossary_Entry_09", "en": "Queen", "target": "Dronning"},
+            {"id": "Glossary_Entry_10", "en": "Kingdom", "target": "Kongerige"}
         ],
-        "referenceEN": {
-            "q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"
-        },
-        "target": {
-            "q5": "[KIT]Kuglen blev placeret på en særegen [color:65845]trone[/color].[KIT]",
-            "q6": "[KIT]Kuglen blev placeret på en særegen [color:65845]trone[/color].[KIT]",
-            "q7": "[KIT]Kuglen blev placeret på en særegen [color:65845]trone[/color].[KIT]"
-        },
+        "referenceEN": {"q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"},
+        "target": {"q5": "[KIT]Kuglen blev placeret på en særegen [color:65845]trone[/color].[KIT]", "q6": "[KIT]Kuglen blev placeret på en særegen [color:65845]trone[/color].[KIT]", "q7": "[KIT]Kuglen blev placeret på en særegen [color:65845]trone[/color].[KIT]"},
         "q9": "Hvad er dit yndlingsvideospil, og fortæl os hvorfor?",
         "volumeLabel": "250 ord"
     },
     "fi-FI": {
-        "flag": "🇫🇮",
-        "nativeName": "Suomi",
-        "region": "Finnish (FI)",
-        "demonym": "Finnish",
+        "flag": "🇫🇮", "nativeName": "Suomi", "region": "Finnish (FI)", "demonym": "Finnish",
         "glossary": [
-            {
-                "id": "Glossary_Entry_01",
-                "en": "Orb",
-                "target": "Pallo"
-            },
-            {
-                "id": "Glossary_Entry_02",
-                "en": "Throne",
-                "target": "Valtaistuin"
-            },
-            {
-                "id": "Glossary_Entry_03",
-                "en": "Strange",
-                "target": "Outo"
-            },
-            {
-                "id": "Glossary_Entry_04",
-                "en": "Placed",
-                "target": "Asetettu"
-            },
-            {
-                "id": "Glossary_Entry_05",
-                "en": "Knight",
-                "target": "Ritari"
-            },
-            {
-                "id": "Glossary_Entry_06",
-                "en": "Sword",
-                "target": "Miekka"
-            },
-            {
-                "id": "Glossary_Entry_07",
-                "en": "Castle",
-                "target": "Linna"
-            },
-            {
-                "id": "Glossary_Entry_08",
-                "en": "King",
-                "target": "Kuningas"
-            },
-            {
-                "id": "Glossary_Entry_09",
-                "en": "Queen",
-                "target": "Kuningatar"
-            },
-            {
-                "id": "Glossary_Entry_10",
-                "en": "Kingdom",
-                "target": "Valtakunta"
-            }
+            {"id": "Glossary_Entry_01", "en": "Orb", "target": "Pallo"},
+            {"id": "Glossary_Entry_02", "en": "Throne", "target": "Valtaistuin"},
+            {"id": "Glossary_Entry_03", "en": "Strange", "target": "Outo"},
+            {"id": "Glossary_Entry_04", "en": "Placed", "target": "Asetettu"},
+            {"id": "Glossary_Entry_05", "en": "Knight", "target": "Ritari"},
+            {"id": "Glossary_Entry_06", "en": "Sword", "target": "Miekka"},
+            {"id": "Glossary_Entry_07", "en": "Castle", "target": "Linna"},
+            {"id": "Glossary_Entry_08", "en": "King", "target": "Kuningas"},
+            {"id": "Glossary_Entry_09", "en": "Queen", "target": "Kuningatar"},
+            {"id": "Glossary_Entry_10", "en": "Kingdom", "target": "Valtakunta"}
         ],
-        "referenceEN": {
-            "q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"
-        },
-        "target": {
-            "q5": "[KIT]Orb asetettiin oudolle [color:65845]valtaistuimelle[/color].[KIT]",
-            "q6": "[KIT]Orb asetettiin oudolle [color:65845]valtaistuimelle[/color].[KIT]",
-            "q7": "[KIT]Orb asetettiin oudolle [color:65845]valtaistuimelle[/color].[KIT]"
-        },
+        "referenceEN": {"q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"},
+        "target": {"q5": "[KIT]Orb asetettiin oudolle [color:65845]valtaistuimelle[/color].[KIT]", "q6": "[KIT]Orb asetettiin oudolle [color:65845]valtaistuimelle[/color].[KIT]", "q7": "[KIT]Orb asetettiin oudolle [color:65845]valtaistuimelle[/color].[KIT]"},
         "q9": "Mikä on suosikkivideopelisi, kerro meille miksi?",
         "volumeLabel": "250 sanaa"
     },
     "es-ES": {
-        "flag": "🇪🇸",
-        "nativeName": "Español",
-        "region": "Spain (ES)",
-        "demonym": "Spanish",
+        "flag": "🇪🇸", "nativeName": "Español", "region": "Spain (ES)", "demonym": "Spanish",
         "glossary": [
-            {
-                "id": "Glossary_Entry_01",
-                "en": "Orb",
-                "target": "Orbe"
-            },
-            {
-                "id": "Glossary_Entry_02",
-                "en": "Throne",
-                "target": "Trono"
-            },
-            {
-                "id": "Glossary_Entry_03",
-                "en": "Strange",
-                "target": "Extraño"
-            },
-            {
-                "id": "Glossary_Entry_04",
-                "en": "Placed",
-                "target": "Colocado"
-            },
-            {
-                "id": "Glossary_Entry_05",
-                "en": "Knight",
-                "target": "Caballero"
-            },
-            {
-                "id": "Glossary_Entry_06",
-                "en": "Sword",
-                "target": "Espada"
-            },
-            {
-                "id": "Glossary_Entry_07",
-                "en": "Castle",
-                "target": "Castillo"
-            },
-            {
-                "id": "Glossary_Entry_08",
-                "en": "King",
-                "target": "Rey"
-            },
-            {
-                "id": "Glossary_Entry_09",
-                "en": "Queen",
-                "target": "Reina"
-            },
-            {
-                "id": "Glossary_Entry_10",
-                "en": "Kingdom",
-                "target": "Reino"
-            }
+            {"id": "Glossary_Entry_01", "en": "Orb", "target": "Orbe"},
+            {"id": "Glossary_Entry_02", "en": "Throne", "target": "Trono"},
+            {"id": "Glossary_Entry_03", "en": "Strange", "target": "Extraño"},
+            {"id": "Glossary_Entry_04", "en": "Placed", "target": "Colocado"},
+            {"id": "Glossary_Entry_05", "en": "Knight", "target": "Caballero"},
+            {"id": "Glossary_Entry_06", "en": "Sword", "target": "Espada"},
+            {"id": "Glossary_Entry_07", "en": "Castle", "target": "Castillo"},
+            {"id": "Glossary_Entry_08", "en": "King", "target": "Rey"},
+            {"id": "Glossary_Entry_09", "en": "Queen", "target": "Reina"},
+            {"id": "Glossary_Entry_10", "en": "Kingdom", "target": "Reino"}
         ],
-        "referenceEN": {
-            "q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"
-        },
-        "target": {
-            "q5": "[KIT]El orbe fue colocado en un extraño [color:65845]trono[/color].[KIT]",
-            "q6": "[KIT]El orbe fue colocado en un extraño [color:65845]trono[/color].[KIT]",
-            "q7": "[KIT]El orbe fue colocado en un extraño [color:65845]trono[/color].[KIT]"
-        },
+        "referenceEN": {"q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"},
+        "target": {"q5": "[KIT]El orbe fue colocado en un extraño [color:65845]trono[/color].[KIT]", "q6": "[KIT]El orbe fue colocado en un extraño [color:65845]trono[/color].[KIT]", "q7": "[KIT]El orbe fue colocado en un extraño [color:65845]trono[/color].[KIT]"},
         "q9": "¿Cuál es tu videojuego favorito? Cuéntanos por qué.",
         "volumeLabel": "250 palabras"
     },
     "es-419": {
-        "flag": "🌎",
-        "nativeName": "Español",
-        "region": "Latin America (419)",
-        "demonym": "Latin American Spanish",
+        "flag": "🌎", "nativeName": "Español", "region": "Latin America (419)", "demonym": "Latin American Spanish",
         "glossary": [
-            {
-                "id": "Glossary_Entry_01",
-                "en": "Orb",
-                "target": "Orbe"
-            },
-            {
-                "id": "Glossary_Entry_02",
-                "en": "Throne",
-                "target": "Trono"
-            },
-            {
-                "id": "Glossary_Entry_03",
-                "en": "Strange",
-                "target": "Extraño"
-            },
-            {
-                "id": "Glossary_Entry_04",
-                "en": "Placed",
-                "target": "Colocado"
-            },
-            {
-                "id": "Glossary_Entry_05",
-                "en": "Knight",
-                "target": "Caballero"
-            },
-            {
-                "id": "Glossary_Entry_06",
-                "en": "Sword",
-                "target": "Espada"
-            },
-            {
-                "id": "Glossary_Entry_07",
-                "en": "Castle",
-                "target": "Castillo"
-            },
-            {
-                "id": "Glossary_Entry_08",
-                "en": "King",
-                "target": "Rey"
-            },
-            {
-                "id": "Glossary_Entry_09",
-                "en": "Queen",
-                "target": "Reina"
-            },
-            {
-                "id": "Glossary_Entry_10",
-                "en": "Kingdom",
-                "target": "Reino"
-            }
+            {"id": "Glossary_Entry_01", "en": "Orb", "target": "Orbe"},
+            {"id": "Glossary_Entry_02", "en": "Throne", "target": "Trono"},
+            {"id": "Glossary_Entry_03", "en": "Strange", "target": "Extraño"},
+            {"id": "Glossary_Entry_04", "en": "Placed", "target": "Colocado"},
+            {"id": "Glossary_Entry_05", "en": "Knight", "target": "Caballero"},
+            {"id": "Glossary_Entry_06", "en": "Sword", "target": "Espada"},
+            {"id": "Glossary_Entry_07", "en": "Castle", "target": "Castillo"},
+            {"id": "Glossary_Entry_08", "en": "King", "target": "Rey"},
+            {"id": "Glossary_Entry_09", "en": "Queen", "target": "Reina"},
+            {"id": "Glossary_Entry_10", "en": "Kingdom", "target": "Reino"}
         ],
-        "referenceEN": {
-            "q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"
-        },
-        "target": {
-            "q5": "[KIT]El orbe fue colocado en un extraño [color:65845]trono[/color].[KIT]",
-            "q6": "[KIT]El orbe fue colocado en un extraño [color:65845]trono[/color].[KIT]",
-            "q7": "[KIT]El orbe fue colocado en un extraño [color:65845]trono[/color].[KIT]"
-        },
+        "referenceEN": {"q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"},
+        "target": {"q5": "[KIT]El orbe fue colocado en un extraño [color:65845]trono[/color].[KIT]", "q6": "[KIT]El orbe fue colocado en un extraño [color:65845]trono[/color].[KIT]", "q7": "[KIT]El orbe fue colocado en un extraño [color:65845]trono[/color].[KIT]"},
         "q9": "¿Cuál es tu videojuego favorito? Platícanos por qué.",
         "volumeLabel": "250 palabras"
     },
     "pt-PT": {
-        "flag": "🇵🇹",
-        "nativeName": "Português",
-        "region": "Portugal (PT)",
-        "demonym": "Portuguese",
+        "flag": "🇵🇹", "nativeName": "Português", "region": "Portugal (PT)", "demonym": "Portuguese",
         "glossary": [
-            {
-                "id": "Glossary_Entry_01",
-                "en": "Orb",
-                "target": "Orbe"
-            },
-            {
-                "id": "Glossary_Entry_02",
-                "en": "Throne",
-                "target": "Trono"
-            },
-            {
-                "id": "Glossary_Entry_03",
-                "en": "Strange",
-                "target": "Estranho"
-            },
-            {
-                "id": "Glossary_Entry_04",
-                "en": "Placed",
-                "target": "Colocado"
-            },
-            {
-                "id": "Glossary_Entry_05",
-                "en": "Knight",
-                "target": "Cavaleiro"
-            },
-            {
-                "id": "Glossary_Entry_06",
-                "en": "Sword",
-                "target": "Espada"
-            },
-            {
-                "id": "Glossary_Entry_07",
-                "en": "Castle",
-                "target": "Castelo"
-            },
-            {
-                "id": "Glossary_Entry_08",
-                "en": "King",
-                "target": "Rei"
-            },
-            {
-                "id": "Glossary_Entry_09",
-                "en": "Queen",
-                "target": "Rainha"
-            },
-            {
-                "id": "Glossary_Entry_10",
-                "en": "Kingdom",
-                "target": "Reino"
-            }
+            {"id": "Glossary_Entry_01", "en": "Orb", "target": "Orbe"},
+            {"id": "Glossary_Entry_02", "en": "Throne", "target": "Trono"},
+            {"id": "Glossary_Entry_03", "en": "Strange", "target": "Estranho"},
+            {"id": "Glossary_Entry_04", "en": "Placed", "target": "Colocado"},
+            {"id": "Glossary_Entry_05", "en": "Knight", "target": "Cavaleiro"},
+            {"id": "Glossary_Entry_06", "en": "Sword", "target": "Espada"},
+            {"id": "Glossary_Entry_07", "en": "Castle", "target": "Castelo"},
+            {"id": "Glossary_Entry_08", "en": "King", "target": "Rei"},
+            {"id": "Glossary_Entry_09", "en": "Queen", "target": "Rainha"},
+            {"id": "Glossary_Entry_10", "en": "Kingdom", "target": "Reino"}
         ],
-        "referenceEN": {
-            "q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"
-        },
-        "target": {
-            "q5": "[KIT]O orbe foi colocado num estranho [color:65845]trono[/color].[KIT]",
-            "q6": "[KIT]O orbe foi colocado num estranho [color:65845]trono[/color].[KIT]",
-            "q7": "[KIT]O orbe foi colocado num estranho [color:65845]trono[/color].[KIT]"
-        },
+        "referenceEN": {"q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"},
+        "target": {"q5": "[KIT]O orbe foi colocado num estranho [color:65845]trono[/color].[KIT]", "q6": "[KIT]O orbe foi colocado num estranho [color:65845]trono[/color].[KIT]", "q7": "[KIT]O orbe foi colocado num estranho [color:65845]trono[/color].[KIT]"},
         "q9": "Qual é o teu videojogo preferido? Diz-nos porquê.",
         "volumeLabel": "250 palavras"
     },
     "pt-BR": {
-        "flag": "🇧🇷",
-        "nativeName": "Português",
-        "region": "Brasil (BR)",
-        "demonym": "Brazilian Portuguese",
+        "flag": "🇧🇷", "nativeName": "Português", "region": "Brasil (BR)", "demonym": "Brazilian Portuguese",
         "glossary": [
-            {
-                "id": "Glossary_Entry_01",
-                "en": "Orb",
-                "target": "Orbe"
-            },
-            {
-                "id": "Glossary_Entry_02",
-                "en": "Throne",
-                "target": "Trono"
-            },
-            {
-                "id": "Glossary_Entry_03",
-                "en": "Strange",
-                "target": "Estranho"
-            },
-            {
-                "id": "Glossary_Entry_04",
-                "en": "Placed",
-                "target": "Colocado"
-            },
-            {
-                "id": "Glossary_Entry_05",
-                "en": "Knight",
-                "target": "Cavaleiro"
-            },
-            {
-                "id": "Glossary_Entry_06",
-                "en": "Sword",
-                "target": "Espada"
-            },
-            {
-                "id": "Glossary_Entry_07",
-                "en": "Castle",
-                "target": "Castelo"
-            },
-            {
-                "id": "Glossary_Entry_08",
-                "en": "King",
-                "target": "Rei"
-            },
-            {
-                "id": "Glossary_Entry_09",
-                "en": "Queen",
-                "target": "Rainha"
-            },
-            {
-                "id": "Glossary_Entry_10",
-                "en": "Kingdom",
-                "target": "Reino"
-            }
+            {"id": "Glossary_Entry_01", "en": "Orb", "target": "Orbe"},
+            {"id": "Glossary_Entry_02", "en": "Throne", "target": "Trono"},
+            {"id": "Glossary_Entry_03", "en": "Strange", "target": "Estranho"},
+            {"id": "Glossary_Entry_04", "en": "Placed", "target": "Colocado"},
+            {"id": "Glossary_Entry_05", "en": "Knight", "target": "Cavaleiro"},
+            {"id": "Glossary_Entry_06", "en": "Sword", "target": "Espada"},
+            {"id": "Glossary_Entry_07", "en": "Castle", "target": "Castelo"},
+            {"id": "Glossary_Entry_08", "en": "King", "target": "Rei"},
+            {"id": "Glossary_Entry_09", "en": "Queen", "target": "Rainha"},
+            {"id": "Glossary_Entry_10", "en": "Kingdom", "target": "Reino"}
         ],
-        "referenceEN": {
-            "q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"
-        },
-        "target": {
-            "q5": "[KIT]O orbe foi colocado em um estranho [color:65845]trono[/color].[KIT]",
-            "q6": "[KIT]O orbe foi colocado em um estranho [color:65845]trono[/color].[KIT]",
-            "q7": "[KIT]O orbe foi colocado em um estranho [color:65845]trono[/color].[KIT]"
-        },
+        "referenceEN": {"q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"},
+        "target": {"q5": "[KIT]O orbe foi colocado em um estranho [color:65845]trono[/color].[KIT]", "q6": "[KIT]O orbe foi colocado em um estranho [color:65845]trono[/color].[KIT]", "q7": "[KIT]O orbe foi colocado em um estranho [color:65845]trono[/color].[KIT]"},
         "q9": "Qual é o seu videogame favorito, conte-nos porquê?",
         "volumeLabel": "250 palavras"
     },
     "ru-RU": {
-        "flag": "🇷🇺",
-        "nativeName": "Русский",
-        "region": "Russian (RU)",
-        "demonym": "Russian",
+        "flag": "🇷🇺", "nativeName": "Русский", "region": "Russian (RU)", "demonym": "Russian",
         "glossary": [
-            {
-                "id": "Glossary_Entry_01",
-                "en": "Orb",
-                "target": "Сфера"
-            },
-            {
-                "id": "Glossary_Entry_02",
-                "en": "Throne",
-                "target": "Трон"
-            },
-            {
-                "id": "Glossary_Entry_03",
-                "en": "Strange",
-                "target": "Странный"
-            },
-            {
-                "id": "Glossary_Entry_04",
-                "en": "Placed",
-                "target": "Помещен"
-            },
-            {
-                "id": "Glossary_Entry_05",
-                "en": "Knight",
-                "target": "Рыцарь"
-            },
-            {
-                "id": "Glossary_Entry_06",
-                "en": "Sword",
-                "target": "Меч"
-            },
-            {
-                "id": "Glossary_Entry_07",
-                "en": "Castle",
-                "target": "Замок"
-            },
-            {
-                "id": "Glossary_Entry_08",
-                "en": "King",
-                "target": "Король"
-            },
-            {
-                "id": "Glossary_Entry_09",
-                "en": "Queen",
-                "target": "Королева"
-            },
-            {
-                "id": "Glossary_Entry_10",
-                "en": "Kingdom",
-                "target": "Королевство"
-            }
+            {"id": "Glossary_Entry_01", "en": "Orb", "target": "Сфера"},
+            {"id": "Glossary_Entry_02", "en": "Throne", "target": "Трон"},
+            {"id": "Glossary_Entry_03", "en": "Strange", "target": "Странный"},
+            {"id": "Glossary_Entry_04", "en": "Placed", "target": "Помещен"},
+            {"id": "Glossary_Entry_05", "en": "Knight", "target": "Рыцарь"},
+            {"id": "Glossary_Entry_06", "en": "Sword", "target": "Меч"},
+            {"id": "Glossary_Entry_07", "en": "Castle", "target": "Замок"},
+            {"id": "Glossary_Entry_08", "en": "King", "target": "Король"},
+            {"id": "Glossary_Entry_09", "en": "Queen", "target": "Королева"},
+            {"id": "Glossary_Entry_10", "en": "Kingdom", "target": "Королевство"}
         ],
-        "referenceEN": {
-            "q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"
-        },
-        "target": {
-            "q5": "[KIT]Сфера была помещена на странный [color:65845]трон[/color].[KIT]",
-            "q6": "[KIT]Сфера была помещена на странный [color:65845]трон[/color].[KIT]",
-            "q7": "[KIT]Сфера была помещена на странный [color:65845]трон[/color].[KIT]"
-        },
+        "referenceEN": {"q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"},
+        "target": {"q5": "[KIT]Сфера была помещена на странный [color:65845]трон[/color].[KIT]", "q6": "[KIT]Сфера была помещена на странный [color:65845]трон[/color].[KIT]", "q7": "[KIT]Сфера была помещена на странный [color:65845]трон[/color].[KIT]"},
         "q9": "Какая ваша любимая видеоигра, расскажите почему?",
         "volumeLabel": "250 слов"
     },
     "pl-PL": {
-        "flag": "🇵🇱",
-        "nativeName": "Polski",
-        "region": "Polish (PL)",
-        "demonym": "Polish",
+        "flag": "🇵🇱", "nativeName": "Polski", "region": "Polish (PL)", "demonym": "Polish",
         "glossary": [
-            {
-                "id": "Glossary_Entry_01",
-                "en": "Orb",
-                "target": "Sfera"
-            },
-            {
-                "id": "Glossary_Entry_02",
-                "en": "Throne",
-                "target": "Tron"
-            },
-            {
-                "id": "Glossary_Entry_03",
-                "en": "Strange",
-                "target": "Dziwny"
-            },
-            {
-                "id": "Glossary_Entry_04",
-                "en": "Placed",
-                "target": "Umieszczony"
-            },
-            {
-                "id": "Glossary_Entry_05",
-                "en": "Knight",
-                "target": "Rycerz"
-            },
-            {
-                "id": "Glossary_Entry_06",
-                "en": "Sword",
-                "target": "Miecz"
-            },
-            {
-                "id": "Glossary_Entry_07",
-                "en": "Castle",
-                "target": "Zamczysko"
-            },
-            {
-                "id": "Glossary_Entry_08",
-                "en": "King",
-                "target": "Król"
-            },
-            {
-                "id": "Glossary_Entry_09",
-                "en": "Queen",
-                "target": "Królowa"
-            },
-            {
-                "id": "Glossary_Entry_10",
-                "en": "Kingdom",
-                "target": "Królestwo"
-            }
+            {"id": "Glossary_Entry_01", "en": "Orb", "target": "Sfera"},
+            {"id": "Glossary_Entry_02", "en": "Throne", "target": "Tron"},
+            {"id": "Glossary_Entry_03", "en": "Strange", "target": "Dziwny"},
+            {"id": "Glossary_Entry_04", "en": "Placed", "target": "Umieszczony"},
+            {"id": "Glossary_Entry_05", "en": "Knight", "target": "Rycerz"},
+            {"id": "Glossary_Entry_06", "en": "Sword", "target": "Miecz"},
+            {"id": "Glossary_Entry_07", "en": "Castle", "target": "Zamczysko"},
+            {"id": "Glossary_Entry_08", "en": "King", "target": "Król"},
+            {"id": "Glossary_Entry_09", "en": "Queen", "target": "Królowa"},
+            {"id": "Glossary_Entry_10", "en": "Kingdom", "target": "Królestwo"}
         ],
-        "referenceEN": {
-            "q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"
-        },
-        "target": {
-            "q5": "[KIT]Sfera została umieszczona na dziwnym [color:65845]tronie[/color].[KIT]",
-            "q6": "[KIT]Sfera została umieszczona na dziwnym [color:65845]tronie[/color].[KIT]",
-            "q7": "[KIT]Sfera została umieszczona na dziwnym [color:65845]tronie[/color].[KIT]"
-        },
+        "referenceEN": {"q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"},
+        "target": {"q5": "[KIT]Sfera została umieszczona na dziwnym [color:65845]tronie[/color].[KIT]", "q6": "[KIT]Sfera została umieszczona na dziwnym [color:65845]tronie[/color].[KIT]", "q7": "[KIT]Sfera została umieszczona na dziwnym [color:65845]tronie[/color].[KIT]"},
         "q9": "Jaka jest Twoja ulubiona gra wideo i dlaczego?",
         "volumeLabel": "250 słów"
     },
     "cs-CZ": {
-        "flag": "🇨🇿",
-        "nativeName": "Čeština",
-        "region": "Czech (CZ)",
-        "demonym": "Czech",
+        "flag": "🇨🇿", "nativeName": "Čeština", "region": "Czech (CZ)", "demonym": "Czech",
         "glossary": [
-            {
-                "id": "Glossary_Entry_01",
-                "en": "Orb",
-                "target": "Sféra"
-            },
-            {
-                "id": "Glossary_Entry_02",
-                "en": "Throne",
-                "target": "Trůn"
-            },
-            {
-                "id": "Glossary_Entry_03",
-                "en": "Strange",
-                "target": "Podivný"
-            },
-            {
-                "id": "Glossary_Entry_04",
-                "en": "Placed",
-                "target": "Umístěn"
-            },
-            {
-                "id": "Glossary_Entry_05",
-                "en": "Knight",
-                "target": "Rytíř"
-            },
-            {
-                "id": "Glossary_Entry_06",
-                "en": "Sword",
-                "target": "Meč"
-            },
-            {
-                "id": "Glossary_Entry_07",
-                "en": "Castle",
-                "target": "Hrad"
-            },
-            {
-                "id": "Glossary_Entry_08",
-                "en": "King",
-                "target": "Král"
-            },
-            {
-                "id": "Glossary_Entry_09",
-                "en": "Queen",
-                "target": "Královna"
-            },
-            {
-                "id": "Glossary_Entry_10",
-                "en": "Kingdom",
-                "target": "Království"
-            }
+            {"id": "Glossary_Entry_01", "en": "Orb", "target": "Sféra"},
+            {"id": "Glossary_Entry_02", "en": "Throne", "target": "Trůn"},
+            {"id": "Glossary_Entry_03", "en": "Strange", "target": "Podivný"},
+            {"id": "Glossary_Entry_04", "en": "Placed", "target": "Umístěn"},
+            {"id": "Glossary_Entry_05", "en": "Knight", "target": "Rytíř"},
+            {"id": "Glossary_Entry_06", "en": "Sword", "target": "Meč"},
+            {"id": "Glossary_Entry_07", "en": "Castle", "target": "Hrad"},
+            {"id": "Glossary_Entry_08", "en": "King", "target": "Král"},
+            {"id": "Glossary_Entry_09", "en": "Queen", "target": "Královna"},
+            {"id": "Glossary_Entry_10", "en": "Kingdom", "target": "Království"}
         ],
-        "referenceEN": {
-            "q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"
-        },
-        "target": {
-            "q5": "[KIT]Sféra byla umístěna na podivný [color:65845]trůn[/color].[KIT]",
-            "q6": "[KIT]Sféra byla umístěna na podivný [color:65845]trůn[/color].[KIT]",
-            "q7": "[KIT]Sféra byla umístěna na podivný [color:65845]trůn[/color].[KIT]"
-        },
+        "referenceEN": {"q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"},
+        "target": {"q5": "[KIT]Sféra byla umístěna na podivný [color:65845]trůn[/color].[KIT]", "q6": "[KIT]Sféra byla umístěna na podivný [color:65845]trůn[/color].[KIT]", "q7": "[KIT]Sféra byla umístěna na podivný [color:65845]trůn[/color].[KIT]"},
         "q9": "Jaká je vaše oblíbená videohra a proč?",
         "volumeLabel": "250 slov"
     },
     "hu-HU": {
-        "flag": "🇭🇺",
-        "nativeName": "Magyar",
-        "region": "Hungarian (HU)",
-        "demonym": "Hungarian",
+        "flag": "🇭🇺", "nativeName": "Magyar", "region": "Hungarian (HU)", "demonym": "Hungarian",
         "glossary": [
-            {
-                "id": "Glossary_Entry_01",
-                "en": "Orb",
-                "target": "Gömb"
-            },
-            {
-                "id": "Glossary_Entry_02",
-                "en": "Throne",
-                "target": "Trón"
-            },
-            {
-                "id": "Glossary_Entry_03",
-                "en": "Strange",
-                "target": "Különös"
-            },
-            {
-                "id": "Glossary_Entry_04",
-                "en": "Placed",
-                "target": "Elhelyezve"
-            },
-            {
-                "id": "Glossary_Entry_05",
-                "en": "Knight",
-                "target": "Lovag"
-            },
-            {
-                "id": "Glossary_Entry_06",
-                "en": "Sword",
-                "target": "Kard"
-            },
-            {
-                "id": "Glossary_Entry_07",
-                "en": "Castle",
-                "target": "Kastély"
-            },
-            {
-                "id": "Glossary_Entry_08",
-                "en": "King",
-                "target": "Király"
-            },
-            {
-                "id": "Glossary_Entry_09",
-                "en": "Queen",
-                "target": "Királynő"
-            },
-            {
-                "id": "Glossary_Entry_10",
-                "en": "Kingdom",
-                "target": "Királyság"
-            }
+            {"id": "Glossary_Entry_01", "en": "Orb", "target": "Gömb"},
+            {"id": "Glossary_Entry_02", "en": "Throne", "target": "Trón"},
+            {"id": "Glossary_Entry_03", "en": "Strange", "target": "Különös"},
+            {"id": "Glossary_Entry_04", "en": "Placed", "target": "Elhelyezve"},
+            {"id": "Glossary_Entry_05", "en": "Knight", "target": "Lovag"},
+            {"id": "Glossary_Entry_06", "en": "Sword", "target": "Kard"},
+            {"id": "Glossary_Entry_07", "en": "Castle", "target": "Kastély"},
+            {"id": "Glossary_Entry_08", "en": "King", "target": "Király"},
+            {"id": "Glossary_Entry_09", "en": "Queen", "target": "Királynő"},
+            {"id": "Glossary_Entry_10", "en": "Kingdom", "target": "Királyság"}
         ],
-        "referenceEN": {
-            "q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"
-        },
-        "target": {
-            "q5": "[KIT]A gömb egy különös [color:65845]trónra[/color] lett elhelyezve.[KIT]",
-            "q6": "[KIT]A gömb egy különös [color:65845]trónra[/color] lett elhelyezve.[KIT]",
-            "q7": "[KIT]A gömb egy különös [color:65845]trónra[/color] lett elhelyezve.[KIT]"
-        },
+        "referenceEN": {"q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"},
+        "target": {"q5": "[KIT]A gömb egy különös [color:65845]trónra[/color] lett elhelyezve.[KIT]", "q6": "[KIT]A gömb egy különös [color:65845]trónra[/color] lett elhelyezve.[KIT]", "q7": "[KIT]A gömb egy különös [color:65845]trónra[/color] lett elhelyezve.[KIT]"},
         "q9": "Mi a kedvenc videojátékod, és miért?",
         "volumeLabel": "250 szó"
     },
     "el-GR": {
-        "flag": "🇬🇷",
-        "nativeName": "Ελληνικά",
-        "region": "Greek (GR)",
-        "demonym": "Greek",
+        "flag": "🇬🇷", "nativeName": "Ελληνικά", "region": "Greek (GR)", "demonym": "Greek",
         "glossary": [
-            {
-                "id": "Glossary_Entry_01",
-                "en": "Orb",
-                "target": "Σφαίρα"
-            },
-            {
-                "id": "Glossary_Entry_02",
-                "en": "Throne",
-                "target": "Θρόνος"
-            },
-            {
-                "id": "Glossary_Entry_03",
-                "en": "Strange",
-                "target": "Παράξενος"
-            },
-            {
-                "id": "Glossary_Entry_04",
-                "en": "Placed",
-                "target": "Τοποθετήθηκε"
-            },
-            {
-                "id": "Glossary_Entry_05",
-                "en": "Knight",
-                "target": "Ιππότης"
-            },
-            {
-                "id": "Glossary_Entry_06",
-                "en": "Sword",
-                "target": "Σπαθί"
-            },
-            {
-                "id": "Glossary_Entry_07",
-                "en": "Castle",
-                "target": "Κάστρο"
-            },
-            {
-                "id": "Glossary_Entry_08",
-                "en": "King",
-                "target": "Βασιλιάς"
-            },
-            {
-                "id": "Glossary_Entry_09",
-                "en": "Queen",
-                "target": "Βασίλισσα"
-            },
-            {
-                "id": "Glossary_Entry_10",
-                "en": "Kingdom",
-                "target": "Βασίλειο"
-            }
+            {"id": "Glossary_Entry_01", "en": "Orb", "target": "Σφαίρα"},
+            {"id": "Glossary_Entry_02", "en": "Throne", "target": "Θρόνος"},
+            {"id": "Glossary_Entry_03", "en": "Strange", "target": "Παράξενος"},
+            {"id": "Glossary_Entry_04", "en": "Placed", "target": "Τοποθετήθηκε"},
+            {"id": "Glossary_Entry_05", "en": "Knight", "target": "Ιππότης"},
+            {"id": "Glossary_Entry_06", "en": "Sword", "target": "Σπαθί"},
+            {"id": "Glossary_Entry_07", "en": "Castle", "target": "Κάστρο"},
+            {"id": "Glossary_Entry_08", "en": "King", "target": "Βασιλιάς"},
+            {"id": "Glossary_Entry_09", "en": "Queen", "target": "Βασίλισσα"},
+            {"id": "Glossary_Entry_10", "en": "Kingdom", "target": "Βασίλειο"}
         ],
-        "referenceEN": {
-            "q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"
-        },
-        "target": {
-            "q5": "[KIT]Η σφαίρα τοποθετήθηκε σε έναν παράξενο [color:65845]θρόνο[/color].[KIT]",
-            "q6": "[KIT]Η σφαίρα τοποθετήθηκε σε έναν παράξενο [color:65845]θρόνο[/color].[KIT]",
-            "q7": "[KIT]Η σφαίρα τοποθετήθηκε σε έναν παράξενο [color:65845]θρόνο[/color].[KIT]"
-        },
+        "referenceEN": {"q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"},
+        "target": {"q5": "[KIT]Η σφαίρα τοποθετήθηκε σε έναν παράξενο [color:65845]θρόνο[/color].[KIT]", "q6": "[KIT]Η σφαίρα τοποθετήθηκε σε έναν παράξενο [color:65845]θρόνο[/color].[KIT]", "q7": "[KIT]Η σφαίρα τοποθετήθηκε σε έναν παράξενο [color:65845]θρόνο[/color].[KIT]"},
         "q9": "Ποιο είναι το αγαπημένο σας βιντεοπαιχνίδι, πείτε μας γιατί;",
         "volumeLabel": "250 λέξεις"
     },
     "tr-TR": {
-        "flag": "🇹🇷",
-        "nativeName": "Türkçe",
-        "region": "Turkish (TR)",
-        "demonym": "Turkish",
+        "flag": "🇹🇷", "nativeName": "Türkçe", "region": "Turkish (TR)", "demonym": "Turkish",
         "glossary": [
-            {
-                "id": "Glossary_Entry_01",
-                "en": "Orb",
-                "target": "Küre"
-            },
-            {
-                "id": "Glossary_Entry_02",
-                "en": "Throne",
-                "target": "Taht"
-            },
-            {
-                "id": "Glossary_Entry_03",
-                "en": "Strange",
-                "target": "Garip"
-            },
-            {
-                "id": "Glossary_Entry_04",
-                "en": "Placed",
-                "target": "Yerleştirildi"
-            },
-            {
-                "id": "Glossary_Entry_05",
-                "en": "Knight",
-                "target": "Şövalye"
-            },
-            {
-                "id": "Glossary_Entry_06",
-                "en": "Sword",
-                "target": "Kılıç"
-            },
-            {
-                "id": "Glossary_Entry_07",
-                "en": "Castle",
-                "target": "Kale"
-            },
-            {
-                "id": "Glossary_Entry_08",
-                "en": "King",
-                "target": "Kral"
-            },
-            {
-                "id": "Glossary_Entry_09",
-                "en": "Queen",
-                "target": "Kraliçe"
-            },
-            {
-                "id": "Glossary_Entry_10",
-                "en": "Kingdom",
-                "target": "Krallık"
-            }
+            {"id": "Glossary_Entry_01", "en": "Orb", "target": "Küre"},
+            {"id": "Glossary_Entry_02", "en": "Throne", "target": "Taht"},
+            {"id": "Glossary_Entry_03", "en": "Strange", "target": "Garip"},
+            {"id": "Glossary_Entry_04", "en": "Placed", "target": "Yerleştirildi"},
+            {"id": "Glossary_Entry_05", "en": "Knight", "target": "Şövalye"},
+            {"id": "Glossary_Entry_06", "en": "Sword", "target": "Kılıç"},
+            {"id": "Glossary_Entry_07", "en": "Castle", "target": "Kale"},
+            {"id": "Glossary_Entry_08", "en": "King", "target": "Kral"},
+            {"id": "Glossary_Entry_09", "en": "Queen", "target": "Kraliçe"},
+            {"id": "Glossary_Entry_10", "en": "Kingdom", "target": "Krallık"}
         ],
-        "referenceEN": {
-            "q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"
-        },
-        "target": {
-            "q5": "[KIT]Küre garip bir [color:65845]taht[/color] üzerine yerleştirildi.[KIT]",
-            "q6": "[KIT]Küre garip bir [color:65845]taht[/color] üzerine yerleştirildi.[KIT]",
-            "q7": "[KIT]Küre garip bir [color:65845]taht[/color] üzerine yerleştirildi.[KIT]"
-        },
+        "referenceEN": {"q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"},
+        "target": {"q5": "[KIT]Küre garip bir [color:65845]taht[/color] üzerine yerleştirildi.[KIT]", "q6": "[KIT]Küre garip bir [color:65845]taht[/color] üzerine yerleştirildi.[KIT]", "q7": "[KIT]Küre garip bir [color:65845]taht[/color] üzerine yerleştirildi.[KIT]"},
         "q9": "En sevdiğiniz video oyunu hangisi, nedenini bize söyleyin?",
         "volumeLabel": "250 kelime"
     },
     "uk-UA": {
-        "flag": "🇺🇦",
-        "nativeName": "Українська",
-        "region": "Ukrainian (UA)",
-        "demonym": "Ukrainian",
+        "flag": "🇺🇦", "nativeName": "Українська", "region": "Ukrainian (UA)", "demonym": "Ukrainian",
         "glossary": [
-            {
-                "id": "Glossary_Entry_01",
-                "en": "Orb",
-                "target": "Сфера"
-            },
-            {
-                "id": "Glossary_Entry_02",
-                "en": "Throne",
-                "target": "Трон"
-            },
-            {
-                "id": "Glossary_Entry_03",
-                "en": "Strange",
-                "target": "Дивний"
-            },
-            {
-                "id": "Glossary_Entry_04",
-                "en": "Placed",
-                "target": "Розміщений"
-            },
-            {
-                "id": "Glossary_Entry_05",
-                "en": "Knight",
-                "target": "Лицар"
-            },
-            {
-                "id": "Glossary_Entry_06",
-                "en": "Sword",
-                "target": "Меч"
-            },
-            {
-                "id": "Glossary_Entry_07",
-                "en": "Castle",
-                "target": "Замок"
-            },
-            {
-                "id": "Glossary_Entry_08",
-                "en": "King",
-                "target": "Король"
-            },
-            {
-                "id": "Glossary_Entry_09",
-                "en": "Queen",
-                "target": "Королева"
-            },
-            {
-                "id": "Glossary_Entry_10",
-                "en": "Kingdom",
-                "target": "Королівство"
-            }
+            {"id": "Glossary_Entry_01", "en": "Orb", "target": "Сфера"},
+            {"id": "Glossary_Entry_02", "en": "Throne", "target": "Трон"},
+            {"id": "Glossary_Entry_03", "en": "Strange", "target": "Дивний"},
+            {"id": "Glossary_Entry_04", "en": "Placed", "target": "Розміщений"},
+            {"id": "Glossary_Entry_05", "en": "Knight", "target": "Лицар"},
+            {"id": "Glossary_Entry_06", "en": "Sword", "target": "Меч"},
+            {"id": "Glossary_Entry_07", "en": "Castle", "target": "Замок"},
+            {"id": "Glossary_Entry_08", "en": "King", "target": "Король"},
+            {"id": "Glossary_Entry_09", "en": "Queen", "target": "Королева"},
+            {"id": "Glossary_Entry_10", "en": "Kingdom", "target": "Королівство"}
         ],
-        "referenceEN": {
-            "q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"
-        },
-        "target": {
-            "q5": "[KIT]Сфера була розміщена на дивному [color:65845]троні[/color].[KIT]",
-            "q6": "[KIT]Сфера була розміщена на дивному [color:65845]троні[/color].[KIT]",
-            "q7": "[KIT]Сфера була розміщена на дивному [color:65845]троні[/color].[KIT]"
-        },
+        "referenceEN": {"q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"},
+        "target": {"q5": "[KIT]Сфера була розміщена на дивному [color:65845]троні[/color].[KIT]", "q6": "[KIT]Сфера була розміщена на дивному [color:65845]троні[/color].[KIT]", "q7": "[KIT]Сфера була розміщена на дивному [color:65845]троні[/color].[KIT]"},
         "q9": "Яка ваша улюблена відеогра, розкажіть чому?",
         "volumeLabel": "250 слів"
     },
     "ro-RO": {
-        "flag": "🇷🇴",
-        "nativeName": "Română",
-        "region": "Romanian (RO)",
-        "demonym": "Romanian",
+        "flag": "🇷🇴", "nativeName": "Română", "region": "Romanian (RO)", "demonym": "Romanian",
         "glossary": [
-            {
-                "id": "Glossary_Entry_01",
-                "en": "Orb",
-                "target": "Orb"
-            },
-            {
-                "id": "Glossary_Entry_02",
-                "en": "Throne",
-                "target": "Tron"
-            },
-            {
-                "id": "Glossary_Entry_03",
-                "en": "Strange",
-                "target": "Straniu"
-            },
-            {
-                "id": "Glossary_Entry_04",
-                "en": "Placed",
-                "target": "Plasat"
-            },
-            {
-                "id": "Glossary_Entry_05",
-                "en": "Knight",
-                "target": "Cavaler"
-            },
-            {
-                "id": "Glossary_Entry_06",
-                "en": "Sword",
-                "target": "Sabie"
-            },
-            {
-                "id": "Glossary_Entry_07",
-                "en": "Castle",
-                "target": "Castel"
-            },
-            {
-                "id": "Glossary_Entry_08",
-                "en": "King",
-                "target": "Rege"
-            },
-            {
-                "id": "Glossary_Entry_09",
-                "en": "Queen",
-                "target": "Regină"
-            },
-            {
-                "id": "Glossary_Entry_10",
-                "en": "Kingdom",
-                "target": "Regat"
-            }
+            {"id": "Glossary_Entry_01", "en": "Orb", "target": "Orb"},
+            {"id": "Glossary_Entry_02", "en": "Throne", "target": "Tron"},
+            {"id": "Glossary_Entry_03", "en": "Strange", "target": "Straniu"},
+            {"id": "Glossary_Entry_04", "en": "Placed", "target": "Plasat"},
+            {"id": "Glossary_Entry_05", "en": "Knight", "target": "Cavaler"},
+            {"id": "Glossary_Entry_06", "en": "Sword", "target": "Sabie"},
+            {"id": "Glossary_Entry_07", "en": "Castle", "target": "Castel"},
+            {"id": "Glossary_Entry_08", "en": "King", "target": "Rege"},
+            {"id": "Glossary_Entry_09", "en": "Queen", "target": "Regină"},
+            {"id": "Glossary_Entry_10", "en": "Kingdom", "target": "Regat"}
         ],
-        "referenceEN": {
-            "q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"
-        },
-        "target": {
-            "q5": "[KIT]Orbul a fost plasat pe un tron [color:65845]straniu[/color].[KIT]",
-            "q6": "[KIT]Orbul a fost plasat pe un tron [color:65845]straniu[/color].[KIT]",
-            "q7": "[KIT]Orbul a fost plasat pe un tron [color:65845]straniu[/color].[KIT]"
-        },
+        "referenceEN": {"q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"},
+        "target": {"q5": "[KIT]Orbul a fost plasat pe un tron [color:65845]straniu[/color].[KIT]", "q6": "[KIT]Orbul a fost plasat pe un tron [color:65845]straniu[/color].[KIT]", "q7": "[KIT]Orbul a fost plasat pe un tron [color:65845]straniu[/color].[KIT]"},
         "q9": "Care este jocul tău video preferat, spune-ne de ce?",
         "volumeLabel": "250 de cuvinte"
     },
     "bg-BG": {
-        "flag": "🇧🇬",
-        "nativeName": "Български",
-        "region": "Bulgarian (BG)",
-        "demonym": "Bulgarian",
+        "flag": "🇧🇬", "nativeName": "Български", "region": "Bulgarian (BG)", "demonym": "Bulgarian",
         "glossary": [
-            {
-                "id": "Glossary_Entry_01",
-                "en": "Orb",
-                "target": "Сфера"
-            },
-            {
-                "id": "Glossary_Entry_02",
-                "en": "Throne",
-                "target": "Трон"
-            },
-            {
-                "id": "Glossary_Entry_03",
-                "en": "Strange",
-                "target": "Странен"
-            },
-            {
-                "id": "Glossary_Entry_04",
-                "en": "Placed",
-                "target": "Поставен"
-            },
-            {
-                "id": "Glossary_Entry_05",
-                "en": "Knight",
-                "target": "Рицар"
-            },
-            {
-                "id": "Glossary_Entry_06",
-                "en": "Sword",
-                "target": "Меч"
-            },
-            {
-                "id": "Glossary_Entry_07",
-                "en": "Castle",
-                "target": "Замък"
-            },
-            {
-                "id": "Glossary_Entry_08",
-                "en": "King",
-                "target": "Крал"
-            },
-            {
-                "id": "Glossary_Entry_09",
-                "en": "Queen",
-                "target": "Кралица"
-            },
-            {
-                "id": "Glossary_Entry_10",
-                "en": "Kingdom",
-                "target": "Кралство"
-            }
+            {"id": "Glossary_Entry_01", "en": "Orb", "target": "Сфера"},
+            {"id": "Glossary_Entry_02", "en": "Throne", "target": "Трон"},
+            {"id": "Glossary_Entry_03", "en": "Strange", "target": "Странен"},
+            {"id": "Glossary_Entry_04", "en": "Placed", "target": "Поставен"},
+            {"id": "Glossary_Entry_05", "en": "Knight", "target": "Рицар"},
+            {"id": "Glossary_Entry_06", "en": "Sword", "target": "Меч"},
+            {"id": "Glossary_Entry_07", "en": "Castle", "target": "Замък"},
+            {"id": "Glossary_Entry_08", "en": "King", "target": "Крал"},
+            {"id": "Glossary_Entry_09", "en": "Queen", "target": "Кралица"},
+            {"id": "Glossary_Entry_10", "en": "Kingdom", "target": "Кралство"}
         ],
-        "referenceEN": {
-            "q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"
-        },
-        "target": {
-            "q5": "[KIT]Сферата беше поставена на странен [color:65845]трон[/color].[KIT]",
-            "q6": "[KIT]Сферата беше поставена на странен [color:65845]трон[/color].[KIT]",
-            "q7": "[KIT]Сферата беше поставена на странен [color:65845]трон[/color].[KIT]"
-        },
+        "referenceEN": {"q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"},
+        "target": {"q5": "[KIT]Сферата беше поставена на странен [color:65845]трон[/color].[KIT]", "q6": "[KIT]Сферата беше поставена на странен [color:65845]трон[/color].[KIT]", "q7": "[KIT]Сферата беше поставена на странен [color:65845]трон[/color].[KIT]"},
         "q9": "Коя е любимата ви видеоигра, разкажете ни защо?",
         "volumeLabel": "250 думи"
     },
     "ar-AA": {
-        "flag": "🇦🇪",
-        "nativeName": "العربية",
-        "region": "Arabic (RTL)",
-        "demonym": "Arabic",
+        "flag": "🇦🇪", "nativeName": "العربية", "region": "Arabic (RTL)", "demonym": "Arabic",
         "glossary": [
-            {
-                "id": "Glossary_Entry_01",
-                "en": "Orb",
-                "target": "جرم سماوي"
-            },
-            {
-                "id": "Glossary_Entry_02",
-                "en": "Throne",
-                "target": "عرش"
-            },
-            {
-                "id": "Glossary_Entry_03",
-                "en": "Strange",
-                "target": "غريب"
-            },
-            {
-                "id": "Glossary_Entry_04",
-                "en": "Placed",
-                "target": "وضع"
-            },
-            {
-                "id": "Glossary_Entry_05",
-                "en": "Knight",
-                "target": "فارس"
-            },
-            {
-                "id": "Glossary_Entry_06",
-                "en": "Sword",
-                "target": "سيف"
-            },
-            {
-                "id": "Glossary_Entry_07",
-                "en": "Castle",
-                "target": "قلعة"
-            },
-            {
-                "id": "Glossary_Entry_08",
-                "en": "King",
-                "target": "ملك"
-            },
-            {
-                "id": "Glossary_Entry_09",
-                "en": "Queen",
-                "target": "ملكة"
-            },
-            {
-                "id": "Glossary_Entry_10",
-                "en": "Kingdom",
-                "target": "مملكة"
-            }
+            {"id": "Glossary_Entry_01", "en": "Orb", "target": "جرم سماوي"},
+            {"id": "Glossary_Entry_02", "en": "Throne", "target": "عرش"},
+            {"id": "Glossary_Entry_03", "en": "Strange", "target": "غريب"},
+            {"id": "Glossary_Entry_04", "en": "Placed", "target": "وضع"},
+            {"id": "Glossary_Entry_05", "en": "Knight", "target": "فارس"},
+            {"id": "Glossary_Entry_06", "en": "Sword", "target": "سيف"},
+            {"id": "Glossary_Entry_07", "en": "Castle", "target": "قلعة"},
+            {"id": "Glossary_Entry_08", "en": "King", "target": "ملك"},
+            {"id": "Glossary_Entry_09", "en": "Queen", "target": "ملكة"},
+            {"id": "Glossary_Entry_10", "en": "Kingdom", "target": "مملكة"}
         ],
-        "referenceEN": {
-            "q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"
-        },
-        "target": {
-            "q5": "[KIT]تم وضع الجرم السماوي على [color:65845]عرش[/color] غريب.[KIT]",
-            "q6": "[KIT]تم وضع الجرم السماوي على [color:65845]عرش[/color] غريب.[KIT]",
-            "q7": "[KIT]تم وضع الجرم السماوي على [color:65845]عرش[/color] غريب.[KIT]"
-        },
+        "referenceEN": {"q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"},
+        "target": {"q5": "[KIT]تم وضع الجرم السماوي على [color:65845]عرش[/color] غريب.[KIT]", "q6": "[KIT]تم وضع الجرم السماوي على [color:65845]عرش[/color] غريب.[KIT]", "q7": "[KIT]تم وضع الجرم السماوي على [color:65845]عرش[/color] غريب.[KIT]"},
         "q9": "ما هي لعبتك الإلكترونية المفضلة، وأخبرنا لماذا؟",
         "volumeLabel": "250 كلمة"
     },
     "hi-IN": {
-        "flag": "🇮🇳",
-        "nativeName": "हिन्दी",
-        "region": "Hindi (IN)",
-        "demonym": "Hindi",
+        "flag": "🇮🇳", "nativeName": "हिन्दी", "region": "Hindi (IN)", "demonym": "Hindi",
         "glossary": [
-            {
-                "id": "Glossary_Entry_01",
-                "en": "Orb",
-                "target": "गोला"
-            },
-            {
-                "id": "Glossary_Entry_02",
-                "en": "Throne",
-                "target": "सिंहासन"
-            },
-            {
-                "id": "Glossary_Entry_03",
-                "en": "Strange",
-                "target": "अजीब"
-            },
-            {
-                "id": "Glossary_Entry_04",
-                "en": "Placed",
-                "target": "रखा गया"
-            },
-            {
-                "id": "Glossary_Entry_05",
-                "en": "Knight",
-                "target": "योद्धा"
-            },
-            {
-                "id": "Glossary_Entry_06",
-                "en": "Sword",
-                "target": "तलवार"
-            },
-            {
-                "id": "Glossary_Entry_07",
-                "en": "Castle",
-                "target": "महल"
-            },
-            {
-                "id": "Glossary_Entry_08",
-                "en": "King",
-                "target": "राजा"
-            },
-            {
-                "id": "Glossary_Entry_09",
-                "en": "Queen",
-                "target": "रानी"
-            },
-            {
-                "id": "Glossary_Entry_10",
-                "en": "Kingdom",
-                "target": "साम्राज्य"
-            }
+            {"id": "Glossary_Entry_01", "en": "Orb", "target": "गोला"},
+            {"id": "Glossary_Entry_02", "en": "Throne", "target": "सिंहासन"},
+            {"id": "Glossary_Entry_03", "en": "Strange", "target": "अजीब"},
+            {"id": "Glossary_Entry_04", "en": "Placed", "target": "रखा गया"},
+            {"id": "Glossary_Entry_05", "en": "Knight", "target": "योद्धा"},
+            {"id": "Glossary_Entry_06", "en": "Sword", "target": "तलवार"},
+            {"id": "Glossary_Entry_07", "en": "Castle", "target": "महल"},
+            {"id": "Glossary_Entry_08", "en": "King", "target": "राजा"},
+            {"id": "Glossary_Entry_09", "en": "Queen", "target": "रानी"},
+            {"id": "Glossary_Entry_10", "en": "Kingdom", "target": "साम्राज्य"}
         ],
-        "referenceEN": {
-            "q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"
-        },
-        "target": {
-            "q5": "[KIT]गोले को एक अजीब [color:65845]सिंहासन[/color] पर रखा गया था।[KIT]",
-            "q6": "[KIT]गोले को एक अजीब [color:65845]सिंहासन[/color] पर रखा गया था।[KIT]",
-            "q7": "[KIT]गोले को एक अजीब [color:65845]सिंहासन[/color] पर रखा गया था।[KIT]"
-        },
+        "referenceEN": {"q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"},
+        "target": {"q5": "[KIT]गोले को एक अजीब [color:65845]सिंहासन[/color] पर रखा गया था।[KIT]", "q6": "[KIT]गोले को एक अजीब [color:65845]सिंहासन[/color] पर रखा गया था।[KIT]", "q7": "[KIT]गोले को एक अजीब [color:65845]सिंहासन[/color] पर रखा गया था।[KIT]"},
         "q9": "आपका पसंदीदा वीडियो गेम कौन सा है, हमें बताएं क्यों?",
         "volumeLabel": "250 शब्द"
     },
     "zh-CN": {
-        "flag": "🇨🇳",
-        "nativeName": "简体中文",
-        "region": "Simplified Chinese",
-        "demonym": "Simplified Chinese",
+        "flag": "🇨🇳", "nativeName": "简体中文", "region": "Simplified Chinese", "demonym": "Simplified Chinese",
         "glossary": [
-            {
-                "id": "Glossary_Entry_01",
-                "en": "Orb",
-                "target": "宝珠"
-            },
-            {
-                "id": "Glossary_Entry_02",
-                "en": "Throne",
-                "target": "王座"
-            },
-            {
-                "id": "Glossary_Entry_03",
-                "en": "Strange",
-                "target": "奇妙"
-            },
-            {
-                "id": "Glossary_Entry_04",
-                "en": "Placed",
-                "target": "放置"
-            },
-            {
-                "id": "Glossary_Entry_05",
-                "en": "Knight",
-                "target": "骑士"
-            },
-            {
-                "id": "Glossary_Entry_06",
-                "en": "Sword",
-                "target": "剑"
-            },
-            {
-                "id": "Glossary_Entry_07",
-                "en": "Castle",
-                "target": "城堡"
-            },
-            {
-                "id": "Glossary_Entry_08",
-                "en": "King",
-                "target": "国王"
-            },
-            {
-                "id": "Glossary_Entry_09",
-                "en": "Queen",
-                "target": "女王"
-            },
-            {
-                "id": "Glossary_Entry_10",
-                "en": "Kingdom",
-                "target": "王国"
-            }
+            {"id": "Glossary_Entry_01", "en": "Orb", "target": "宝珠"},
+            {"id": "Glossary_Entry_02", "en": "Throne", "target": "王座"},
+            {"id": "Glossary_Entry_03", "en": "Strange", "target": "奇妙"},
+            {"id": "Glossary_Entry_04", "en": "Placed", "target": "放置"},
+            {"id": "Glossary_Entry_05", "en": "Knight", "target": "骑士"},
+            {"id": "Glossary_Entry_06", "en": "Sword", "target": "剑"},
+            {"id": "Glossary_Entry_07", "en": "Castle", "target": "城堡"},
+            {"id": "Glossary_Entry_08", "en": "King", "target": "国王"},
+            {"id": "Glossary_Entry_09", "en": "Queen", "target": "女王"},
+            {"id": "Glossary_Entry_10", "en": "Kingdom", "target": "王国"}
         ],
-        "referenceEN": {
-            "q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"
-        },
-        "target": {
-            "q5": "[KIT]宝珠被放置在一个奇妙的[color:65845]王座[/color]上。[KIT]",
-            "q6": "[KIT]宝珠被放置在一个奇妙的[color:65845]王座[/color]上。[KIT]",
-            "q7": "[KIT]宝珠被放置在一个奇妙的[color:65845]王座[/color]上。[KIT]"
-        },
+        "referenceEN": {"q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"},
+        "target": {"q5": "[KIT]宝珠被放置在一个奇妙的[color:65845]王座[/color]上。[KIT]", "q6": "[KIT]宝珠被放置在一个奇妙的[color:65845]王座[/color]上。[KIT]", "q7": "[KIT]宝珠被放置在一个奇妙的[color:65845]王座[/color]上。[KIT]"},
         "q9": "你最喜欢的电子游戏是什么，告诉我们为什么？"
     },
     "zh-TW": {
-        "flag": "🇹🇼",
-        "nativeName": "繁體中文",
-        "region": "Taiwan (TW)",
-        "demonym": "Traditional Chinese (Taiwan)",
+        "flag": "🇹🇼", "nativeName": "繁體中文", "region": "Taiwan (TW)", "demonym": "Traditional Chinese (Taiwan)",
         "glossary": [
-            {
-                "id": "Glossary_Entry_01",
-                "en": "Orb",
-                "target": "寶珠"
-            },
-            {
-                "id": "Glossary_Entry_02",
-                "en": "Throne",
-                "target": "王座"
-            },
-            {
-                "id": "Glossary_Entry_03",
-                "en": "Strange",
-                "target": "奇妙"
-            },
-            {
-                "id": "Glossary_Entry_04",
-                "en": "Placed",
-                "target": "放置"
-            },
-            {
-                "id": "Glossary_Entry_05",
-                "en": "Knight",
-                "target": "騎士"
-            },
-            {
-                "id": "Glossary_Entry_06",
-                "en": "Sword",
-                "target": "劍"
-            },
-            {
-                "id": "Glossary_Entry_07",
-                "en": "Castle",
-                "target": "城堡"
-            },
-            {
-                "id": "Glossary_Entry_08",
-                "en": "King",
-                "target": "國王"
-            },
-            {
-                "id": "Glossary_Entry_09",
-                "en": "Queen",
-                "target": "女王"
-            },
-            {
-                "id": "Glossary_Entry_10",
-                "en": "Kingdom",
-                "target": "王國"
-            }
+            {"id": "Glossary_Entry_01", "en": "Orb", "target": "寶珠"},
+            {"id": "Glossary_Entry_02", "en": "Throne", "target": "王座"},
+            {"id": "Glossary_Entry_03", "en": "Strange", "target": "奇妙"},
+            {"id": "Glossary_Entry_04", "en": "Placed", "target": "放置"},
+            {"id": "Glossary_Entry_05", "en": "Knight", "target": "騎士"},
+            {"id": "Glossary_Entry_06", "en": "Sword", "target": "劍"},
+            {"id": "Glossary_Entry_07", "en": "Castle", "target": "城堡"},
+            {"id": "Glossary_Entry_08", "en": "King", "target": "國王"},
+            {"id": "Glossary_Entry_09", "en": "Queen", "target": "女王"},
+            {"id": "Glossary_Entry_10", "en": "Kingdom", "target": "王國"}
         ],
-        "referenceEN": {
-            "q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"
-        },
-        "target": {
-            "q5": "[KIT]寶珠被放置在一個奇妙的[color:65845]王座[/color]上。[KIT]",
-            "q6": "[KIT]寶珠被放置在一個奇妙的[color:65845]王座[/color]上。[KIT]",
-            "q7": "[KIT]寶珠被放置在一個奇妙的[color:65845]王座[/color]上。[KIT]"
-        },
+        "referenceEN": {"q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"},
+        "target": {"q5": "[KIT]寶珠被放置在一個奇妙的[color:65845]王座[/color]上。[KIT]", "q6": "[KIT]寶珠被放置在一個奇妙的[color:65845]王座[/color]上。[KIT]", "q7": "[KIT]寶珠被放置在一個奇妙的[color:65845]王座[/color]上。[KIT]"},
         "q9": "你最喜歡的電子遊戲是什麼，告訴我們為什麼？"
     },
     "zh-HK": {
-        "flag": "🇭🇰",
-        "nativeName": "繁體中文",
-        "region": "Hong Kong (HK)",
-        "demonym": "Traditional Chinese (Hong Kong)",
+        "flag": "🇭🇰", "nativeName": "繁體中文", "region": "Hong Kong (HK)", "demonym": "Traditional Chinese (Hong Kong)",
         "glossary": [
-            {
-                "id": "Glossary_Entry_01",
-                "en": "Orb",
-                "target": "寶珠"
-            },
-            {
-                "id": "Glossary_Entry_02",
-                "en": "Throne",
-                "target": "王座"
-            },
-            {
-                "id": "Glossary_Entry_03",
-                "en": "Strange",
-                "target": "奇妙"
-            },
-            {
-                "id": "Glossary_Entry_04",
-                "en": "Placed",
-                "target": "放置"
-            },
-            {
-                "id": "Glossary_Entry_05",
-                "en": "Knight",
-                "target": "騎士"
-            },
-            {
-                "id": "Glossary_Entry_06",
-                "en": "Sword",
-                "target": "劍"
-            },
-            {
-                "id": "Glossary_Entry_07",
-                "en": "Castle",
-                "target": "城堡"
-            },
-            {
-                "id": "Glossary_Entry_08",
-                "en": "King",
-                "target": "國王"
-            },
-            {
-                "id": "Glossary_Entry_09",
-                "en": "Queen",
-                "target": "女王"
-            },
-            {
-                "id": "Glossary_Entry_10",
-                "en": "Kingdom",
-                "target": "王國"
-            }
+            {"id": "Glossary_Entry_01", "en": "Orb", "target": "寶珠"},
+            {"id": "Glossary_Entry_02", "en": "Throne", "target": "王座"},
+            {"id": "Glossary_Entry_03", "en": "Strange", "target": "奇妙"},
+            {"id": "Glossary_Entry_04", "en": "Placed", "target": "放置"},
+            {"id": "Glossary_Entry_05", "en": "Knight", "target": "騎士"},
+            {"id": "Glossary_Entry_06", "en": "Sword", "target": "劍"},
+            {"id": "Glossary_Entry_07", "en": "Castle", "target": "城堡"},
+            {"id": "Glossary_Entry_08", "en": "King", "target": "國王"},
+            {"id": "Glossary_Entry_09", "en": "Queen", "target": "女王"},
+            {"id": "Glossary_Entry_10", "en": "Kingdom", "target": "王國"}
         ],
-        "referenceEN": {
-            "q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"
-        },
-        "target": {
-            "q5": "[KIT]寶珠被放置喺一個奇妙嘅[color:65845]王座[/color]上面。[KIT]",
-            "q6": "[KIT]寶珠被放置喺一個奇妙嘅[color:65845]王座[/color]上面。[KIT]",
-            "q7": "[KIT]寶珠被放置喺一個奇妙嘅[color:65845]王座[/color]上面。[KIT]"
-        },
+        "referenceEN": {"q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"},
+        "target": {"q5": "[KIT]寶珠被放置喺一個奇妙嘅[color:65845]王座[/color]上面。[KIT]", "q6": "[KIT]寶珠被放置喺一個奇妙嘅[color:65845]王座[/color]上面。[KIT]", "q7": "[KIT]寶珠被放置喺一個奇妙嘅[color:65845]王座[/color]上面。[KIT]"},
         "q9": "你最鍾意邊款電子遊戲，話畀我哋知點解？"
     },
     "ja-JP": {
-        "flag": "🇯🇵",
-        "nativeName": "日本語",
-        "region": "Japanese (JP)",
-        "demonym": "Japanese",
+        "flag": "🇯🇵", "nativeName": "日本語", "region": "Japanese (JP)", "demonym": "Japanese",
         "glossary": [
-            {
-                "id": "Glossary_Entry_01",
-                "en": "Orb",
-                "target": "宝珠"
-            },
-            {
-                "id": "Glossary_Entry_02",
-                "en": "Throne",
-                "target": "玉座"
-            },
-            {
-                "id": "Glossary_Entry_03",
-                "en": "Strange",
-                "target": "奇妙"
-            },
-            {
-                "id": "Glossary_Entry_04",
-                "en": "Placed",
-                "target": "配置"
-            },
-            {
-                "id": "Glossary_Entry_05",
-                "en": "Knight",
-                "target": "騎士"
-            },
-            {
-                "id": "Glossary_Entry_06",
-                "en": "Sword",
-                "target": "剣"
-            },
-            {
-                "id": "Glossary_Entry_07",
-                "en": "Castle",
-                "target": "城"
-            },
-            {
-                "id": "Glossary_Entry_08",
-                "en": "King",
-                "target": "王"
-            },
-            {
-                "id": "Glossary_Entry_09",
-                "en": "Queen",
-                "target": "女王"
-            },
-            {
-                "id": "Glossary_Entry_10",
-                "en": "Kingdom",
-                "target": "王国"
-            }
+            {"id": "Glossary_Entry_01", "en": "Orb", "target": "宝珠"},
+            {"id": "Glossary_Entry_02", "en": "Throne", "target": "玉座"},
+            {"id": "Glossary_Entry_03", "en": "Strange", "target": "奇妙"},
+            {"id": "Glossary_Entry_04", "en": "Placed", "target": "配置"},
+            {"id": "Glossary_Entry_05", "en": "Knight", "target": "騎士"},
+            {"id": "Glossary_Entry_06", "en": "Sword", "target": "剣"},
+            {"id": "Glossary_Entry_07", "en": "Castle", "target": "城"},
+            {"id": "Glossary_Entry_08", "en": "King", "target": "王"},
+            {"id": "Glossary_Entry_09", "en": "Queen", "target": "女王"},
+            {"id": "Glossary_Entry_10", "en": "Kingdom", "target": "王国"}
         ],
-        "referenceEN": {
-            "q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"
-        },
-        "target": {
-            "q5": "[KIT]宝珠は奇妙な[color:65845]玉座[/color]に置かれた。[KIT]",
-            "q6": "[KIT]宝珠は奇妙な[color:65845]玉座[/color]に置かれた。[KIT]",
-            "q7": "[KIT]宝珠は奇妙な[color:65845]玉座[/color]に置かれた。[KIT]"
-        },
+        "referenceEN": {"q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"},
+        "target": {"q5": "[KIT]宝珠は奇妙な[color:65845]玉座[/color]に置かれた。[KIT]", "q6": "[KIT]宝珠は奇妙な[color:65845]玉座[/color]に置かれた。[KIT]", "q7": "[KIT]宝珠は奇妙な[color:65845]玉座[/color]に置かれた。[KIT]"},
         "q9": "あなたの好きなビデオゲームは何ですか、その理由を教えてください。"
     },
     "ko-KR": {
-        "flag": "🇰🇷",
-        "nativeName": "한국어",
-        "region": "Korean (KR)",
-        "demonym": "Korean",
+        "flag": "🇰🇷", "nativeName": "한국어", "region": "Korean (KR)", "demonym": "Korean",
         "glossary": [
-            {
-                "id": "Glossary_Entry_01",
-                "en": "Orb",
-                "target": "오브"
-            },
-            {
-                "id": "Glossary_Entry_02",
-                "en": "Throne",
-                "target": "왕좌"
-            },
-            {
-                "id": "Glossary_Entry_03",
-                "en": "Strange",
-                "target": "기묘한"
-            },
-            {
-                "id": "Glossary_Entry_04",
-                "en": "Placed",
-                "target": "놓인"
-            },
-            {
-                "id": "Glossary_Entry_05",
-                "en": "Knight",
-                "target": "기사"
-            },
-            {
-                "id": "Glossary_Entry_06",
-                "en": "Sword",
-                "target": "검"
-            },
-            {
-                "id": "Glossary_Entry_07",
-                "en": "Castle",
-                "target": "성"
-            },
-            {
-                "id": "Glossary_Entry_08",
-                "en": "King",
-                "target": "왕"
-            },
-            {
-                "id": "Glossary_Entry_09",
-                "en": "Queen",
-                "target": "여왕"
-            },
-            {
-                "id": "Glossary_Entry_10",
-                "en": "Kingdom",
-                "target": "왕국"
-            }
+            {"id": "Glossary_Entry_01", "en": "Orb", "target": "오브"},
+            {"id": "Glossary_Entry_02", "en": "Throne", "target": "왕좌"},
+            {"id": "Glossary_Entry_03", "en": "Strange", "target": "기묘한"},
+            {"id": "Glossary_Entry_04", "en": "Placed", "target": "놓인"},
+            {"id": "Glossary_Entry_05", "en": "Knight", "target": "기사"},
+            {"id": "Glossary_Entry_06", "en": "Sword", "target": "검"},
+            {"id": "Glossary_Entry_07", "en": "Castle", "target": "성"},
+            {"id": "Glossary_Entry_08", "en": "King", "target": "왕"},
+            {"id": "Glossary_Entry_09", "en": "Queen", "target": "여왕"},
+            {"id": "Glossary_Entry_10", "en": "Kingdom", "target": "왕국"}
         ],
-        "referenceEN": {
-            "q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"
-        },
-        "target": {
-            "q5": "[KIT]오브가 기묘한[color:65845]왕좌[/color]에 놓였다.[KIT]",
-            "q6": "[KIT]오브가 기묘한[color:65845]왕좌[/color]에 놓였다.[KIT]",
-            "q7": "[KIT]오브가 기묘한[color:65845]왕좌[/color]에 놓였다.[KIT]"
-        },
+        "referenceEN": {"q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"},
+        "target": {"q5": "[KIT]오브가 기묘한[color:65845]왕좌[/color]에 놓였다.[KIT]", "q6": "[KIT]오브가 기묘한[color:65845]왕좌[/color]에 놓였다.[KIT]", "q7": "[KIT]오브가 기묘한[color:65845]왕좌[/color]에 놓였다.[KIT]"},
         "q9": "가장 좋아하는 비디오 게임은 무엇인가요, 그 이유를 말해주세요."
     },
     "vi-VN": {
-        "flag": "🇻🇳",
-        "nativeName": "Tiếng Việt",
-        "region": "Vietnamese (VN)",
-        "demonym": "Vietnamese",
+        "flag": "🇻🇳", "nativeName": "Tiếng Việt", "region": "Vietnamese (VN)", "demonym": "Vietnamese",
         "glossary": [
-            {
-                "id": "Glossary_Entry_01",
-                "en": "Orb",
-                "target": "Quả cầu"
-            },
-            {
-                "id": "Glossary_Entry_02",
-                "en": "Throne",
-                "target": "Ngai vàng"
-            },
-            {
-                "id": "Glossary_Entry_03",
-                "en": "Strange",
-                "target": "Kỳ lạ"
-            },
-            {
-                "id": "Glossary_Entry_04",
-                "en": "Placed",
-                "target": "Đặt"
-            },
-            {
-                "id": "Glossary_Entry_05",
-                "en": "Knight",
-                "target": "Hiệp sĩ"
-            },
-            {
-                "id": "Glossary_Entry_06",
-                "en": "Sword",
-                "target": "Kiếm"
-            },
-            {
-                "id": "Glossary_Entry_07",
-                "en": "Castle",
-                "target": "Lâu đài"
-            },
-            {
-                "id": "Glossary_Entry_08",
-                "en": "King",
-                "target": "Vua"
-            },
-            {
-                "id": "Glossary_Entry_09",
-                "en": "Queen",
-                "target": "Nữ hoàng"
-            },
-            {
-                "id": "Glossary_Entry_10",
-                "en": "Kingdom",
-                "target": "Vương quốc"
-            }
+            {"id": "Glossary_Entry_01", "en": "Orb", "target": "Quả cầu"},
+            {"id": "Glossary_Entry_02", "en": "Throne", "target": "Ngai vàng"},
+            {"id": "Glossary_Entry_03", "en": "Strange", "target": "Kỳ lạ"},
+            {"id": "Glossary_Entry_04", "en": "Placed", "target": "Đặt"},
+            {"id": "Glossary_Entry_05", "en": "Knight", "target": "Hiệp sĩ"},
+            {"id": "Glossary_Entry_06", "en": "Sword", "target": "Kiếm"},
+            {"id": "Glossary_Entry_07", "en": "Castle", "target": "Lâu đài"},
+            {"id": "Glossary_Entry_08", "en": "King", "target": "Vua"},
+            {"id": "Glossary_Entry_09", "en": "Queen", "target": "Nữ hoàng"},
+            {"id": "Glossary_Entry_10", "en": "Kingdom", "target": "Vương quốc"}
         ],
-        "referenceEN": {
-            "q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"
-        },
-        "target": {
-            "q5": "[KIT]Quả cầu được đặt trên một ngai vàng [color:65845]kỳ lạ[/color].[KIT]",
-            "q6": "[KIT]Quả cầu được đặt trên một ngai vàng [color:65845]kỳ lạ[/color].[KIT]",
-            "q7": "[KIT]Quả cầu được đặt trên một ngai vàng [color:65845]kỳ lạ[/color].[KIT]"
-        },
+        "referenceEN": {"q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"},
+        "target": {"q5": "[KIT]Quả cầu được đặt trên một ngai vàng [color:65845]kỳ lạ[/color].[KIT]", "q6": "[KIT]Quả cầu được đặt trên một ngai vàng [color:65845]kỳ lạ[/color].[KIT]", "q7": "[KIT]Quả cầu được đặt trên một ngai vàng [color:65845]kỳ lạ[/color].[KIT]"},
         "q9": "Trò chơi điện tử yêu thích của bạn là gì, hãy cho chúng tôi biết tại sao?",
         "volumeLabel": "250 từ"
     },
     "th-TH": {
-        "flag": "🇹🇭",
-        "nativeName": "ไทย",
-        "region": "Thai (TH)",
-        "demonym": "Thai",
+        "flag": "🇹🇭", "nativeName": "ไทย", "region": "Thai (TH)", "demonym": "Thai",
         "glossary": [
-            {
-                "id": "Glossary_Entry_01",
-                "en": "Orb",
-                "target": "ลูกแก้ว"
-            },
-            {
-                "id": "Glossary_Entry_02",
-                "en": "Throne",
-                "target": "บัลลังก์"
-            },
-            {
-                "id": "Glossary_Entry_03",
-                "en": "Strange",
-                "target": "แปลก"
-            },
-            {
-                "id": "Glossary_Entry_04",
-                "en": "Placed",
-                "target": "วาง"
-            },
-            {
-                "id": "Glossary_Entry_05",
-                "en": "Knight",
-                "target": "อัศวิน"
-            },
-            {
-                "id": "Glossary_Entry_06",
-                "en": "Sword",
-                "target": "ดาบ"
-            },
-            {
-                "id": "Glossary_Entry_07",
-                "en": "Castle",
-                "target": "ปราสาท"
-            },
-            {
-                "id": "Glossary_Entry_08",
-                "en": "King",
-                "target": "ราชา"
-            },
-            {
-                "id": "Glossary_Entry_09",
-                "en": "Queen",
-                "target": "ราชินี"
-            },
-            {
-                "id": "Glossary_Entry_10",
-                "en": "Kingdom",
-                "target": "อาณาจักร"
-            }
+            {"id": "Glossary_Entry_01", "en": "Orb", "target": "ลูกแก้ว"},
+            {"id": "Glossary_Entry_02", "en": "Throne", "target": "บัลลังก์"},
+            {"id": "Glossary_Entry_03", "en": "Strange", "target": "แปลก"},
+            {"id": "Glossary_Entry_04", "en": "Placed", "target": "วาง"},
+            {"id": "Glossary_Entry_05", "en": "Knight", "target": "อัศวิน"},
+            {"id": "Glossary_Entry_06", "en": "Sword", "target": "ดาบ"},
+            {"id": "Glossary_Entry_07", "en": "Castle", "target": "ปราสาท"},
+            {"id": "Glossary_Entry_08", "en": "King", "target": "ราชา"},
+            {"id": "Glossary_Entry_09", "en": "Queen", "target": "ราชินี"},
+            {"id": "Glossary_Entry_10", "en": "Kingdom", "target": "อาณาจักร"}
         ],
-        "referenceEN": {
-            "q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"
-        },
-        "target": {
-            "q5": "[KIT]ลูกแก้วถูกวางไว้บนบัลลังก์[color:65845]ที่แปลกประหลาด[/color].[KIT]",
-            "q6": "[KIT]ลูกแก้วถูกวางไว้บนบัลลังก์[color:65845]ที่แปลกประหลาด[/color].[KIT]",
-            "q7": "[KIT]ลูกแก้วถูกวางไว้บนบัลลังก์[color:65845]ที่แปลกประหลาด[/color].[KIT]"
-        },
+        "referenceEN": {"q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"},
+        "target": {"q5": "[KIT]ลูกแก้วถูกวางไว้บนบัลลังก์[color:65845]ที่แปลกประหลาด[/color].[KIT]", "q6": "[KIT]ลูกแก้วถูกวางไว้บนบัลลังก์[color:65845]ที่แปลกประหลาด[/color].[KIT]", "q7": "[KIT]ลูกแก้วถูกวางไว้บนบัลลังก์[color:65845]ที่แปลกประหลาด[/color].[KIT]"},
         "q9": "เกมโปรดของคุณคือเกมอะไร และบอกเหตุผลให้เราฟังหน่อย?"
     },
     "ms-MY": {
-        "flag": "🇲🇾",
-        "nativeName": "Bahasa Melayu",
-        "region": "Malay (MY)",
-        "demonym": "Malay",
+        "flag": "🇲🇾", "nativeName": "Bahasa Melayu", "region": "Malay (MY)", "demonym": "Malay",
         "glossary": [
-            {
-                "id": "Glossary_Entry_01",
-                "en": "Orb",
-                "target": "Sfera"
-            },
-            {
-                "id": "Glossary_Entry_02",
-                "en": "Throne",
-                "target": "Takhta"
-            },
-            {
-                "id": "Glossary_Entry_03",
-                "en": "Strange",
-                "target": "Aneh"
-            },
-            {
-                "id": "Glossary_Entry_04",
-                "en": "Placed",
-                "target": "Diletakkan"
-            },
-            {
-                "id": "Glossary_Entry_05",
-                "en": "Knight",
-                "target": "Satria"
-            },
-            {
-                "id": "Glossary_Entry_06",
-                "en": "Sword",
-                "target": "Pedang"
-            },
-            {
-                "id": "Glossary_Entry_07",
-                "en": "Castle",
-                "target": "Istana"
-            },
-            {
-                "id": "Glossary_Entry_08",
-                "en": "King",
-                "target": "Raja"
-            },
-            {
-                "id": "Glossary_Entry_09",
-                "en": "Queen",
-                "target": "Permaisuri"
-            },
-            {
-                "id": "Glossary_Entry_10",
-                "en": "Kingdom",
-                "target": "Kerajaan"
-            }
+            {"id": "Glossary_Entry_01", "en": "Orb", "target": "Sfera"},
+            {"id": "Glossary_Entry_02", "en": "Throne", "target": "Takhta"},
+            {"id": "Glossary_Entry_03", "en": "Strange", "target": "Aneh"},
+            {"id": "Glossary_Entry_04", "en": "Placed", "target": "Diletakkan"},
+            {"id": "Glossary_Entry_05", "en": "Knight", "target": "Satria"},
+            {"id": "Glossary_Entry_06", "en": "Sword", "target": "Pedang"},
+            {"id": "Glossary_Entry_07", "en": "Castle", "target": "Istana"},
+            {"id": "Glossary_Entry_08", "en": "King", "target": "Raja"},
+            {"id": "Glossary_Entry_09", "en": "Queen", "target": "Permaisuri"},
+            {"id": "Glossary_Entry_10", "en": "Kingdom", "target": "Kerajaan"}
         ],
-        "referenceEN": {
-            "q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"
-        },
-        "target": {
-            "q5": "[KIT]Sfera itu diletakkan di atas takhta yang [color:65845]aneh[/color].[KIT]",
-            "q6": "[KIT]Sfera itu diletakkan di atas takhta yang [color:65845]aneh[/color].[KIT]",
-            "q7": "[KIT]Sfera itu diletakkan di atas takhta yang [color:65845]aneh[/color].[KIT]"
-        },
+        "referenceEN": {"q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"},
+        "target": {"q5": "[KIT]Sfera itu diletakkan di atas takhta yang [color:65845]aneh[/color].[KIT]", "q6": "[KIT]Sfera itu diletakkan di atas takhta yang [color:65845]aneh[/color].[KIT]", "q7": "[KIT]Sfera itu diletakkan di atas takhta yang [color:65845]aneh[/color].[KIT]"},
         "q9": "Apakah permainan video kegemaran anda, beritahu kami mengapa?",
         "volumeLabel": "250 patah perkataan"
     },
     "id-ID": {
-        "flag": "🇮🇩",
-        "nativeName": "Bahasa Indonesia",
-        "region": "Indonesian (ID)",
-        "demonym": "Indonesian",
+        "flag": "🇮🇩", "nativeName": "Bahasa Indonesia", "region": "Indonesian (ID)", "demonym": "Indonesian",
         "glossary": [
-            {
-                "id": "Glossary_Entry_01",
-                "en": "Orb",
-                "target": "Bola"
-            },
-            {
-                "id": "Glossary_Entry_02",
-                "en": "Throne",
-                "target": "Takhta"
-            },
-            {
-                "id": "Glossary_Entry_03",
-                "en": "Strange",
-                "target": "Aneh"
-            },
-            {
-                "id": "Glossary_Entry_04",
-                "en": "Placed",
-                "target": "Ditempatkan"
-            },
-            {
-                "id": "Glossary_Entry_05",
-                "en": "Knight",
-                "target": "Ksatria"
-            },
-            {
-                "id": "Glossary_Entry_06",
-                "en": "Sword",
-                "target": "Pedang"
-            },
-            {
-                "id": "Glossary_Entry_07",
-                "en": "Castle",
-                "target": "Kastil"
-            },
-            {
-                "id": "Glossary_Entry_08",
-                "en": "King",
-                "target": "Raja"
-            },
-            {
-                "id": "Glossary_Entry_09",
-                "en": "Queen",
-                "target": "Ratu"
-            },
-            {
-                "id": "Glossary_Entry_10",
-                "en": "Kingdom",
-                "target": "Kerajaan"
-            }
+            {"id": "Glossary_Entry_01", "en": "Orb", "target": "Bola"},
+            {"id": "Glossary_Entry_02", "en": "Throne", "target": "Takhta"},
+            {"id": "Glossary_Entry_03", "en": "Strange", "target": "Aneh"},
+            {"id": "Glossary_Entry_04", "en": "Placed", "target": "Ditempatkan"},
+            {"id": "Glossary_Entry_05", "en": "Knight", "target": "Ksatria"},
+            {"id": "Glossary_Entry_06", "en": "Sword", "target": "Pedang"},
+            {"id": "Glossary_Entry_07", "en": "Castle", "target": "Kastil"},
+            {"id": "Glossary_Entry_08", "en": "King", "target": "Raja"},
+            {"id": "Glossary_Entry_09", "en": "Queen", "target": "Ratu"},
+            {"id": "Glossary_Entry_10", "en": "Kingdom", "target": "Kerajaan"}
         ],
-        "referenceEN": {
-            "q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]",
-            "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"
-        },
-        "target": {
-            "q5": "[KIT]Orb ditempatkan di atas takhta yang [color:65845]aneh[/color].[KIT]",
-            "q6": "[KIT]Orb ditempatkan di atas takhta yang [color:65845]aneh[/color].[KIT]",
-            "q7": "[KIT]Orb ditempatkan di atas takhta yang [color:65845]aneh[/color].[KIT]"
-        },
+        "referenceEN": {"q5": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q6": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]", "q7": "[KIT]The orb was placed on a strange [color:65845]throne[/color].[/KIT]"},
+        "target": {"q5": "[KIT]Orb ditempatkan di atas takhta yang [color:65845]aneh[/color].[KIT]", "q6": "[KIT]Orb ditempatkan di atas takhta yang [color:65845]aneh[/color].[KIT]", "q7": "[KIT]Orb ditempatkan di atas takhta yang [color:65845]aneh[/color].[KIT]"},
         "q9": "Apakah permainan video favorit Anda, beritahu kami mengapa?",
         "volumeLabel": "250 kata"
     }
 };</script>
 <script>
-
-// ---------------------------------------------------------------------------
-// I18N INJECTION & RENDERING
-// EN_COMMON / BUG_TYPES / GLOSSARY_TERMS_EN / LANG_GRID_ORDER / LQA_LANGUAGES
-// are defined just above. Nothing candidate-visible should be hardcoded in
-// the HTML below this point — everything comes from this data layer so a
-// future text change never requires touching markup or JS.
-// ---------------------------------------------------------------------------
 
 // Converts literal "\n" markers (as typed in a spreadsheet cell) into real
 // line breaks, so multi-line EN_Common strings (e.g. the bug report template)
@@ -3100,10 +1352,6 @@ function expandLineBreaks(text) {
     return String(text).replace(/\\n/g, "\n");
 }
 
-// Injects every static EN_Common string into the page via the generic
-// [data-i18n] / [data-i18n-placeholder] / [data-i18n-alt] hooks, plus the
-// few spots (bug types list, report template) that need their own renderer
-// because they're built from an expandable list rather than a single string.
 function injectEnCommonTexts() {
     if (EN_COMMON['global.pageTitle']) document.title = EN_COMMON['global.pageTitle'];
 
@@ -3124,9 +1372,6 @@ function injectEnCommonTexts() {
     renderReportTemplate();
 }
 
-// Renders the BUG_TYPES list (BugType_Entry_01...N) as a simple bullet list
-// inside the existing .side-text node. Expandable: add/remove/reorder entries
-// in BUG_TYPES and this re-renders the right number of lines automatically.
 function renderBugTypesList() {
     const el = document.getElementById('bugTypesBody');
     if (!el || !Array.isArray(BUG_TYPES)) return;
@@ -3139,9 +1384,6 @@ function renderReportTemplate() {
     el.textContent = expandLineBreaks(EN_COMMON['page2.sidebar.reportTemplate'] || '');
 }
 
-// Builds the Page 1 language-selection grid from LQA_LANGUAGES, in the
-// visual order given by LANG_GRID_ORDER. Adding/removing/reordering a test
-// language is now a data-layer change only — no markup edit required.
 function renderLanguageGrid() {
     const container = document.getElementById('langGridContainer');
     if (!container) return;
@@ -3155,8 +1397,7 @@ function renderLanguageGrid() {
     }).join('');
 }
 
-// Column header = language code itself, not a translated "Glossary" title
-// (see the glossary panel comment in the HTML above for the full fix history).
+// Column header is the language code itself — never a translated label.
 function buildGlossaryColumnCode(langCode) {
     return (langCode || '').toUpperCase();
 }
@@ -3170,7 +1411,6 @@ let lqaBroadcastChannel = new BroadcastChannel('lqa_session_channel');
 let sessionKeepAliveInterval;
 let testEndTime;
 
-// Handles the selection mechanics and active state styling for the language cards grid
 function selectGridLanguage(cardElement) {
     if (!cardElement) return;
     document.querySelectorAll('.language-card').forEach(card => card.classList.remove('active'));
@@ -3195,7 +1435,6 @@ function changePageView(targetPageId) {
     window.scrollTo(0, 0);
 }
 
-// Lists unanswered questions and adapts the confirmation modal text accordingly
 function openConfirmationModal() {
     const missingQuestions = [];
     for (let i = 1; i <= 9; i++) {
@@ -3252,7 +1491,6 @@ function triggerSecurityHardlockWipe(titleText, reasonText) {
     document.getElementById('securityHardlockScreen').style.display = 'flex';
 }
 
-// Wipes out all local active assessment data stores and reloads the current window cleanly
 function resetQASession() {
     if (confirm(EN_COMMON['qaReset.confirmPrompt'])) {
         clearInterval(timerRunningEngine);
@@ -3263,9 +1501,7 @@ function resetQASession() {
     }
 }
 
-// ---------------------------------------------------------------------------
-// Screen-shield anti-screenshot/anti-blur protections (unchanged behavior)
-// ---------------------------------------------------------------------------
+// Screen-shield anti-screenshot/anti-blur protections
 const shield = document.getElementById('greyShield');
 
 const triggerProtection = () => {
@@ -3412,9 +1648,6 @@ async function startTestTimer(isRestoring) {
     }, 1000);
 }
 
-// ---------------------------------------------------------------------------
-// Summary dashboard generator and payload submission
-// ---------------------------------------------------------------------------
 function triggerCandidatePdfDownload() {
     window.print();
 }
@@ -3553,7 +1786,7 @@ function displaySummaryDashboard(isTriggeredByTimeout) {
 
     const answersSnapshot = { first, last, email, lang, elapsedMinutes, teamsBodyText };
     const submissionPayload = {
-        title: `${last} ${first} - Language: ${lang}`,
+        title: `${last} ${first} - ${EN_COMMON['page5.languageMetaPrefix']}${lang}`,
         text: teamsBodyText
     };
 
@@ -3575,10 +1808,6 @@ function displaySummaryDashboard(isTriggeredByTimeout) {
     changePageView(5);
 }
 
-// ---------------------------------------------------------------------------
-// Per-language content hydration (replaces the old lqaLocalTranslationMatrix
-// + triggerDynamicLocalContentHydration pair) and RTL support.
-// ---------------------------------------------------------------------------
 function triggerDynamicLocalContentHydration(langCode) {
     const targetCode = langCode || LANG_GRID_ORDER[0];
     localStorage.setItem('lqa_candidate_lang', targetCode);
@@ -3586,16 +1815,11 @@ function triggerDynamicLocalContentHydration(langCode) {
     const dataPack = LQA_LANGUAGES[targetCode];
     if (!dataPack) return;
 
-    // Personalized main heading + browser tab title (Priority 0, #9). The generic
-    // "LQA Tester Assessment" (EN_COMMON) remains the default shown on Page 1
-    // before any language is chosen.
     const personalizedTitle = `LQA ${dataPack.demonym} Tester Assessment`;
     const headingEl = document.getElementById('mainHeadingTitle');
     if (headingEl) headingEl.textContent = personalizedTitle;
     document.title = personalizedTitle;
 
-    // Section B glossary panel: column header is the language code itself (see
-    // buildGlossaryColumnCode), panel title stays English (untouched, EN_Common).
     const targetHeader = document.getElementById('glossaryTargetHeader');
     if (targetHeader) targetHeader.textContent = buildGlossaryColumnCode(targetCode);
 
@@ -3615,10 +1839,6 @@ function triggerDynamicLocalContentHydration(langCode) {
         });
     }
 
-    // Section B proofreading sheets (Q5/Q6/Q7): reference (EN) + target text, both
-    // sourced per-language so a future divergent scenario per language is a data
-    // change only. Bracket tokens ([KIT], [color:xxxxx]) and target-side flaws are
-    // intentional test variables — always injected as plain text, never interpreted.
     ['q5', 'q6', 'q7'].forEach(qid => {
         const leftEl = document.getElementById(`sheet_${qid}_left`);
         const rightEl = document.getElementById(`sheet_${qid}_right`);
@@ -3626,10 +1846,6 @@ function triggerDynamicLocalContentHydration(langCode) {
         if (rightEl && dataPack.target && dataPack.target[qid]) rightEl.textContent = dataPack.target[qid];
     });
 
-    // Q9 (harmonized — Priority 0, #6: same generic prompt for every language, no
-    // more French-only special case). CJK/JA/KO/TH keep one fixed English suffix
-    // (Priority 0, #3, intentional); all other languages get a translated suffix
-    // from their own volumeLabel (Priority 0, #4: Arabic now has one too).
     const lbl9 = document.getElementById('lbl_q9');
     if (lbl9 && dataPack.q9) {
         const isCharacterDensityLang = /^(zh|ja|ko|th)/i.test(targetCode);
@@ -3666,7 +1882,6 @@ function applyRtlSupport(langCode) {
     });
 }
 
-// ---------------------------------------------------------------------------
 // Anti-cheat interceptors, feedback submission, lightbox runtime.
 //
 // SECURITY NOTE: everything in this block — and the single-tab BroadcastChannel
@@ -3680,7 +1895,6 @@ function applyRtlSupport(langCode) {
 // server-side on every POST, timestamped answer snapshots logged as the candidate
 // types, server-side enforcement of the time limit, or a dedicated proctoring
 // SDK/service for true lockdown (clipboard, dev tools, tab focus).
-// ---------------------------------------------------------------------------
 function submitAnonymousFeedbackForm() {
     const selectedOptions = [];
     const checkboxes = document.querySelectorAll('input[name="fb_opt"]:checked');
@@ -3797,9 +2011,6 @@ function closeFullscreenLightbox() {
     }
 }
 
-// ---------------------------------------------------------------------------
-// Runtime rehydration bootloader and hardware detector
-// ---------------------------------------------------------------------------
 window.addEventListener('load', () => {
     // 1. Hardware detection matrix blocking smart devices, tablets, and phones.
     // Combines three independent signals (User-Agent sniffing, viewport width, touch capability)
@@ -3818,14 +2029,13 @@ window.addEventListener('load', () => {
         return;
     }
 
-    // 2. Theme Restoration Setup
     if (localStorage.getItem('lqa_theme') === 'dark') {
         document.body.classList.add('dark-mode');
         const btn = document.getElementById('themeToggle');
         if (btn) btn.innerHTML = EN_COMMON['buttons.lightMode'];
     }
 
-    // 3. Text Answers State Rehydration Loop (q1 to q9). Refreshes the word-count
+    // 2. Text Answers State Rehydration Loop (q1 to q9). Refreshes the word-count
     // badges for the two free-text fields that have one (q8, q9).
     for (let i = 1; i <= 9; i++) {
         const storedAnswer = localStorage.getItem(`lqa_ans_q${i}`);
@@ -3836,7 +2046,7 @@ window.addEventListener('load', () => {
         }
     }
 
-    // 4. Accessibility hardening for the hidden language input: kept out of the
+    // 3. Accessibility hardening for the hidden language input: kept out of the
     // keyboard tab order and invisible to assistive technologies, since the
     // visible language picker is the language-card grid, not this input.
     const hiddenLangInput = document.getElementById('candidateLanguage');
@@ -3845,7 +2055,7 @@ window.addEventListener('load', () => {
         hiddenLangInput.setAttribute('aria-hidden', 'true');
     }
 
-    // 5. Reapply localized content + RTL layout support on reload, based on the
+    // 4. Reapply localized content + RTL layout support on reload, based on the
     // previously stored candidate language (registration fields stay disabled by
     // CSS/state already set before reload — this just restores the visible text).
     const storedLangForRtl = localStorage.getItem('lqa_candidate_lang');
